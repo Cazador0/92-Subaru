@@ -1,0 +1,13 @@
+{
+  "name": "92-subaru",
+  "version": "1.0.0",
+  "private": true,
+  "description": "92 Subaru — retrowave car-cabin landing page + Firebase backend",
+  "scripts": {
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "firebase": "^12.15.0",
+    "firebase-admin": "^14.1.0"
+  }
+}

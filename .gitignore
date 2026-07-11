@@ -1,0 +1,26 @@
+# Secrets — NEVER commit these
+serviceAccountKey.json
+*serviceAccount*.json
+*-firebase-adminsdk-*.json
+.env
+.env.*
+
+# Node
+node_modules/
+
+# Firebase tooling
+.firebase/
+firebase-debug.log
+.runtimeconfig.json
+
+# Deno server — local booking store (Deno KV / SQLite)
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Research scratch — assets, seed prototype, node_modules
+research/
+
+# macOS
+.DS_Store

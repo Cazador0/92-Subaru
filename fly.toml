@@ -1,0 +1,31 @@
+# Fly.io config for the '92 Subaru Deno server.
+# Deploy:  fly launch --no-deploy   (first time, to create the app)
+#          fly volumes create subaru_data --size 1 --region dfw
+#          fly deploy
+# For push-to-deploy, add the Fly GitHub Action (superfly/flyctl-actions/setup-flyctl)
+# or run `fly deploy` from CI with a FLY_API_TOKEN secret.
+
+app = "92-subaru"
+primary_region = "dfw" # Dallas–Fort Worth
+
+[build]
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[env]
+  KV_PATH = "/data/kv.sqlite"
+  PORT = "8000"
+
+# Persistent volume so the Deno KV / SQLite booking store survives restarts.
+[mounts]
+  source = "subaru_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

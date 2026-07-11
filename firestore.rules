@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /events/{event} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /presets/{preset} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

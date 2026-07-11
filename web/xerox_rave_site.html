@@ -1,0 +1,2202 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="./support.js"></script>
+    </head>
+    <body>
+        <x-dc>
+            <helmet>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.gstatic.com"
+                    crossorigin
+                />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&display=swap"
+                    rel="stylesheet"
+                />
+                <style>
+                    * {
+                        box-sizing: border-box;
+                    }
+                    body {
+                        margin: 0;
+                    }
+                    a {
+                        color: inherit;
+                        text-decoration: none;
+                    }
+                    a:hover {
+                        color: #d83a2b;
+                    }
+                    ::selection {
+                        background: #d83a2b;
+                        color: #efe8d6;
+                    }
+                    @keyframes eqbar {
+                        0%,
+                        100% {
+                            transform: scaleY(0.22);
+                        }
+                        50% {
+                            transform: scaleY(1);
+                        }
+                    }
+                    @keyframes xpulse {
+                        0%,
+                        100% {
+                            opacity: 0.5;
+                        }
+                        50% {
+                            opacity: 1;
+                        }
+                    }
+                    @keyframes xscan {
+                        0% {
+                            transform: translateY(-160px);
+                        }
+                        100% {
+                            transform: translateY(700px);
+                        }
+                    }
+                    @keyframes xflick {
+                        0%,
+                        100% {
+                            opacity: 1;
+                        }
+                        91% {
+                            opacity: 1;
+                        }
+                        93% {
+                            opacity: 0.6;
+                        }
+                        95% {
+                            opacity: 1;
+                        }
+                        97% {
+                            opacity: 0.82;
+                        }
+                    }
+                </style>
+            </helmet>
+            <div
+                style="
+                    min-height: 100vh;
+                    background: #efe8d6;
+                    background-image: radial-gradient(
+                        #0000001a 1.1px,
+                        transparent 1.2px
+                    );
+                    background-size: 5px 5px;
+                    color: #17140f;
+                    font-family: &quot;Courier Prime&quot;, monospace;
+                "
+            >
+                <!-- ============ GLOBAL NAV ============ -->
+                <div
+                    style="
+                        position: sticky;
+                        top: 0;
+                        z-index: 50;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 15px 34px;
+                        border-bottom: 3px solid #17140f;
+                        background: #17140f;
+                        color: #efe8d6;
+                    "
+                >
+                    <div
+                        onClick="{{ goHome }}"
+                        style="
+                            font-family: &quot;Anton&quot;, sans-serif;
+                            font-size: 26px;
+                            letter-spacing: 1px;
+                            cursor: pointer;
+                        "
+                    >
+                        '92 SUBARU
+                    </div>
+                    <div
+                        style="
+                            display: flex;
+                            align-items: center;
+                            gap: 22px;
+                            font-size: 13px;
+                            font-weight: 700;
+                            letter-spacing: 1.5px;
+                        "
+                    >
+                        <span onClick="{{ goHome }}" style="{{ navHomeStyle }}"
+                            >HOME</span
+                        >
+                        <span
+                            onClick="{{ goAbout }}"
+                            style="{{ navAboutStyle }}"
+                            >ABOUT</span
+                        >
+                        <span
+                            onClick="{{ goContact }}"
+                            style="{{ navContactStyle }}"
+                            >CONTACT</span
+                        >
+                        <span
+                            onClick="{{ goContact }}"
+                            style="
+                                background: #d83a2b;
+                                color: #efe8d6;
+                                padding: 8px 15px;
+                                font-family: &quot;Anton&quot;, sans-serif;
+                                letter-spacing: 1px;
+                                transform: rotate(-1.5deg);
+                                display: inline-block;
+                                cursor: pointer;
+                            "
+                            >BOOK</span
+                        >
+                    </div>
+                </div>
+
+                <!-- ============ HOME ============ -->
+                <div style="{{ homeStyle }}">
+                    <!-- HERO (centered flyer) -->
+                    <div style="position: relative; overflow: hidden">
+                        <sc-if
+                            value="{{ sweep }}"
+                            hint-placeholder-val="{{ true }}"
+                        >
+                            <div
+                                style="
+                                    position: absolute;
+                                    left: 0;
+                                    right: 0;
+                                    top: 0;
+                                    height: 160px;
+                                    z-index: 2;
+                                    pointer-events: none;
+                                    background: linear-gradient(
+                                        180deg,
+                                        transparent,
+                                        rgba(216, 58, 43, 0.13),
+                                        transparent
+                                    );
+                                    animation: xscan 7s linear infinite;
+                                "
+                            ></div>
+                        </sc-if>
+                        <div
+                            style="
+                                position: relative;
+                                z-index: 1;
+                                max-width: 1180px;
+                                margin: 0 auto;
+                                text-align: center;
+                                padding: 60px 44px 40px;
+                            "
+                        >
+                            <sc-if
+                                value="{{ doorsStamp }}"
+                                hint-placeholder-val="{{ true }}"
+                            >
+                                <span
+                                    style="
+                                        position: absolute;
+                                        top: 52px;
+                                        right: 44px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 14px;
+                                        letter-spacing: 1px;
+                                        color: #d83a2b;
+                                        border: 2px solid #d83a2b;
+                                        padding: 4px 10px;
+                                        transform: rotate(4deg);
+                                        display: inline-block;
+                                    "
+                                    >TODO - Place the Book Button</span
+                                >
+                            </sc-if>
+                            <div
+                                style="
+                                    font-family:
+                                        &quot;Courier Prime&quot;, monospace;
+                                    font-weight: 700;
+                                    font-size: 12px;
+                                    letter-spacing: 5px;
+                                    color: #d83a2b;
+                                    margin-bottom: 20px;
+                                    animation: xpulse 2s ease-in-out infinite;
+                                "
+                            >
+                                &#9666; Socials &middot; Link &middot; To&quot;
+                                Do &#9656;
+                            </div>
+                            <div
+                                style="
+                                    font-family: &quot;Anton&quot;, sans-serif;
+                                    font-size: 118px;
+                                    line-height: 0.85;
+                                    letter-spacing: 0;
+                                    text-transform: uppercase;
+                                    text-shadow: 7px 7px 0 #d83a2b;
+                                    animation: xflick 6s linear infinite;
+                                "
+                            >
+                                '92 SUBARU
+                            </div>
+                            <div
+                                style="
+                                    margin: 24px auto 0;
+                                    display: inline-block;
+                                    background: #fffdf5;
+                                    border: 2px dashed #17140f;
+                                    padding: 10px 16px;
+                                    transform: rotate(-0.5deg);
+                                    font-size: 14px;
+                                    letter-spacing: 0.5px;
+                                "
+                            >
+                                // MAX VOLUME TRIBUTE TO THE DECADE OF THE DROP
+                                //
+                            </div>
+                            <div style="margin-top: 22px">
+                                <span
+                                    style="
+                                        display: inline-block;
+                                        background: #efe8d6;
+                                        border: 2px solid #17140f;
+                                        padding: 12px 16px;
+                                        box-shadow: 4px 4px 0 #17140f;
+                                    "
+                                >
+                                    <span
+                                        style="
+                                            display: inline-block;
+                                            margin-left: 10px;
+                                            border: 2px solid #d83a2b;
+                                            color: #d83a2b;
+                                            font-family:
+                                                &quot;Anton&quot;, sans-serif;
+                                            font-size: 13px;
+                                            padding: 2px 8px;
+                                            transform: rotate(-4deg);
+                                        "
+                                        >SOLD OUT</span
+                                    >
+                                </span>
+                            </div>
+                            <div
+                                style="
+                                    margin-top: 30px;
+                                    display: flex;
+                                    justify-content: center;
+                                    gap: 8px;
+                                    align-items: flex-end;
+                                    height: 40px;
+                                "
+                            >
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 55%;
+                                        background: #d83a2b;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 90%;
+                                        background: #17140f;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.1s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 42%;
+                                        background: #d83a2b;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.22s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 100%;
+                                        background: #17140f;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.32s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 62%;
+                                        background: #d83a2b;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.15s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 82%;
+                                        background: #17140f;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.27s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 46%;
+                                        background: #d83a2b;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.36s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 94%;
+                                        background: #17140f;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.06s;
+                                    "
+                                ></span>
+                                <span
+                                    style="
+                                        width: 7px;
+                                        height: 50%;
+                                        background: #d83a2b;
+                                        transform-origin: bottom;
+                                        animation: eqbar 0.5s ease-in-out
+                                            infinite;
+                                        animation-delay: 0.19s;
+                                    "
+                                ></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CASSETTE centered -->
+                    <div
+                        style="
+                            max-width: 520px;
+                            margin: 0 auto;
+                            padding: 0 44px 18px;
+                            position: relative;
+                        "
+                    >
+                        <div
+                            style="
+                                position: absolute;
+                                top: -6px;
+                                left: 50%;
+                                width: 150px;
+                                height: 34px;
+                                background: rgba(220, 214, 196, 0.72);
+                                border: 1px solid rgba(23, 20, 15, 0.22);
+                                transform: translateX(-50%) rotate(-2.5deg);
+                                z-index: 5;
+                            "
+                        ></div>
+                        <div style="transform: rotate(-1.4deg)">
+                            <div style="{{ cass }}">
+                                <dc-import
+                                    name="Cassette"
+                                    hint-size="480px,320px"
+                                ></dc-import>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- THE DECK -->
+                    <div
+                        style="
+                            max-width: 1180px;
+                            margin: 6px auto 42px;
+                            padding: 0 44px;
+                        "
+                    >
+                        <div
+                            style="
+                                background: #17140f;
+                                color: #efe8d6;
+                                padding: 22px 26px;
+                                border: 3px solid #17140f;
+                                box-shadow: 8px 8px 0 rgba(23, 20, 15, 0.22);
+                            "
+                        >
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                                    gap: 20px;
+                                    flex-wrap: wrap;
+                                "
+                            >
+                                <div style="min-width: 270px">
+                                    <div
+                                        style="
+                                            font-size: 11px;
+                                            letter-spacing: 2px;
+                                            color: #d83a2b;
+                                            margin-bottom: 5px;
+                                        "
+                                    >
+                                        &#9654; TAPE ROLLING — SIDE {{ side }}
+                                    </div>
+                                    <div
+                                        style="
+                                            font-family:
+                                                &quot;Anton&quot;, sans-serif;
+                                            font-size: 26px;
+                                            letter-spacing: 0.5px;
+                                            text-transform: uppercase;
+                                        "
+                                    >
+                                        {{ activeTitle }}
+                                    </div>
+                                    <div
+                                        style="
+                                            font-size: 12px;
+                                            opacity: 0.75;
+                                            margin-top: 3px;
+                                        "
+                                    >
+                                        {{ activeNo }} · {{ activeArtist }} · {{
+                                        activeYear }}
+                                    </div>
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                    "
+                                >
+                                    <div
+                                        onClick="{{ onPrev }}"
+                                        style="
+                                            width: 44px;
+                                            height: 44px;
+                                            background: #efe8d6;
+                                            color: #17140f;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            cursor: pointer;
+                                            border: 2px solid #efe8d6;
+                                        "
+                                    >
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                d="M7 6h2v12H7zM20 6v12l-9-6z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                    <div
+                                        onClick="{{ onPlay }}"
+                                        style="
+                                            width: 56px;
+                                            height: 56px;
+                                            background: #d83a2b;
+                                            color: #efe8d6;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            cursor: pointer;
+                                            border: 2px solid #efe8d6;
+                                        "
+                                        style-active="transform:translate(2px,2px);"
+                                    >
+                                        <sc-if
+                                            value="{{ playing }}"
+                                            hint-placeholder-val="{{ false }}"
+                                            ><svg
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M7 5h4v14H7zM13 5h4v14h-4z"
+                                                ></path></svg
+                                        ></sc-if>
+                                        <sc-if
+                                            value="{{ paused }}"
+                                            hint-placeholder-val="{{ true }}"
+                                            ><svg
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M8 5l12 7-12 7z"
+                                                ></path></svg
+                                        ></sc-if>
+                                    </div>
+                                    <div
+                                        onClick="{{ onStop }}"
+                                        style="
+                                            width: 44px;
+                                            height: 44px;
+                                            background: #efe8d6;
+                                            color: #17140f;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            cursor: pointer;
+                                            border: 2px solid #efe8d6;
+                                        "
+                                    >
+                                        <svg
+                                            width="15"
+                                            height="15"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                        >
+                                            <rect
+                                                x="6"
+                                                y="6"
+                                                width="12"
+                                                height="12"
+                                            ></rect>
+                                        </svg>
+                                    </div>
+                                    <div
+                                        onClick="{{ onNext }}"
+                                        style="
+                                            width: 44px;
+                                            height: 44px;
+                                            background: #efe8d6;
+                                            color: #17140f;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            cursor: pointer;
+                                            border: 2px solid #efe8d6;
+                                        "
+                                    >
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                d="M15 6h2v12h-2zM4 6l9 6-9 6z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            border: 2px solid #efe8d6;
+                                            margin-left: 6px;
+                                            font-family:
+                                                &quot;Anton&quot;, sans-serif;
+                                            font-size: 16px;
+                                        "
+                                    >
+                                        <div
+                                            onClick="{{ onSideA }}"
+                                            style="{{ tabAStyle }}"
+                                        >
+                                            A
+                                        </div>
+                                        <div
+                                            onClick="{{ onSideB }}"
+                                            style="{{ tabBStyle }}"
+                                        >
+                                            B
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                    margin-top: 18px;
+                                    font-family:
+                                        &quot;Courier Prime&quot;, monospace;
+                                "
+                            >
+                                <span style="font-size: 12px; color: #d83a2b"
+                                    >{{ elapsedText }}</span
+                                >
+                                <div
+                                    style="
+                                        flex: 1;
+                                        height: 14px;
+                                        border: 2px solid #efe8d6;
+                                        background: repeating-linear-gradient(
+                                            90deg,
+                                            #efe8d6 0 3px,
+                                            transparent 3px 7px
+                                        );
+                                        position: relative;
+                                    "
+                                >
+                                    <div style="{{ progressStyle }}"></div>
+                                </div>
+                                <span style="font-size: 12px; opacity: 0.7"
+                                    >{{ durText }}</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MIXTAPE J-card -->
+                    <div
+                        style="
+                            border-top: 3px solid #17140f;
+                            background: #fffdf5;
+                            background-image: repeating-linear-gradient(
+                                #fffdf5 0 30px,
+                                #e4dcc6 30px 31px
+                            );
+                        "
+                    >
+                        <div
+                            style="
+                                max-width: 1180px;
+                                margin: 0 auto;
+                                padding: 40px 44px 46px;
+                            "
+                        >
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: flex-end;
+                                    justify-content: space-between;
+                                    margin-bottom: 22px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 44px;
+                                        text-transform: uppercase;
+                                        transform: rotate(-1deg);
+                                    "
+                                >
+                                    The Mixtape
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        gap: 6px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                    "
+                                >
+                                    <div
+                                        onClick="{{ onSideA }}"
+                                        style="{{ mixAStyle }}"
+                                    >
+                                        SIDE A
+                                    </div>
+                                    <div
+                                        onClick="{{ onSideB }}"
+                                        style="{{ mixBStyle }}"
+                                    >
+                                        SIDE B
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 2px;
+                                "
+                            >
+                                <sc-for
+                                    list="{{ list }}"
+                                    as="t"
+                                    hint-placeholder-count="5"
+                                >
+                                    <div
+                                        onClick="{{ t.onPick }}"
+                                        style="
+                                            position: relative;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 16px;
+                                            padding: 11px 6px;
+                                            cursor: pointer;
+                                            border-bottom: 1px dotted #17140f;
+                                        "
+                                        style-hover="background:#0000000a;"
+                                    >
+                                        <div
+                                            style="
+                                                font-family:
+                                                    &quot;Courier Prime&quot;,
+                                                    monospace;
+                                                font-weight: 700;
+                                                font-size: 15px;
+                                                width: 30px;
+                                            "
+                                        >
+                                            {{ t.no }}
+                                        </div>
+                                        <div style="flex: 1; min-width: 0">
+                                            <span
+                                                style="
+                                                    font-family:
+                                                        &quot;Courier Prime&quot;,
+                                                        monospace;
+                                                    font-weight: 700;
+                                                    font-size: 17px;
+                                                "
+                                                >{{ t.title }}</span
+                                            >
+                                            <span
+                                                style="
+                                                    font-size: 12px;
+                                                    opacity: 0.7;
+                                                "
+                                            >
+                                                — {{ t.artist }}, {{ t.year
+                                                }}</span
+                                            >
+                                        </div>
+                                        <div
+                                            style="
+                                                font-family:
+                                                    &quot;Courier Prime&quot;,
+                                                    monospace;
+                                                font-size: 14px;
+                                            "
+                                        >
+                                            {{ t.dur }}
+                                        </div>
+                                        <sc-if
+                                            value="{{ t.active }}"
+                                            hint-placeholder-val="{{ false }}"
+                                        >
+                                            <div
+                                                style="
+                                                    position: absolute;
+                                                    left: 44px;
+                                                    right: 70px;
+                                                    bottom: 6px;
+                                                    height: 6px;
+                                                    background: #d83a2b;
+                                                    opacity: 0.45;
+                                                    transform: rotate(-0.5deg);
+                                                    border-radius: 3px;
+                                                    pointer-events: none;
+                                                "
+                                            ></div>
+                                            <span
+                                                style="
+                                                    display: inline-flex;
+                                                    align-items: flex-end;
+                                                    gap: 2px;
+                                                    height: 16px;
+                                                    width: 22px;
+                                                "
+                                            >
+                                                <span
+                                                    style="
+                                                        width: 4px;
+                                                        height: 100%;
+                                                        background: #17140f;
+                                                        transform-origin: bottom;
+                                                        animation: eqbar 0.6s
+                                                            ease-in-out infinite;
+                                                    "
+                                                ></span>
+                                                <span
+                                                    style="
+                                                        width: 4px;
+                                                        height: 100%;
+                                                        background: #17140f;
+                                                        transform-origin: bottom;
+                                                        animation: eqbar 0.6s
+                                                            ease-in-out infinite;
+                                                        animation-delay: 0.15s;
+                                                    "
+                                                ></span>
+                                                <span
+                                                    style="
+                                                        width: 4px;
+                                                        height: 100%;
+                                                        background: #17140f;
+                                                        transform-origin: bottom;
+                                                        animation: eqbar 0.6s
+                                                            ease-in-out infinite;
+                                                        animation-delay: 0.3s;
+                                                    "
+                                                ></span>
+                                            </span>
+                                        </sc-if>
+                                    </div>
+                                </sc-for>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GIGS -->
+                    <div
+                        style="
+                            border-top: 3px solid #17140f;
+                            background: #17140f;
+                            color: #efe8d6;
+                        "
+                    >
+                        <div
+                            style="
+                                max-width: 1180px;
+                                margin: 0 auto;
+                                padding: 40px 44px 50px;
+                            "
+                        >
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: flex-end;
+                                    justify-content: space-between;
+                                    margin-bottom: 22px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 44px;
+                                        text-transform: uppercase;
+                                        color: #efe8d6;
+                                    "
+                                >
+                                    Gigs
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        gap: 6px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    <div
+                                        onClick="{{ onUpcoming }}"
+                                        style="{{ tourUpStyle }}"
+                                    >
+                                        UPCOMING
+                                    </div>
+                                    <div
+                                        onClick="{{ onPast }}"
+                                        style="{{ tourPastStyle }}"
+                                    >
+                                        PAST
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column">
+                                <sc-for
+                                    list="{{ tour }}"
+                                    as="g"
+                                    hint-placeholder-count="4"
+                                >
+                                    <div
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 120px 1fr 130px;
+                                            gap: 16px;
+                                            align-items: center;
+                                            padding: 14px 0;
+                                            border-bottom: 1px dashed #55503f;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                font-family:
+                                                    &quot;Anton&quot;,
+                                                    sans-serif;
+                                                font-size: 20px;
+                                                color: #d83a2b;
+                                            "
+                                        >
+                                            {{ g.date }}
+                                        </div>
+                                        <div>
+                                            <span
+                                                style="
+                                                    font-family:
+                                                        &quot;Courier Prime&quot;,
+                                                        monospace;
+                                                    font-weight: 700;
+                                                    font-size: 16px;
+                                                "
+                                                >{{ g.venue }}</span
+                                            ><span
+                                                style="
+                                                    font-size: 12px;
+                                                    opacity: 0.65;
+                                                "
+                                            >
+                                                / {{ g.city }}</span
+                                            >
+                                        </div>
+                                        <div style="justify-self: end">
+                                            <span style="{{ g.badgeStyle }}"
+                                                >{{ g.status }}</span
+                                            >
+                                        </div>
+                                    </div>
+                                </sc-for>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ ABOUT ============ -->
+                <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+                    <div
+                        style="
+                            max-width: 1080px;
+                            margin: 0 auto;
+                            padding: 52px 44px 64px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: inline-block;
+                                background: #17140f;
+                                color: #efe8d6;
+                                font-weight: 700;
+                                font-size: 12px;
+                                letter-spacing: 2px;
+                                padding: 5px 10px;
+                                transform: rotate(-1deg);
+                                margin-bottom: 18px;
+                            "
+                        >
+                            SIDE B // OFF THE RECORD
+                        </div>
+                        <div
+                            style="
+                                font-family: &quot;Anton&quot;, sans-serif;
+                                font-size: 96px;
+                                line-height: 0.85;
+                                text-transform: uppercase;
+                                text-shadow: 6px 6px 0 #d83a2b;
+                                margin-bottom: 8px;
+                            "
+                        >
+                            Liner<br />Notes
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 34px;
+                                background: #fffdf5;
+                                border: 2px dashed #17140f;
+                                padding: 26px 28px;
+                                max-width: 760px;
+                                transform: rotate(-0.4deg);
+                                font-size: 19px;
+                                line-height: 1.7;
+                            "
+                        >
+                            No originals. No tribute-act cheese. Four people
+                            from Dallas–Fort Worth playing the decade's greatest
+                            hits
+                            <span
+                                style="
+                                    background: #d83a2b;
+                                    color: #efe8d6;
+                                    padding: 0 4px;
+                                "
+                                >louder</span
+                            >
+                            than they were ever meant to be — one C60 at a time.
+                        </div>
+
+                        <div
+                            style="
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 34px;
+                                margin-top: 46px;
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 24px;
+                                        letter-spacing: 1px;
+                                        border-bottom: 3px solid #17140f;
+                                        padding-bottom: 8px;
+                                        margin-bottom: 16px;
+                                    "
+                                >
+                                    PERSONNEL
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 12px;
+                                        font-size: 15px;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 12px;
+                                        "
+                                    >
+                                        <span style="width: 80px">VOCALS</span
+                                        ><span
+                                            style="
+                                                flex: 1;
+                                                border-bottom: 1px dotted
+                                                    #17140f;
+                                                height: 1px;
+                                            "
+                                        ></span
+                                        ><span
+                                            style="
+                                                background: #17140f;
+                                                color: #17140f;
+                                                user-select: none;
+                                                padding: 1px 22px;
+                                                transform: rotate(-1deg);
+                                            "
+                                            >████</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 12px;
+                                        "
+                                    >
+                                        <span style="width: 80px">GUITAR</span
+                                        ><span
+                                            style="
+                                                flex: 1;
+                                                border-bottom: 1px dotted
+                                                    #17140f;
+                                                height: 1px;
+                                            "
+                                        ></span
+                                        ><span
+                                            style="
+                                                background: #17140f;
+                                                color: #17140f;
+                                                user-select: none;
+                                                padding: 1px 30px;
+                                                transform: rotate(1deg);
+                                            "
+                                            >████</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 12px;
+                                        "
+                                    >
+                                        <span style="width: 80px">BASS</span
+                                        ><span
+                                            style="
+                                                flex: 1;
+                                                border-bottom: 1px dotted
+                                                    #17140f;
+                                                height: 1px;
+                                            "
+                                        ></span
+                                        ><span
+                                            style="
+                                                background: #17140f;
+                                                color: #17140f;
+                                                user-select: none;
+                                                padding: 1px 18px;
+                                                transform: rotate(-0.5deg);
+                                            "
+                                            >████</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 12px;
+                                        "
+                                    >
+                                        <span style="width: 80px">DRUMS</span
+                                        ><span
+                                            style="
+                                                flex: 1;
+                                                border-bottom: 1px dotted
+                                                    #17140f;
+                                                height: 1px;
+                                            "
+                                        ></span
+                                        ><span
+                                            style="
+                                                background: #17140f;
+                                                color: #17140f;
+                                                user-select: none;
+                                                padding: 1px 26px;
+                                                transform: rotate(0.8deg);
+                                            "
+                                            >████</span
+                                        >
+                                    </div>
+                                </div>
+                                <div
+                                    style="
+                                        margin-top: 16px;
+                                        font-size: 13px;
+                                        opacity: 0.7;
+                                        font-style: italic;
+                                    "
+                                >
+                                    // names withheld. the music speaks for
+                                    itself.
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    style="
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 24px;
+                                        letter-spacing: 1px;
+                                        border-bottom: 3px solid #17140f;
+                                        padding-bottom: 8px;
+                                        margin-bottom: 16px;
+                                    "
+                                >
+                                    SPECS
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 11px;
+                                        font-size: 15px;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                        "
+                                    >
+                                        <span style="opacity: 0.7">FORMED</span
+                                        ><span style="font-weight: 700"
+                                            >1998 · Denton, TX</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                        "
+                                    >
+                                        <span style="opacity: 0.7">BASED</span
+                                        ><span style="font-weight: 700"
+                                            >Dallas–Fort Worth</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                        "
+                                    >
+                                        <span style="opacity: 0.7"
+                                            >SET LENGTH</span
+                                        ><span style="font-weight: 700"
+                                            >2 × 45 min</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                        "
+                                    >
+                                        <span style="opacity: 0.7">FORMAT</span
+                                        ><span style="font-weight: 700"
+                                            >C60 mixtape</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                        "
+                                    >
+                                        <span style="opacity: 0.7">BIAS</span
+                                        ><span style="font-weight: 700"
+                                            >Normal · 120µs EQ</span
+                                        >
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                        "
+                                    >
+                                        <span style="opacity: 0.7">VOLUME</span
+                                        ><span
+                                            style="
+                                                font-weight: 700;
+                                                color: #d83a2b;
+                                            "
+                                            >Too loud</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 46px">
+                            <div
+                                style="
+                                    font-family: &quot;Anton&quot;, sans-serif;
+                                    font-size: 24px;
+                                    letter-spacing: 1px;
+                                    margin-bottom: 14px;
+                                "
+                            >
+                                WHAT WE PLAY
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    gap: 10px;
+                                "
+                            >
+                                <span
+                                    style="
+                                        border: 2px solid #17140f;
+                                        padding: 7px 14px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                        transform: rotate(-1deg);
+                                    "
+                                    >GRUNGE</span
+                                >
+                                <span
+                                    style="
+                                        border: 2px solid #17140f;
+                                        padding: 7px 14px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                        transform: rotate(1deg);
+                                    "
+                                    >BRITPOP</span
+                                >
+                                <span
+                                    style="
+                                        border: 2px solid #17140f;
+                                        padding: 7px 14px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                        transform: rotate(-0.6deg);
+                                    "
+                                    >POP-PUNK</span
+                                >
+                                <span
+                                    style="
+                                        background: #d83a2b;
+                                        color: #efe8d6;
+                                        padding: 7px 14px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                        transform: rotate(0.8deg);
+                                    "
+                                    >EURODANCE</span
+                                >
+                                <span
+                                    style="
+                                        border: 2px solid #17140f;
+                                        padding: 7px 14px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                        transform: rotate(-1deg);
+                                    "
+                                    >HIP-HOP</span
+                                >
+                                <span
+                                    style="
+                                        border: 2px solid #17140f;
+                                        padding: 7px 14px;
+                                        font-family:
+                                            &quot;Anton&quot;, sans-serif;
+                                        font-size: 15px;
+                                        transform: rotate(0.5deg);
+                                    "
+                                    >R&amp;B</span
+                                >
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                display: flex;
+                                gap: 14px;
+                                margin-top: 44px;
+                                flex-wrap: wrap;
+                            "
+                        >
+                            <span
+                                onClick="{{ goHome }}"
+                                style="
+                                    background: #17140f;
+                                    color: #efe8d6;
+                                    font-family: &quot;Anton&quot;, sans-serif;
+                                    font-size: 17px;
+                                    letter-spacing: 1px;
+                                    padding: 13px 22px;
+                                    cursor: pointer;
+                                    box-shadow: 4px 4px 0 rgba(23, 20, 15, 0.3);
+                                "
+                                >◂ HEAR THE TAPE</span
+                            >
+                            <span
+                                onClick="{{ goContact }}"
+                                style="
+                                    background: #d83a2b;
+                                    color: #efe8d6;
+                                    font-family: &quot;Anton&quot;, sans-serif;
+                                    font-size: 17px;
+                                    letter-spacing: 1px;
+                                    padding: 13px 22px;
+                                    cursor: pointer;
+                                    box-shadow: 4px 4px 0 rgba(23, 20, 15, 0.3);
+                                "
+                                >BOOK US ▸</span
+                            >
+                        </div>
+                    </div>
+                </sc-if>
+
+                <!-- ============ CONTACT ============ -->
+                <sc-if
+                    value="{{ isContact }}"
+                    hint-placeholder-val="{{ false }}"
+                >
+                    <div
+                        style="
+                            max-width: 1080px;
+                            margin: 0 auto;
+                            padding: 52px 44px 64px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: inline-block;
+                                background: #17140f;
+                                color: #efe8d6;
+                                font-weight: 700;
+                                font-size: 12px;
+                                letter-spacing: 2px;
+                                padding: 5px 10px;
+                                transform: rotate(-1deg);
+                                margin-bottom: 18px;
+                            "
+                        >
+                            BOOKING // TECHNICAL SPECS
+                        </div>
+                        <div
+                            style="
+                                font-family: &quot;Anton&quot;, sans-serif;
+                                font-size: 96px;
+                                line-height: 0.85;
+                                text-transform: uppercase;
+                                text-shadow: 6px 6px 0 #d83a2b;
+                                margin-bottom: 8px;
+                            "
+                        >
+                            Book The<br />Tape
+                        </div>
+
+                        <div
+                            style="
+                                display: grid;
+                                grid-template-columns: 1.4fr 0.9fr;
+                                gap: 38px;
+                                margin-top: 38px;
+                                align-items: start;
+                            "
+                        >
+                            <!-- SPEC SHEET FORM -->
+                            <div
+                                style="
+                                    border: 3px solid #17140f;
+                                    background: #fffdf5;
+                                    box-shadow: 7px 7px 0 rgba(23, 20, 15, 0.25);
+                                "
+                            >
+                                <div
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        background: #17140f;
+                                        color: #efe8d6;
+                                        padding: 12px 18px;
+                                    "
+                                >
+                                    <span
+                                        style="
+                                            font-family:
+                                                &quot;Anton&quot;, sans-serif;
+                                            letter-spacing: 1px;
+                                            font-size: 16px;
+                                        "
+                                        >MODEL '92 — BOOKING REQUEST</span
+                                    >
+                                    <span style="font-size: 11px; opacity: 0.6"
+                                        >FORM / SIDE A</span
+                                    >
+                                </div>
+
+                                <sc-if
+                                    value="{{ notSent }}"
+                                    hint-placeholder-val="{{ true }}"
+                                >
+                                    <div style="padding: 26px 24px">
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 1fr 1fr;
+                                                gap: 18px;
+                                            "
+                                        >
+                                            <div>
+                                                <label
+                                                    style="
+                                                        font-family:
+                                                            &quot;Anton&quot;,
+                                                            sans-serif;
+                                                        font-size: 13px;
+                                                        letter-spacing: 1px;
+                                                        display: block;
+                                                        margin-bottom: 6px;
+                                                    "
+                                                    >EVENT DATE *</label
+                                                >
+                                                <input
+                                                    type="date"
+                                                    min="2026-07-11"
+                                                    value="{{ fDate }}"
+                                                    onChange="{{ onDate }}"
+                                                    style="
+                                                        width: 100%;
+                                                        font-family:
+                                                            &quot;Courier Prime&quot;,
+                                                            monospace;
+                                                        font-size: 15px;
+                                                        padding: 11px 12px;
+                                                        background: #efe8d6;
+                                                        border: 2px solid
+                                                            #17140f;
+                                                        color: #17140f;
+                                                        outline: none;
+                                                    "
+                                                    style-focus="border-color:#d83a2b; box-shadow:0 0 0 3px rgba(216,58,43,.18);"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label
+                                                    style="
+                                                        font-family:
+                                                            &quot;Anton&quot;,
+                                                            sans-serif;
+                                                        font-size: 13px;
+                                                        letter-spacing: 1px;
+                                                        display: block;
+                                                        margin-bottom: 6px;
+                                                    "
+                                                    >EVENT TYPE</label
+                                                >
+                                                <select
+                                                    value="{{ fType }}"
+                                                    onChange="{{ onType }}"
+                                                    style="
+                                                        width: 100%;
+                                                        font-family:
+                                                            &quot;Courier Prime&quot;,
+                                                            monospace;
+                                                        font-size: 15px;
+                                                        padding: 11px 12px;
+                                                        background: #efe8d6;
+                                                        border: 2px solid
+                                                            #17140f;
+                                                        color: #17140f;
+                                                        outline: none;
+                                                    "
+                                                    style-focus="border-color:#d83a2b; box-shadow:0 0 0 3px rgba(216,58,43,.18);"
+                                                >
+                                                    <option value="">
+                                                        — select —
+                                                    </option>
+                                                    <option value="Bar / Club">
+                                                        Bar / Club
+                                                    </option>
+                                                    <option
+                                                        value="Private Party"
+                                                    >
+                                                        Private Party
+                                                    </option>
+                                                    <option value="Wedding">
+                                                        Wedding
+                                                    </option>
+                                                    <option
+                                                        value="Corporate / Brand"
+                                                    >
+                                                        Corporate / Brand
+                                                    </option>
+                                                    <option value="Festival">
+                                                        Festival
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div style="margin-top: 18px">
+                                            <label
+                                                style="
+                                                    font-family:
+                                                        &quot;Anton&quot;,
+                                                        sans-serif;
+                                                    font-size: 13px;
+                                                    letter-spacing: 1px;
+                                                    display: block;
+                                                    margin-bottom: 6px;
+                                                "
+                                                >LOCATION / VENUE *</label
+                                            >
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Trees, Deep Ellum"
+                                                value="{{ fLocation }}"
+                                                onChange="{{ onLocation }}"
+                                                style="
+                                                    width: 100%;
+                                                    font-family:
+                                                        &quot;Courier Prime&quot;,
+                                                        monospace;
+                                                    font-size: 15px;
+                                                    padding: 11px 12px;
+                                                    background: #efe8d6;
+                                                    border: 2px solid #17140f;
+                                                    color: #17140f;
+                                                    outline: none;
+                                                "
+                                                style-focus="border-color:#d83a2b; box-shadow:0 0 0 3px rgba(216,58,43,.18);"
+                                            />
+                                        </div>
+
+                                        <div style="margin-top: 18px">
+                                            <label
+                                                style="
+                                                    font-family:
+                                                        &quot;Anton&quot;,
+                                                        sans-serif;
+                                                    font-size: 13px;
+                                                    letter-spacing: 1px;
+                                                    display: block;
+                                                    margin-bottom: 6px;
+                                                "
+                                                >BUDGET RANGE</label
+                                            >
+                                            <select
+                                                value="{{ fBudget }}"
+                                                onChange="{{ onBudget }}"
+                                                style="
+                                                    width: 100%;
+                                                    font-family:
+                                                        &quot;Courier Prime&quot;,
+                                                        monospace;
+                                                    font-size: 15px;
+                                                    padding: 11px 12px;
+                                                    background: #efe8d6;
+                                                    border: 2px solid #17140f;
+                                                    color: #17140f;
+                                                    outline: none;
+                                                "
+                                                style-focus="border-color:#d83a2b; box-shadow:0 0 0 3px rgba(216,58,43,.18);"
+                                            >
+                                                <option value="">
+                                                    — select —
+                                                </option>
+                                                <option value="Under $1,500">
+                                                    Under $1,500
+                                                </option>
+                                                <option value="$1,500 – 3,000">
+                                                    $1,500 – 3,000
+                                                </option>
+                                                <option value="$3,000 – 6,000">
+                                                    $3,000 – 6,000
+                                                </option>
+                                                <option value="$6,000+">
+                                                    $6,000+
+                                                </option>
+                                                <option value="Let's talk">
+                                                    Let's talk
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div style="margin-top: 18px">
+                                            <label
+                                                style="
+                                                    font-family:
+                                                        &quot;Anton&quot;,
+                                                        sans-serif;
+                                                    font-size: 13px;
+                                                    letter-spacing: 1px;
+                                                    display: block;
+                                                    margin-bottom: 6px;
+                                                "
+                                                >MESSAGE *</label
+                                            >
+                                            <textarea
+                                                rows="4"
+                                                placeholder="Tell us about the gig..."
+                                                value="{{ fMessage }}"
+                                                onChange="{{ onMessage }}"
+                                                style="
+                                                    width: 100%;
+                                                    font-family:
+                                                        &quot;Courier Prime&quot;,
+                                                        monospace;
+                                                    font-size: 15px;
+                                                    padding: 11px 12px;
+                                                    background: #efe8d6;
+                                                    border: 2px solid #17140f;
+                                                    color: #17140f;
+                                                    outline: none;
+                                                    resize: vertical;
+                                                "
+                                                style-focus="border-color:#d83a2b; box-shadow:0 0 0 3px rgba(216,58,43,.18);"
+                                            ></textarea>
+                                        </div>
+
+                                        <sc-if
+                                            value="{{ err }}"
+                                            hint-placeholder-val="{{ false }}"
+                                        >
+                                            <div
+                                                style="
+                                                    margin-top: 16px;
+                                                    color: #d83a2b;
+                                                    font-weight: 700;
+                                                    font-size: 13px;
+                                                "
+                                            >
+                                                ⚠ Fill in event date, location,
+                                                and message.
+                                            </div>
+                                        </sc-if>
+
+                                        <div
+                                            onClick="{{ onSubmit }}"
+                                            style="
+                                                margin-top: 22px;
+                                                background: #d83a2b;
+                                                color: #efe8d6;
+                                                font-family:
+                                                    &quot;Anton&quot;,
+                                                    sans-serif;
+                                                font-size: 20px;
+                                                letter-spacing: 1px;
+                                                text-align: center;
+                                                padding: 15px;
+                                                cursor: pointer;
+                                                box-shadow: 5px 5px 0 #17140f;
+                                            "
+                                            style-active="transform:translate(3px,3px); box-shadow:2px 2px 0 #17140f;"
+                                        >
+                                            SEND TRANSMISSION ▸
+                                        </div>
+                                    </div>
+                                </sc-if>
+
+                                <sc-if
+                                    value="{{ sent }}"
+                                    hint-placeholder-val="{{ false }}"
+                                >
+                                    <div
+                                        style="
+                                            padding: 52px 30px;
+                                            text-align: center;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                display: inline-block;
+                                                border: 4px solid #d83a2b;
+                                                color: #d83a2b;
+                                                font-family:
+                                                    &quot;Anton&quot;,
+                                                    sans-serif;
+                                                font-size: 34px;
+                                                letter-spacing: 2px;
+                                                padding: 10px 24px;
+                                                transform: rotate(-5deg);
+                                            "
+                                        >
+                                            TAPE RECEIVED
+                                        </div>
+                                        <div
+                                            style="
+                                                margin-top: 24px;
+                                                font-size: 16px;
+                                                line-height: 1.7;
+                                                max-width: 420px;
+                                                margin-left: auto;
+                                                margin-right: auto;
+                                            "
+                                        >
+                                            Thanks — your booking request is in
+                                            the deck. We'll rewind and get back
+                                            to you within
+                                            <span style="font-weight: 700"
+                                                >48 hours</span
+                                            >.
+                                        </div>
+                                        <div
+                                            onClick="{{ onReset }}"
+                                            style="
+                                                margin-top: 26px;
+                                                display: inline-block;
+                                                border: 2px solid #17140f;
+                                                font-family:
+                                                    &quot;Anton&quot;,
+                                                    sans-serif;
+                                                font-size: 15px;
+                                                padding: 10px 18px;
+                                                cursor: pointer;
+                                            "
+                                        >
+                                            ◂ SEND ANOTHER
+                                        </div>
+                                    </div>
+                                </sc-if>
+                            </div>
+
+                            <!-- INFO PANEL -->
+                            <div
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 18px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        border: 3px solid #17140f;
+                                        padding: 22px 22px;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            font-family:
+                                                &quot;Anton&quot;, sans-serif;
+                                            font-size: 20px;
+                                            letter-spacing: 1px;
+                                            margin-bottom: 14px;
+                                        "
+                                    >
+                                        DIRECT LINE
+                                    </div>
+                                    <div
+                                        style="font-size: 14px; line-height: 2"
+                                    >
+                                        <div
+                                            style="
+                                                opacity: 0.7;
+                                                font-size: 11px;
+                                                letter-spacing: 1px;
+                                            "
+                                        >
+                                            BOOKING
+                                        </div>
+                                        <div
+                                            style="
+                                                font-weight: 700;
+                                                font-size: 16px;
+                                                word-break: break-all;
+                                            "
+                                        >
+                                            booking@92subaru.fm
+                                        </div>
+                                        <div
+                                            style="
+                                                opacity: 0.7;
+                                                font-size: 11px;
+                                                letter-spacing: 1px;
+                                                margin-top: 10px;
+                                            "
+                                        >
+                                            TERRITORY
+                                        </div>
+                                        <div style="font-weight: 700">
+                                            Dallas–Fort Worth &amp; beyond
+                                        </div>
+                                        <div
+                                            style="
+                                                opacity: 0.7;
+                                                font-size: 11px;
+                                                letter-spacing: 1px;
+                                                margin-top: 10px;
+                                            "
+                                        >
+                                            RESPONSE
+                                        </div>
+                                        <div
+                                            style="
+                                                font-weight: 700;
+                                                color: #d83a2b;
+                                            "
+                                        >
+                                            &lt; 48 hours
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="
+                                        background: #17140f;
+                                        color: #efe8d6;
+                                        padding: 22px;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            font-family:
+                                                &quot;Anton&quot;, sans-serif;
+                                            font-size: 20px;
+                                            letter-spacing: 1px;
+                                            margin-bottom: 14px;
+                                        "
+                                    >
+                                        ON THE DIAL
+                                    </div>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            flex-direction: column;
+                                            gap: 9px;
+                                            font-size: 14px;
+                                        "
+                                    >
+                                        <span>▸ instagram / @92subaru</span>
+                                        <span>▸ youtube / 92subaru</span>
+                                        <span>▸ bandcamp / 92subaru</span>
+                                        <span>▸ tiktok / @92subaru</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sc-if>
+
+                <!-- ============ FOOTER ============ -->
+                <div
+                    style="
+                        border-top: 3px solid #17140f;
+                        background: #17140f;
+                        color: #efe8d6;
+                    "
+                >
+                    <div
+                        style="
+                            max-width: 1180px;
+                            margin: 0 auto;
+                            padding: 26px 44px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            gap: 16px;
+                            flex-wrap: wrap;
+                        "
+                    >
+                        <div
+                            style="
+                                font-family: &quot;Anton&quot;, sans-serif;
+                                font-size: 22px;
+                                letter-spacing: 1px;
+                            "
+                        >
+                            '92 SUBARU
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                opacity: 0.65;
+                                letter-spacing: 1px;
+                            "
+                        >
+                            DALLAS // FORT WORTH · NORMAL BIAS 120µs EQ
+                        </div>
+                        <div style="font-size: 12px; opacity: 0.65">
+                            © 2026 · REWIND SIDE B
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-dc>
+        <script
+            type="text/x-dc"
+            data-dc-script
+            data-props='{"beatMs":{"editor":"range","default":140,"min":100,"max":220,"step":10,"unit":"ms","tsType":"number","section":"Rave"},"sweep":{"editor":"boolean","default":true,"tsType":"boolean","section":"Xerox"},"doorsStamp":{"editor":"boolean","default":true,"tsType":"boolean","section":"Xerox"}}'
+        >
+            class Component extends DCLogic {
+              tracks = {
+                A: [
+                  { n:'A1', t:'Smells Like Teen Spirit', a:'Nirvana', y:1991, d:301 },
+                  { n:'A2', t:'Creep', a:'Radiohead', y:1992, d:236 },
+                  { n:'A3', t:'Wonderwall', a:'Oasis', y:1995, d:258 },
+                  { n:'A4', t:'Losing My Religion', a:'R.E.M.', y:1991, d:268 },
+                  { n:'A5', t:'Bittersweet Symphony', a:'The Verve', y:1997, d:358 }
+                ],
+                B: [
+                  { n:'B1', t:'I Want It That Way', a:'Backstreet Boys', y:1999, d:213 },
+                  { n:'B2', t:'...Baby One More Time', a:'Britney Spears', y:1998, d:211 },
+                  { n:'B3', t:'Waterfalls', a:'TLC', y:1995, d:279 },
+                  { n:'B4', t:'Wannabe', a:'Spice Girls', y:1996, d:173 },
+                  { n:'B5', t:"Gangsta's Paradise", a:'Coolio', y:1995, d:240 }
+                ]
+              };
+              tour = {
+                upcoming: [
+                  { date:'AUG 14', venue:'Trees', city:'Deep Ellum, Dallas', status:'SOLD OUT' },
+                  { date:'AUG 22', venue:'Tulips FTW', city:'Fort Worth', status:'GET TICKETS' },
+                  { date:'SEP 05', venue:'The Factory', city:'Deep Ellum, Dallas', status:'GET TICKETS' },
+                  { date:'SEP 19', venue:"Dan's Silverleaf", city:'Denton', status:'SOLD OUT' },
+                  { date:'OCT 03', venue:'Texas Live!', city:'Arlington', status:'GET TICKETS' }
+                ],
+                past: [
+                  { date:'MAY 10', venue:'Granada Theater', city:'Greenville Ave, Dallas', status:'PLAYED' },
+                  { date:'APR 18', venue:'Ridglea Theater', city:'Fort Worth', status:'PLAYED' },
+                  { date:'MAR 21', venue:'Gas Monkey Live', city:'Dallas', status:'PLAYED' },
+                  { date:'FEB 07', venue:'The Rustic', city:'Uptown, Dallas', status:'PLAYED' }
+                ]
+              };
+              XPAL = { '--cass-body':'#17150f','--cass-body-edge':'#000000','--cass-body-hi':'#3a352b','--cass-ink':'#141210','--cass-ink-soft':'#141210','--cass-label':'#f3ecd9','--cass-stripe':'#df3b2c','--cass-accent':'#df3b2c','--cass-band':'#211f1a','--cass-band-ink':'#f3ecd9','--cass-gear':'#e7e0cd','--cass-clutch':'#141210','--cass-teal':'#cdc7b4','--cass-teal-hi':'#eae4d2','--cass-window':'#8f897a','--cass-hole':'#0c0b09','--cass-filter':'url(#cass-rough)','--cass-drop':'drop-shadow(0 8px 0 rgba(20,18,16,.20))' };
+
+              state = { page:'home', playing:false, side:'A', idx:0, elapsed:0, flip:0, tf:'upcoming',
+                        form:{ date:'', type:'', location:'', budget:'', message:'' }, sent:false, err:false };
+
+              _timer = null; _audio = null; _ac = null; _nb = null;
+              componentWillUnmount() { this.stopTimer(); this.stopAudio(); }
+              componentDidUpdate(prev) { if (prev && prev.beatMs !== this.props.beatMs && this.state.playing) this.restartAudio(); }
+
+              fmt(s) { s = Math.max(0, Math.floor(s)); const m = Math.floor(s/60); const ss = String(s%60).padStart(2,'0'); return m + ':' + ss; }
+              beat() { return this.props.beatMs ?? 140; }
+              setPage(p) { this.setState({ page:p }); try { window.scrollTo(0,0); } catch(e){} }
+
+              // ---- transport ----
+              toggle() { if (this.state.playing) this.pause(); else this.play(); }
+              play() { this.setState({ playing:true }); this.startTimer(); this.startAudio(); }
+              pause() { this.setState({ playing:false }); this.stopTimer(); this.stopAudio(); }
+              stop() { this.setState({ playing:false, elapsed:0 }); this.stopTimer(); this.stopAudio(); }
+              prev() { const s = this.state; this.setState({ idx:(s.idx+4)%5, elapsed:0 }); if (s.playing) this.restartAudio(); }
+              next() { const s = this.state; this.setState({ idx:(s.idx+1)%5, elapsed:0 }); if (s.playing) this.restartAudio(); }
+              pick(i) { this.setState({ idx:i, elapsed:0, playing:true }); this.startTimer(); this.startAudio(); }
+              setSide(side) { const s = this.state; if (s.side === side) return; this.setState({ side, idx:0, elapsed:0, flip:s.flip+360 }); if (s.playing) this.restartAudio(); }
+              setTour(tf) { this.setState({ tf }); }
+
+              startTimer() {
+                this.stopTimer();
+                this._timer = setInterval(() => {
+                  const s = this.state;
+                  const dur = this.tracks[s.side][s.idx].d;
+                  const e = s.elapsed + 0.25;
+                  if (e >= dur) { this.setState({ idx:(s.idx+1)%5, elapsed:0 }); this.restartAudio(); }
+                  else this.setState({ elapsed:e });
+                }, 250);
+              }
+              stopTimer() { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
+
+              // ---- audio: rave four-on-the-floor, run through a worn-tape lowpass + hiss ----
+              ctx() { if (!this._ac) { const AC = window.AudioContext || window.webkitAudioContext; this._ac = new AC(); } if (this._ac.state === 'suspended') this._ac.resume(); return this._ac; }
+              noise() { const ac = this.ctx(); if (!this._nb) { const b = ac.createBuffer(1, ac.sampleRate*2, ac.sampleRate); const d = b.getChannelData(0); for (let i=0;i<d.length;i++) d[i] = Math.random()*2-1; this._nb = b; } return this._nb; }
+
+              blip(ac, master, freq, type, dur, g, opts) {
+                opts = opts || {}; const t = ac.currentTime;
+                const o = ac.createOscillator(); o.type = type; o.frequency.value = freq;
+                const env = ac.createGain();
+                env.gain.setValueAtTime(0.0001, t);
+                env.gain.exponentialRampToValueAtTime(g, t + 0.012);
+                env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                if (opts.lowpass) { const lp = ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=opts.lowpass; o.connect(lp); lp.connect(env); }
+                else o.connect(env);
+                env.connect(master);
+                if (opts.wobble) { const lfo = ac.createOscillator(); lfo.frequency.value = 5.5; const lg = ac.createGain(); lg.gain.value = 16; lfo.connect(lg); lg.connect(o.detune); lfo.start(t); lfo.stop(t+dur+0.05); }
+                o.start(t); o.stop(t + dur + 0.05);
+              }
+              kick(ac, master) { const t = ac.currentTime; const o = ac.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(140,t); o.frequency.exponentialRampToValueAtTime(45,t+0.12); const g = ac.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.9,t+0.008); g.gain.exponentialRampToValueAtTime(0.0001,t+0.22); o.connect(g); g.connect(master); o.start(t); o.stop(t+0.24); }
+              hat(ac, master) { const t = ac.currentTime; const s = ac.createBufferSource(); s.buffer = this.noise(); const hp = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=6800; const g = ac.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.09,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+0.05); s.connect(hp); hp.connect(g); g.connect(master); s.start(t); s.stop(t+0.06); }
+
+              raveStep(ac, master, step) {
+                if (step%4===0) this.kick(ac, master);
+                if (step%2===1) this.hat(ac, master);
+                const bass = [0,0,7,5];
+                if (step%2===0) this.blip(ac, master, 98*Math.pow(2, bass[Math.floor(step/2)%4]/12), 'sawtooth', 0.16, 0.12, { lowpass:440, wobble:true });
+                const lead = [12,7,12,15,12,7,10,7];
+                if (step%4!==2) this.blip(ac, master, 220*Math.pow(2, lead[step%lead.length]/12), 'sawtooth', 0.11, 0.055, { lowpass:2400 });
+              }
+
+              startAudio() {
+                this.stopAudio();
+                let ac; try { ac = this.ctx(); } catch(e) { return; }
+                const master = ac.createGain(); master.gain.value = 0;
+                const tapeLp = ac.createBiquadFilter(); tapeLp.type='lowpass'; tapeLp.frequency.value=5200; tapeLp.Q.value=0.4;
+                master.connect(tapeLp); tapeLp.connect(ac.destination);
+                master.gain.setTargetAtTime(0.5, ac.currentTime, 0.05);
+                const store = { master, timers:[], nodes:[] };
+                const hiss = ac.createBufferSource(); hiss.buffer = this.noise(); hiss.loop = true;
+                const hf = ac.createBiquadFilter(); hf.type='highpass'; hf.frequency.value=4600;
+                const hg = ac.createGain(); hg.gain.value = 0.03;
+                hiss.connect(hf); hf.connect(hg); hg.connect(master); hiss.start();
+                store.nodes.push(hiss);
+                let step = 0;
+                const stepMs = this.beat();
+                const tick = () => { try { this.raveStep(ac, master, step); step++; } catch(e){} };
+                tick(); store.timers.push(setInterval(tick, stepMs));
+                this._audio = store;
+              }
+              stopAudio() {
+                const s = this._audio; if (!s) return;
+                try {
+                  s.timers.forEach(t => clearInterval(t));
+                  const ac = this._ac;
+                  s.master.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03);
+                  setTimeout(() => { try { s.nodes.forEach(n => { try { n.stop && n.stop(); } catch(e){} }); s.master.disconnect(); } catch(e){} }, 140);
+                } catch(e){}
+                this._audio = null;
+              }
+              restartAudio() { if (this.state.playing) this.startAudio(); }
+
+              // ---- form ----
+              setField(k, v) { this.setState(st => ({ form: Object.assign({}, st.form, { [k]:v }), err:false })); }
+              submit() { const f = this.state.form; if (!f.date || !f.location || !f.message) { this.setState({ err:true }); return; } this.setState({ sent:true }); try { window.scrollTo(0,0); } catch(e){} }
+              resetForm() { this.setState({ sent:false, err:false, form:{ date:'', type:'', location:'', budget:'', message:'' } }); }
+
+              // ---- view ----
+              seg(active, activeBg, activeInk, idleInk, pad) {
+                return active
+                  ? { padding:pad, cursor:'pointer', background:activeBg, color:activeInk, display:'flex', alignItems:'center' }
+                  : { padding:pad, cursor:'pointer', background:'transparent', color:idleInk, display:'flex', alignItems:'center' };
+              }
+              nav(active) {
+                return active
+                  ? { cursor:'pointer', color:'#efe8d6', borderBottom:'3px solid #d83a2b', paddingBottom:'2px' }
+                  : { cursor:'pointer', color:'#efe8d6', opacity:0.55, paddingBottom:'2px' };
+              }
+              badge(st) {
+                const base = { fontFamily:"'Anton',sans-serif", fontSize:'13px', padding:'3px 10px', display:'inline-block', letterSpacing:'.5px', whiteSpace:'nowrap' };
+                if (st==='SOLD OUT') return Object.assign({}, base, { border:'2px solid #d83a2b', color:'#d83a2b', transform:'rotate(-3deg)' });
+                if (st==='GET TICKETS') return Object.assign({}, base, { background:'#efe8d6', color:'#17140f' });
+                return Object.assign({}, base, { color:'#8a856f', border:'1px dashed #55503f' });
+              }
+
+              renderVals() {
+                const s = this.state;
+                const raw = this.tracks[s.side];
+                const active = raw[s.idx] || raw[0];
+                const dur = active.d;
+                const pct = Math.min(100, (s.elapsed / dur) * 100);
+                const list = raw.map((t, i) => ({ no:t.n, title:t.t, artist:t.a, year:t.y, dur:this.fmt(t.d), active:i===s.idx, onPick:()=>this.pick(i) }));
+                const tourRaw = s.tf === 'past' ? this.tour.past : this.tour.upcoming;
+                const reelSpeed = (1.05 * this.beat() / 140).toFixed(2) + 's';
+
+                return {
+                  // tweaks
+                  sweep: this.props.sweep ?? true,
+                  doorsStamp: this.props.doorsStamp ?? true,
+                  // routing
+                  isHome:s.page==='home', isAbout:s.page==='about', isContact:s.page==='contact',
+                  homeStyle:{ display: s.page==='home' ? 'block' : 'none' },
+                  navHomeStyle:this.nav(s.page==='home'), navAboutStyle:this.nav(s.page==='about'), navContactStyle:this.nav(s.page==='contact'),
+                  goHome:()=>this.setPage('home'), goAbout:()=>this.setPage('about'), goContact:()=>this.setPage('contact'),
+                  // player
+                  side:s.side, playing:s.playing, paused:!s.playing,
+                  activeNo:active.n, activeTitle:active.t, activeArtist:active.a, activeYear:active.y,
+                  elapsedText:this.fmt(s.elapsed), durText:this.fmt(dur),
+                  list,
+                  cass: Object.assign({ width:'100%', display:'block' }, this.XPAL, { '--reel-play': s.playing ? 'running' : 'paused', '--reel-speed':reelSpeed, '--cass-flip': s.flip + 'deg' }),
+                  progressStyle:{ position:'absolute', left:0, top:0, bottom:0, width:pct+'%', background:'#df3b2c' },
+                  onPlay:()=>this.toggle(), onStop:()=>this.stop(), onPrev:()=>this.prev(), onNext:()=>this.next(),
+                  onSideA:()=>this.setSide('A'), onSideB:()=>this.setSide('B'),
+                  onUpcoming:()=>this.setTour('upcoming'), onPast:()=>this.setTour('past'),
+                  tabAStyle:this.seg(s.side==='A','#efe8d6','#17140f','#efe8d6','6px 13px'),
+                  tabBStyle:this.seg(s.side==='B','#efe8d6','#17140f','#efe8d6','6px 13px'),
+                  mixAStyle:this.seg(s.side==='A','#17140f','#efe8d6','#17140f','7px 15px'),
+                  mixBStyle:this.seg(s.side==='B','#17140f','#efe8d6','#17140f','7px 15px'),
+                  tourUpStyle:this.seg(s.tf!=='past','#d83a2b','#efe8d6','#efe8d6','6px 14px'),
+                  tourPastStyle:this.seg(s.tf==='past','#d83a2b','#efe8d6','#efe8d6','6px 14px'),
+                  tour: tourRaw.map(g => ({ date:g.date, venue:g.venue, city:g.city, status:g.status, badgeStyle:this.badge(g.status) })),
+                  // form
+                  fDate:s.form.date, fType:s.form.type, fLocation:s.form.location, fBudget:s.form.budget, fMessage:s.form.message,
+                  onDate:(e)=>this.setField('date', e.target.value), onType:(e)=>this.setField('type', e.target.value),
+                  onLocation:(e)=>this.setField('location', e.target.value), onBudget:(e)=>this.setField('budget', e.target.value),
+                  onMessage:(e)=>this.setField('message', e.target.value),
+                  sent:s.sent, notSent:!s.sent, err:s.err, onSubmit:()=>this.submit(), onReset:()=>this.resetForm()
+                };
+              }
+            }
+        </script>
+    </body>
+</html>

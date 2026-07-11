@@ -1,0 +1,17 @@
+{
+  "tasks": {
+    "start": "deno run --unstable-kv --allow-net --allow-read --allow-write --allow-env server/main.ts",
+    "dev": "deno run --watch --unstable-kv --allow-net --allow-read --allow-write --allow-env server/main.ts",
+    "test": "deno test --unstable-kv --allow-net --allow-read --allow-write --allow-env",
+    "deploy": "deployctl deploy --project=$DENO_DEPLOY_PROJECT --entrypoint=server/main.ts ."
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1"
+  },
+  "fmt": {
+    "include": ["server/", "deno.json"]
+  },
+  "lint": {
+    "include": ["server/"]
+  }
+}

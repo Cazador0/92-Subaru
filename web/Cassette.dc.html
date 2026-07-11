@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@keyframes cass-reel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+</helmet>
+<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; perspective:1400px;">
+  <div style="width:100%; transform: rotateY(var(--cass-flip,0deg)); transition: transform .8s cubic-bezier(.34,1.2,.4,1); transform-style:preserve-3d;">
+    <svg viewBox="0 0 800 520" width="100%" style="height:auto; display:block; overflow:visible; filter: var(--cass-drop, drop-shadow(0 24px 30px rgba(0,0,0,.28)));">
+      <defs>
+        <filter id="cass-rough" x="-6%" y="-6%" width="112%" height="112%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+        <filter id="cass-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <g filter="var(--cass-filter, none)">
+        <!-- BODY -->
+        <rect x="64" y="96" width="672" height="400" rx="26" fill="var(--cass-body,#2B2E3A)" stroke="var(--cass-body-edge,#171922)" stroke-width="5"/>
+        <path d="M78 120 Q78 108 92 108 L708 108 Q722 108 722 120" fill="none" stroke="var(--cass-body-hi,#3b3f4d)" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+
+        <!-- LABEL -->
+        <rect x="104" y="150" width="592" height="250" rx="8" fill="var(--cass-label,#ffffff)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="3"/>
+        <path d="M104 158 L104 172 L696 172 L696 158 Q696 150 688 150 L112 150 Q104 150 104 158 Z" fill="var(--cass-stripe,#F0544F)"/>
+
+        <!-- B square -->
+        <rect x="118" y="180" width="42" height="42" rx="3" fill="var(--cass-ink,#2B2E3A)"/>
+        <text x="139" y="212" text-anchor="middle" fill="var(--cass-label,#ffffff)" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:30px;">B</text>
+
+        <!-- N.R. + IN/OUT -->
+        <text x="446" y="204" fill="var(--cass-ink,#2B2E3A)" style="font-family:'Space Mono',monospace; font-weight:700; font-size:17px; letter-spacing:1px;">N.R.</text>
+        <path d="M494 190 L494 208 L500 208" fill="none" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.5"/>
+        <text x="566" y="204" fill="var(--cass-ink,#2B2E3A)" style="font-family:'Space Mono',monospace; font-weight:700; font-size:17px;">]</text>
+        <rect x="580" y="190" width="14" height="14" fill="none" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.5"/>
+        <text x="599" y="204" fill="var(--cass-ink,#2B2E3A)" style="font-family:'Space Mono',monospace; font-weight:700; font-size:16px;">IN</text>
+        <rect x="632" y="190" width="14" height="14" fill="none" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.5"/>
+        <text x="651" y="204" fill="var(--cass-ink,#2B2E3A)" style="font-family:'Space Mono',monospace; font-weight:700; font-size:16px;">OUT</text>
+
+        <!-- rib lines -->
+        <path d="M116 246 h94 M116 255 h94 M116 264 h94 M116 273 h94 M116 282 h94 M116 291 h94 M116 300 h94 M116 309 h94 M116 318 h94" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.4" stroke-linecap="round" opacity="0.9"/>
+        <path d="M590 246 h94 M590 255 h94 M590 264 h94 M590 273 h94 M590 282 h94 M590 291 h94 M590 300 h94 M590 309 h94 M590 318 h94" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.4" stroke-linecap="round" opacity="0.9"/>
+
+        <!-- WINDOW -->
+        <rect x="344" y="238" width="112" height="90" rx="10" fill="var(--cass-window,#6f7480)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="4"/>
+        <rect x="352" y="246" width="96" height="74" rx="5" fill="var(--cass-teal,#52C6D8)"/>
+        <polygon points="356,250 444,250 400,283 444,316 356,316 400,283" fill="var(--cass-teal-hi,#b6e9f1)" opacity="0.85"/>
+        <rect x="356" y="250" width="88" height="12" rx="3" fill="#ffffff" opacity="0.18"/>
+
+        <!-- LEFT REEL -->
+        <g transform="translate(264,282)">
+          <g style="transform-box:fill-box; transform-origin:center; animation: cass-reel-spin var(--reel-speed,1.9s) linear infinite; animation-play-state: var(--reel-play,paused);">
+            <circle r="50" fill="var(--cass-gear,#d3d6dd)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="3"/>
+            <circle r="44" fill="none" stroke="var(--cass-ink,#2B2E3A)" stroke-width="7" stroke-dasharray="3 8.1"/>
+            <circle r="32" fill="var(--cass-teal,#52C6D8)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="3"/>
+            <circle r="24" fill="none" stroke="var(--cass-clutch,#2B2E3A)" stroke-width="11" stroke-dasharray="4 12.6" opacity="0.75"/>
+            <circle r="10" fill="var(--cass-gear,#d3d6dd)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.5"/>
+            <rect x="-4" y="-50" width="8" height="14" rx="1.5" fill="var(--cass-accent,#F0544F)"/>
+          </g>
+        </g>
+
+        <!-- RIGHT REEL -->
+        <g transform="translate(536,282)">
+          <g style="transform-box:fill-box; transform-origin:center; animation: cass-reel-spin var(--reel-speed,1.9s) linear infinite; animation-play-state: var(--reel-play,paused);">
+            <circle r="50" fill="var(--cass-gear,#d3d6dd)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="3"/>
+            <circle r="44" fill="none" stroke="var(--cass-ink,#2B2E3A)" stroke-width="7" stroke-dasharray="3 8.1"/>
+            <circle r="32" fill="var(--cass-teal,#52C6D8)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="3"/>
+            <circle r="24" fill="none" stroke="var(--cass-clutch,#2B2E3A)" stroke-width="11" stroke-dasharray="4 12.6" opacity="0.75"/>
+            <circle r="10" fill="var(--cass-gear,#d3d6dd)" stroke="var(--cass-ink,#2B2E3A)" stroke-width="2.5"/>
+            <rect x="-4" y="-50" width="8" height="14" rx="1.5" fill="var(--cass-accent,#F0544F)"/>
+          </g>
+        </g>
+
+        <!-- LOWER BAND -->
+        <rect x="104" y="352" width="592" height="48" rx="4" fill="var(--cass-band,#474b57)"/>
+        <text x="300" y="382" text-anchor="middle" fill="var(--cass-band-ink,#ffffff)" style="font-family:'Space Mono',monospace; font-weight:400; font-size:18px; letter-spacing:0.5px;">Normal Bias 120&#181;s EQ</text>
+        <rect x="596" y="356" width="90" height="40" rx="3" fill="var(--cass-accent,#F0544F)"/>
+        <text x="614" y="385" text-anchor="middle" fill="#ffffff" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:28px;">A</text>
+        <line x1="631" y1="360" x2="631" y2="392" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+        <text x="661" y="384" text-anchor="middle" fill="#ffffff" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:26px;">60</text>
+
+        <!-- BOTTOM SHELL -->
+        <path d="M232 456 L568 456 L536 420 L264 420 Z" fill="none" stroke="var(--cass-ink-soft,#20222c)" stroke-width="3" opacity="0.55"/>
+        <g stroke="var(--cass-ink-soft,#20222c)" stroke-width="3" opacity="0.6">
+          <circle cx="400" cy="432" r="11" fill="var(--cass-hole,#191b23)"/>
+          <line x1="391" y1="432" x2="409" y2="432"/>
+          <circle cx="300" cy="470" r="12" fill="var(--cass-hole,#191b23)"/>
+          <circle cx="348" cy="470" r="9" fill="var(--cass-hole,#191b23)"/>
+          <circle cx="452" cy="470" r="9" fill="var(--cass-hole,#191b23)"/>
+          <circle cx="500" cy="470" r="12" fill="var(--cass-hole,#191b23)"/>
+        </g>
+
+        <!-- CORNER SCREWS -->
+        <g stroke="var(--cass-ink-soft,#20222c)" stroke-width="3">
+          <circle cx="108" cy="126" r="12" fill="var(--cass-hole,#191b23)"/>
+          <line x1="100" y1="120" x2="116" y2="132"/>
+          <circle cx="692" cy="126" r="12" fill="var(--cass-hole,#191b23)"/>
+          <line x1="684" y1="120" x2="700" y2="132"/>
+          <circle cx="108" cy="462" r="12" fill="var(--cass-hole,#191b23)"/>
+          <line x1="100" y1="456" x2="116" y2="468"/>
+          <circle cx="692" cy="462" r="12" fill="var(--cass-hole,#191b23)"/>
+          <line x1="684" y1="456" x2="700" y2="468"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:360}}"></script>
+</body>
+</html>
