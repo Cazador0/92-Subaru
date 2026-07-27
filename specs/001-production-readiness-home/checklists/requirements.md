@@ -27,7 +27,7 @@
 
 - [ ] CHK014 Do the form fields (FR-001) and the "data retained" list (Key Entities / FR-019) agree on which fields are stored vs. only emailed? [Consistency, Spec §FR-001 / §FR-019]
 - [ ] CHK015 Does "email is the system of record; not persisted" conflict with any implied read-back of past bookings (e.g., a GET listing)? [Conflict, Spec §FR-002 / Key Entities]
-- [ ] CHK016 Is the primary page name consistent ("Book" vs "Contact") across user stories and requirements? [Consistency, Spec §US1 / §FR]
+- [x] CHK016 Is the primary page name consistent ("Book" vs "Contact") across user stories and requirements? [Consistency, Spec §US1 / §FR] — **Resolved 2026-07-26: page is "Book"; nav = HOME / ABOUT / BOOK (see copy-deck.md)**
 - [ ] CHK017 Are FR-008 (embedded YouTube) and FR-010 (owner audio files) reconciled on which is authoritative and when? [Consistency, Spec §FR-008 / §FR-010]
 
 ## Acceptance Criteria & Measurability

@@ -7,17 +7,15 @@ WORKDIR /app
 # Cache dependencies first for faster rebuilds.
 COPY deno.json .
 COPY server/ server/
-RUN deno cache --unstable-kv server/main.ts
+RUN deno cache server/main.ts
 
 # App source.
 COPY public/ public/
 
-# Booking store (Deno KV) persists here; mount a volume at /data in production.
-ENV KV_PATH=/data/kv.sqlite
+# Bookings are delivered by email (see server/email.ts) — no datastore.
 ENV PORT=8000
 EXPOSE 8000
 
-# deno user is unprivileged; ensure it can write the KV volume mount point.
 USER deno
 
-CMD ["deno", "run", "--unstable-kv", "--allow-net", "--allow-read", "--allow-write", "--allow-env", "server/main.ts"]
+CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "server/main.ts"]

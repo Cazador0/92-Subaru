@@ -14,7 +14,7 @@
 
 ### User Story 1 - Book the band (Priority: P1)
 
-A prospective client (venue booker, event planner, private host) lands on the site, opens **Book/Contact**, fills a short form, and submits a booking request. The band receives it by email and follows up.
+A prospective client (venue booker, event planner, private host) lands on the site, opens **Book** (nav: HOME / ABOUT / BOOK — there is no separate "Contact" page), fills a short form, and submits a booking request. The band receives it by email and follows up.
 
 **Why this priority**: Bookings are the site's core conversion — the reason it exists. Without reliable delivery, nothing else matters.
 
@@ -100,10 +100,10 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 - **FR-010**: The site MAY later use owner-provided audio files as the soundtrack source (do last). [NEEDS CLARIFICATION: audio files]
 
 **About / copy (US2)**
-- **FR-011**: The About page MUST describe the band theme, 90s-cover focus, and Dallas–Fort Worth gig availability, without a redacted personnel block or a specs table.
+- **FR-011**: The About page MUST describe the band theme, '90s/early-2000s cover focus, and Dallas–Fort Worth gig availability, without a redacted personnel block or a specs table. Owner copy received 2026-07-26 — approved verbatim in [copy-deck.md](copy-deck.md) §About.
 - **FR-012**: Location MUST read "Dallas Fort Worth" wherever location appears.
 - **FR-013**: 100% of user-facing copy MUST be personalized for '92 Subaru with no sample/placeholder text. [NEEDS CLARIFICATION: final copy — requires owner refinement session]
-- **FR-014**: Placeholder social links MUST be removed/hidden until official endpoints are provided. [NEEDS CLARIFICATION: official social platforms + URLs]
+- **FR-014**: Social links MUST be deleted entirely (hero eyebrow included); the owner will reconstruct the link architecture later. Approved copy for Home, nav, and footer is in [copy-deck.md](copy-deck.md) and is authoritative.
 
 **EPK (US3)**
 - **FR-015**: The site MUST provide an EPK/Press Kit page with bio, photos, repertoire, and a booking CTA. [NEEDS CLARIFICATION: bio text + photos]

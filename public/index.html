@@ -19,7 +19,6 @@
     <div style="display:flex; align-items:center; gap:22px; font-size:13px; font-weight:700; letter-spacing:1.5px;">
       <span id="nav-home" data-go="home" style="cursor:pointer;">HOME</span>
       <span id="nav-about" data-go="about" style="cursor:pointer;">ABOUT</span>
-      <span id="nav-contact" data-go="contact" style="cursor:pointer;">CONTACT</span>
       <span data-go="contact" style="background:#d83a2b; color:#efe8d6; padding:8px 15px; font-family:'Anton',sans-serif; letter-spacing:1px; transform:rotate(-1.5deg); display:inline-block; cursor:pointer;">BOOK</span>
     </div>
   </div>
@@ -32,7 +31,6 @@
       <div id="hero-sweep" style="position:absolute; left:0; right:0; top:0; height:160px; z-index:2; pointer-events:none; background:linear-gradient(180deg, transparent, rgba(216,58,43,.13), transparent); animation:xscan 7s linear infinite;"></div>
       <div style="position:relative; z-index:1; max-width:1180px; margin:0 auto; text-align:center; padding:60px 44px 40px;">
         <span id="hero-book" data-go="contact" style="position:absolute; top:52px; right:44px; font-family:'Anton',sans-serif; font-size:15px; letter-spacing:1px; background:#d83a2b; color:#efe8d6; padding:8px 15px; transform:rotate(4deg); display:inline-block; cursor:pointer; box-shadow:4px 4px 0 #17140f;">BOOK ▸</span>
-        <div style="font-family:'Courier Prime',monospace; font-weight:700; font-size:12px; letter-spacing:5px; color:#d83a2b; margin-bottom:20px; animation:xpulse 2s ease-in-out infinite;">&#9666; <a href="https://instagram.com/92subaru" target="_blank" rel="noopener">INSTAGRAM</a> &middot; <a href="https://youtube.com/@92subaru" target="_blank" rel="noopener">YOUTUBE</a> &middot; <a href="https://92subaru.bandcamp.com" target="_blank" rel="noopener">BANDCAMP</a> &#9656;</div>
         <div style="font-family:'Anton',sans-serif; font-size:118px; line-height:.85; letter-spacing:0; text-transform:uppercase; text-shadow:7px 7px 0 #d83a2b; animation:xflick 6s linear infinite;">'92 SUBARU</div>
         <div style="margin:24px auto 0; display:inline-block; background:#fffdf5; border:2px dashed #17140f; padding:12px 18px; transform:rotate(-.5deg); font-size:clamp(12px,3.4vw,17px); font-weight:700; letter-spacing:1px; line-height:1.5; text-transform:uppercase;">
           <span style="display:block;">The songs you remember.</span>
@@ -118,7 +116,7 @@
                   <rect x="104" y="352" width="592" height="48" rx="4" fill="var(--cass-band,#474b57)"/>
                   <text x="300" y="382" text-anchor="middle" fill="var(--cass-band-ink,#ffffff)" style="font-family:'Space Mono',monospace; font-weight:400; font-size:18px; letter-spacing:0.5px;">Normal Bias 120&#181;s EQ</text>
                   <rect x="596" y="356" width="90" height="40" rx="3" fill="var(--cass-accent,#F0544F)"/>
-                  <text id="cass-side" x="614" y="385" text-anchor="middle" fill="#ffffff" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:28px;">A</text>
+                  <text x="614" y="385" text-anchor="middle" fill="#ffffff" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:28px;">A</text>
                   <line x1="631" y1="360" x2="631" y2="392" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
                   <text x="661" y="384" text-anchor="middle" fill="#ffffff" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:26px;">60</text>
                   <!-- BOTTOM SHELL -->
@@ -155,7 +153,7 @@
       <div style="background:#17140f; color:#efe8d6; padding:22px 26px; border:3px solid #17140f; box-shadow:8px 8px 0 rgba(23,20,15,.22);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
           <div style="min-width:270px;">
-            <div style="font-size:11px; letter-spacing:2px; color:#d83a2b; margin-bottom:5px;">&#9654; TAPE ROLLING — SIDE <span id="deck-side">A</span></div>
+            <div style="font-size:11px; letter-spacing:2px; color:#d83a2b; margin-bottom:5px;">&#9654; NOW PLAYING</div>
             <div id="deck-title" style="font-family:'Anton',sans-serif; font-size:26px; letter-spacing:.5px; text-transform:uppercase;"></div>
             <div id="deck-meta" style="font-size:12px; opacity:.75; margin-top:3px;"></div>
           </div>
@@ -167,10 +165,6 @@
             </div>
             <div id="btn-stop" style="width:44px;height:44px;background:#efe8d6;color:#17140f;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #efe8d6;"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg></div>
             <div id="btn-next" style="width:44px;height:44px;background:#efe8d6;color:#17140f;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #efe8d6;"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15 6h2v12h-2zM4 6l9 6-9 6z"></path></svg></div>
-            <div style="display:flex; border:2px solid #efe8d6; margin-left:6px; font-family:'Anton',sans-serif; font-size:16px;">
-              <div id="tab-a" data-side="A" style="cursor:pointer;">A</div>
-              <div id="tab-b" data-side="B" style="cursor:pointer;">B</div>
-            </div>
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:12px; margin-top:18px; font-family:'Courier Prime',monospace;">
@@ -185,11 +179,7 @@
     <div style="border-top:3px solid #17140f; background:#fffdf5; background-image:repeating-linear-gradient(#fffdf5 0 30px, #e4dcc6 30px 31px);">
       <div style="max-width:1180px; margin:0 auto; padding:40px 44px 46px;">
         <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:22px;">
-          <div style="font-family:'Anton',sans-serif; font-size:44px; text-transform:uppercase; transform:rotate(-1deg);">The Mixtape</div>
-          <div style="display:flex; gap:6px; font-family:'Anton',sans-serif; font-size:15px;">
-            <div id="mix-a" data-side="A" style="cursor:pointer;">SIDE A</div>
-            <div id="mix-b" data-side="B" style="cursor:pointer;">SIDE B</div>
-          </div>
+          <div style="font-family:'Anton',sans-serif; font-size:44px; text-transform:uppercase; transform:rotate(-1deg);">The Soundtrack</div>
         </div>
         <div id="mix-list" style="display:flex; flex-direction:column; gap:2px;"></div>
       </div>
@@ -214,52 +204,34 @@
   <!-- ============ ABOUT ============ -->
   <div id="view-about" style="display:none;">
     <div style="max-width:1080px; margin:0 auto; padding:52px 44px 64px;">
-      <div style="display:inline-block; background:#17140f; color:#efe8d6; font-weight:700; font-size:12px; letter-spacing:2px; padding:5px 10px; transform:rotate(-1deg); margin-bottom:18px;">SIDE B // OFF THE RECORD</div>
-      <div style="font-family:'Anton',sans-serif; font-size:96px; line-height:.85; text-transform:uppercase; text-shadow:6px 6px 0 #d83a2b; margin-bottom:8px;">Liner<br>Notes</div>
+      <div style="font-family:'Anton',sans-serif; font-size:96px; line-height:.85; text-transform:uppercase; text-shadow:6px 6px 0 #d83a2b; margin-bottom:8px;">About</div>
 
       <div style="margin-top:34px; background:#fffdf5; border:2px dashed #17140f; padding:26px 28px; max-width:760px; transform:rotate(-.4deg); font-size:19px; line-height:1.7;">
-        No originals. No tribute-act cheese. Four people from Dallas–Fort Worth playing the decade's greatest hits <span style="background:#d83a2b; color:#efe8d6; padding:0 4px;">louder</span> than they were ever meant to be — one C60 at a time.
+        '92 Subaru brings the <span style="background:#d83a2b; color:#efe8d6; padding:0 4px;">soundtrack</span> of the '90s and early 2000s back to life — energetic covers of the alternative rock, pop, and grunge hits everyone still knows by heart, with a few of our own twists thrown in along the way.
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:46px;">
-        <div>
-          <div style="font-family:'Anton',sans-serif; font-size:24px; letter-spacing:1px; border-bottom:3px solid #17140f; padding-bottom:8px; margin-bottom:16px;">PERSONNEL</div>
-          <div style="display:flex; flex-direction:column; gap:12px; font-size:15px;">
-            <div style="display:flex; align-items:center; gap:12px;"><span style="width:80px;">VOCALS</span><span style="flex:1; border-bottom:1px dotted #17140f; height:1px;"></span><span style="background:#17140f; color:#17140f; user-select:none; padding:1px 22px; transform:rotate(-1deg);">████</span></div>
-            <div style="display:flex; align-items:center; gap:12px;"><span style="width:80px;">GUITAR</span><span style="flex:1; border-bottom:1px dotted #17140f; height:1px;"></span><span style="background:#17140f; color:#17140f; user-select:none; padding:1px 30px; transform:rotate(1deg);">████</span></div>
-            <div style="display:flex; align-items:center; gap:12px;"><span style="width:80px;">BASS</span><span style="flex:1; border-bottom:1px dotted #17140f; height:1px;"></span><span style="background:#17140f; color:#17140f; user-select:none; padding:1px 18px; transform:rotate(-.5deg);">████</span></div>
-            <div style="display:flex; align-items:center; gap:12px;"><span style="width:80px;">DRUMS</span><span style="flex:1; border-bottom:1px dotted #17140f; height:1px;"></span><span style="background:#17140f; color:#17140f; user-select:none; padding:1px 26px; transform:rotate(.8deg);">████</span></div>
-          </div>
-          <div style="margin-top:16px; font-size:13px; opacity:.7; font-style:italic;">// names withheld. the music speaks for itself.</div>
-        </div>
-        <div>
-          <div style="font-family:'Anton',sans-serif; font-size:24px; letter-spacing:1px; border-bottom:3px solid #17140f; padding-bottom:8px; margin-bottom:16px;">SPECS</div>
-          <div style="display:flex; flex-direction:column; gap:11px; font-size:15px;">
-            <div style="display:flex; justify-content:space-between;"><span style="opacity:.7;">FORMED</span><span style="font-weight:700;">1998 · Denton, TX</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="opacity:.7;">BASED</span><span style="font-weight:700;">Dallas–Fort Worth</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="opacity:.7;">SET LENGTH</span><span style="font-weight:700;">2 × 45 min</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="opacity:.7;">FORMAT</span><span style="font-weight:700;">C60 mixtape</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="opacity:.7;">BIAS</span><span style="font-weight:700;">Normal · 120µs EQ</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="opacity:.7;">VOLUME</span><span style="font-weight:700; color:#d83a2b;">Too loud</span></div>
-          </div>
-        </div>
+      <div style="margin-top:34px; max-width:760px; font-size:16px; line-height:1.8;">
+        Our sets pull from Goo Goo Dolls, The Cranberries, Gin Blossoms, Oasis, Third Eye Blind, Stone Temple Pilots, Hootie &amp; the Blowfish, Matchbox Twenty, No Doubt, Radiohead, Green Day, Sixpence None the Richer, Deep Blue Something, 4 Non Blondes, Alanis Morissette, Sheryl Crow, Aerosmith, The Cure, Smash Mouth, Sugar Ray, and Barenaked Ladies — the perfect mix to sing along to and dance to all night.
       </div>
 
-      <div style="margin-top:46px;">
+      <div style="margin-top:40px;">
         <div style="font-family:'Anton',sans-serif; font-size:24px; letter-spacing:1px; margin-bottom:14px;">WHAT WE PLAY</div>
         <div style="display:flex; flex-wrap:wrap; gap:10px;">
-          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(-1deg);">GRUNGE</span>
-          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(1deg);">BRITPOP</span>
-          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(-.6deg);">POP-PUNK</span>
-          <span style="background:#d83a2b; color:#efe8d6; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(.8deg);">EURODANCE</span>
-          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(-1deg);">HIP-HOP</span>
-          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(.5deg);">R&amp;B</span>
+          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(-1deg);">ALT-ROCK</span>
+          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(1deg);">POP</span>
+          <span style="background:#d83a2b; color:#efe8d6; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(.8deg);">GRUNGE</span>
+          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(-.6deg);">'90s</span>
+          <span style="border:2px solid #17140f; padding:7px 14px; font-family:'Anton',sans-serif; font-size:15px; transform:rotate(.5deg);">EARLY 2000s</span>
         </div>
       </div>
 
-      <div style="display:flex; gap:14px; margin-top:44px; flex-wrap:wrap;">
-        <span data-go="home" style="background:#17140f; color:#efe8d6; font-family:'Anton',sans-serif; font-size:17px; letter-spacing:1px; padding:13px 22px; cursor:pointer; box-shadow:4px 4px 0 rgba(23,20,15,.3);">◂ HEAR THE TAPE</span>
-        <span data-go="contact" style="background:#d83a2b; color:#efe8d6; font-family:'Anton',sans-serif; font-size:17px; letter-spacing:1px; padding:13px 22px; cursor:pointer; box-shadow:4px 4px 0 rgba(23,20,15,.3);">BOOK US ▸</span>
+      <div style="margin-top:40px; max-width:760px; font-size:16px; line-height:1.8;">
+        Based in the Dallas–Fort Worth metroplex, we play bars, breweries, festivals, private parties, weddings, corporate events, and community celebrations.
+      </div>
+
+      <div style="display:flex; align-items:center; gap:18px; margin-top:44px; flex-wrap:wrap;">
+        <span style="font-family:'Anton',sans-serif; font-size:22px; letter-spacing:1px;">READY TO BOOK?</span>
+        <span data-go="contact" style="background:#d83a2b; color:#efe8d6; font-family:'Anton',sans-serif; font-size:17px; letter-spacing:1px; padding:13px 22px; cursor:pointer; box-shadow:4px 4px 0 rgba(23,20,15,.3);">CHECK AVAILABILITY ▸</span>
       </div>
     </div>
   </div>
@@ -276,7 +248,7 @@
         <div style="border:3px solid #17140f; background:#fffdf5; box-shadow:7px 7px 0 rgba(23,20,15,.25);">
           <div style="display:flex; align-items:center; justify-content:space-between; background:#17140f; color:#efe8d6; padding:12px 18px;">
             <span style="font-family:'Anton',sans-serif; letter-spacing:1px; font-size:16px;">MODEL '92 — BOOKING REQUEST</span>
-            <span style="font-size:11px; opacity:.6;">FORM / SIDE A</span>
+            <span style="font-size:11px; opacity:.6;">BOOKING FORM</span>
           </div>
 
           <div id="form-body" style="padding:26px 24px;">
@@ -345,15 +317,6 @@
               <div style="font-weight:700; color:#d83a2b;">&lt; 48 hours</div>
             </div>
           </div>
-          <div style="background:#17140f; color:#efe8d6; padding:22px;">
-            <div style="font-family:'Anton',sans-serif; font-size:20px; letter-spacing:1px; margin-bottom:14px;">ON THE DIAL</div>
-            <div style="display:flex; flex-direction:column; gap:9px; font-size:14px;">
-              <span>▸ instagram / @92subaru</span>
-              <span>▸ youtube / 92subaru</span>
-              <span>▸ bandcamp / 92subaru</span>
-              <span>▸ tiktok / @92subaru</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -363,8 +326,8 @@
   <div style="border-top:3px solid #17140f; background:#17140f; color:#efe8d6;">
     <div style="max-width:1180px; margin:0 auto; padding:26px 44px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
       <div style="font-family:'Anton',sans-serif; font-size:22px; letter-spacing:1px;">'92 SUBARU</div>
-      <div style="font-size:12px; opacity:.65; letter-spacing:1px;">DALLAS // FORT WORTH · NORMAL BIAS 120µs EQ</div>
-      <div style="font-size:12px; opacity:.65;">© 2026 · REWIND SIDE B</div>
+      <div style="font-size:12px; opacity:.65; letter-spacing:1px;">DALLAS // FORT WORTH</div>
+      <div style="font-size:12px; opacity:.65;">© 2026</div>
     </div>
   </div>
 

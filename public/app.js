@@ -1,17 +1,16 @@
 /*
  * '92 Subaru — application logic.
  *
- * A faithful vanilla-JS port of the Xerox-Rave prototype's `class Component`
- * (routing, tape transport, the Web Audio "bootleg-tape rave" synth, and the
- * booking form). The design tool's React runtime (support.js) is intentionally
- * NOT used — this is the shippable recreation the handoff asked for.
+ * Vanilla-JS app: routing (Home/About/Book), the Soundtrack deck (single
+ * ordered track list — no Side A/B), the Web Audio "bootleg-tape" synth
+ * (placeholder until the YouTube player, issue #12), and the booking form
+ * (POSTs to /api/bookings, which emails the band).
  *
- * Data (mixtape tracks + gig dates) is fetched from the Deno server's
- * /api/content endpoint; the booking form POSTs to /api/bookings.
+ * Content comes from /api/content with an embedded fallback.
  */
 "use strict";
 
-// ---- design knobs (the prototype's tweakable props, via ?query) ------------
+// ---- design knobs (via ?query) ---------------------------------------------
 const params = new URLSearchParams(location.search);
 const PROPS = {
   beatMs: Math.min(220, Math.max(100, Number(params.get("beat")) || 140)),
@@ -20,22 +19,18 @@ const PROPS = {
 
 // ---- fallback content (used if the API is unreachable) ---------------------
 const FALLBACK = {
-  tracks: {
-    A: [
-      { n: "A1", t: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, d: 301 },
-      { n: "A2", t: "Creep", a: "Radiohead", y: 1992, d: 236 },
-      { n: "A3", t: "Wonderwall", a: "Oasis", y: 1995, d: 258 },
-      { n: "A4", t: "Losing My Religion", a: "R.E.M.", y: 1991, d: 268 },
-      { n: "A5", t: "Bittersweet Symphony", a: "The Verve", y: 1997, d: 358 },
-    ],
-    B: [
-      { n: "B1", t: "I Want It That Way", a: "Backstreet Boys", y: 1999, d: 213 },
-      { n: "B2", t: "...Baby One More Time", a: "Britney Spears", y: 1998, d: 211 },
-      { n: "B3", t: "Waterfalls", a: "TLC", y: 1995, d: 279 },
-      { n: "B4", t: "Wannabe", a: "Spice Girls", y: 1996, d: 173 },
-      { n: "B5", t: "Gangsta's Paradise", a: "Coolio", y: 1995, d: 240 },
-    ],
-  },
+  tracks: [
+    { n: "01", t: "Wonderwall", a: "Oasis", y: 1995, d: 258 },
+    { n: "02", t: "Semi-Charmed Life", a: "Third Eye Blind", y: 1997, d: 268 },
+    { n: "03", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289 },
+    { n: "04", t: "Zombie", a: "The Cranberries", y: 1994, d: 306 },
+    { n: "05", t: "Don't Speak", a: "No Doubt", y: 1996, d: 263 },
+    { n: "06", t: "Creep", a: "Radiohead", y: 1992, d: 236 },
+    { n: "07", t: "Basket Case", a: "Green Day", y: 1994, d: 181 },
+    { n: "08", t: "What's Up?", a: "4 Non Blondes", y: 1993, d: 295 },
+    { n: "09", t: "Hey Jealousy", a: "Gin Blossoms", y: 1992, d: 236 },
+    { n: "10", t: "All Star", a: "Smash Mouth", y: 1999, d: 200 },
+  ],
   tour: {
     upcoming: [
       { date: "AUG 14", venue: "Trees", city: "Deep Ellum, Dallas", status: "SOLD OUT" },
@@ -58,10 +53,8 @@ let DATA = FALLBACK;
 const state = {
   page: "home",
   playing: false,
-  side: "A",
   idx: 0,
   elapsed: 0,
-  flip: 0,
   tf: "upcoming",
   form: { date: "", type: "", location: "", budget: "", message: "" },
   sent: false,
@@ -76,6 +69,7 @@ function fmt(s) {
   s = Math.max(0, Math.floor(s));
   return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
 }
+const trackCount = () => DATA.tracks.length;
 
 // ======================================================================
 //  TRANSPORT
@@ -88,37 +82,34 @@ function pause() { state.playing = false; stopTimer(); stopAudio(); renderTransp
 function stop() { state.playing = false; state.elapsed = 0; stopTimer(); stopAudio(); renderTransport(); }
 
 function prev() {
-  state.idx = (state.idx + 4) % 5; state.elapsed = 0;
+  state.idx = (state.idx + trackCount() - 1) % trackCount();
+  state.elapsed = 0;
   if (state.playing) restartAudio();
-  renderMixtape(); renderTransport();
+  renderSoundtrack(); renderTransport();
 }
 function next() {
-  state.idx = (state.idx + 1) % 5; state.elapsed = 0;
+  state.idx = (state.idx + 1) % trackCount();
+  state.elapsed = 0;
   if (state.playing) restartAudio();
-  renderMixtape(); renderTransport();
+  renderSoundtrack(); renderTransport();
 }
 function pick(i) {
   state.idx = i; state.elapsed = 0; state.playing = true;
   startTimer(); startAudio();
-  renderMixtape(); renderTransport();
-}
-function setSide(side) {
-  if (state.side === side) return;
-  state.side = side; state.idx = 0; state.elapsed = 0; state.flip += 360;
-  if (state.playing) restartAudio();
-  renderMixtape(); renderTransport();
+  renderSoundtrack(); renderTransport();
 }
 function setTour(tf) { state.tf = tf; renderGigs(); }
 
 function startTimer() {
   stopTimer();
   _timer = setInterval(() => {
-    const dur = DATA.tracks[state.side][state.idx].d;
+    const dur = DATA.tracks[state.idx].d;
     const e = state.elapsed + 0.25;
     if (e >= dur) {
-      state.idx = (state.idx + 1) % 5; state.elapsed = 0;
+      state.idx = (state.idx + 1) % trackCount();
+      state.elapsed = 0;
       restartAudio();
-      renderMixtape(); renderTransport();
+      renderSoundtrack(); renderTransport();
     } else {
       state.elapsed = e;
       renderTime();
@@ -129,6 +120,7 @@ function stopTimer() { if (_timer) { clearInterval(_timer); _timer = null; } }
 
 // ======================================================================
 //  AUDIO — rave four-on-the-floor through a worn-tape lowpass + hiss
+//  (placeholder sound until the embedded YouTube player, issue #12)
 // ======================================================================
 let _ac = null, _nb = null, _audio = null;
 
@@ -228,7 +220,7 @@ function stopAudio() {
 function restartAudio() { if (state.playing) startAudio(); }
 
 // ======================================================================
-//  ROUTING
+//  ROUTING  (nav: HOME / ABOUT / BOOK — "contact" is the Book view id)
 // ======================================================================
 function setPage(p) {
   state.page = p;
@@ -237,12 +229,11 @@ function setPage(p) {
   $("view-contact").style.display = p === "contact" ? "block" : "none";
   applyNav($("nav-home"), p === "home");
   applyNav($("nav-about"), p === "about");
-  applyNav($("nav-contact"), p === "contact");
   try { window.scrollTo(0, 0); } catch { /* */ }
 }
 
 // ======================================================================
-//  STYLE HELPERS (ported from the prototype's seg/nav/badge)
+//  STYLE HELPERS
 // ======================================================================
 function applySeg(el, active, activeBg, activeInk, idleInk, pad) {
   el.style.padding = pad;
@@ -270,16 +261,14 @@ function badgeStyle(st) {
 //  RENDER
 // ======================================================================
 function renderTime() {
-  const dur = DATA.tracks[state.side][state.idx].d;
+  const dur = DATA.tracks[state.idx].d;
   const pct = Math.min(100, (state.elapsed / dur) * 100);
   $("deck-elapsed").textContent = fmt(state.elapsed);
   $("deck-progress").style.width = pct + "%";
 }
 
 function renderTransport() {
-  const track = DATA.tracks[state.side][state.idx] || DATA.tracks[state.side][0];
-  $("deck-side").textContent = state.side;
-  $("cass-side").textContent = state.side;
+  const track = DATA.tracks[state.idx] || DATA.tracks[0];
   $("deck-title").textContent = track.t;
   $("deck-meta").textContent = `${track.n} · ${track.a} · ${track.y}`;
   $("deck-dur").textContent = fmt(track.d);
@@ -288,17 +277,11 @@ function renderTransport() {
   $("icon-pause").style.display = state.playing ? "" : "none";
   $("icon-play").style.display = state.playing ? "none" : "";
 
-  applySeg($("tab-a"), state.side === "A", "#efe8d6", "#17140f", "#efe8d6", "6px 13px");
-  applySeg($("tab-b"), state.side === "B", "#efe8d6", "#17140f", "#efe8d6", "6px 13px");
-  applySeg($("mix-a"), state.side === "A", "#17140f", "#efe8d6", "#17140f", "7px 15px");
-  applySeg($("mix-b"), state.side === "B", "#17140f", "#efe8d6", "#17140f", "7px 15px");
-
-  // cassette motion
+  // cassette motion (reels only — flip removed with Side A/B)
   const reelSpeed = (1.05 * PROPS.beatMs / 140).toFixed(2) + "s";
   const cass = $("cass").style;
   cass.setProperty("--reel-play", state.playing ? "running" : "paused");
   cass.setProperty("--reel-speed", reelSpeed);
-  cass.setProperty("--cass-flip", state.flip + "deg");
 }
 
 const MINI_EQ =
@@ -308,9 +291,8 @@ const MINI_EQ =
   '<span style="width:4px; height:100%; background:#17140f; transform-origin:bottom; animation:eqbar .6s ease-in-out infinite; animation-delay:.3s;"></span>' +
   "</span>";
 
-function renderMixtape() {
-  const rows = DATA.tracks[state.side];
-  $("mix-list").innerHTML = rows.map((t, i) => {
+function renderSoundtrack() {
+  $("mix-list").innerHTML = DATA.tracks.map((t, i) => {
     const active = i === state.idx;
     const adorn = active
       ? '<div style="position:absolute; left:44px; right:70px; bottom:6px; height:6px; background:#d83a2b; opacity:.45; transform:rotate(-.5deg); border-radius:3px; pointer-events:none;"></div>' + MINI_EQ
@@ -342,7 +324,7 @@ function renderGigs() {
 }
 
 // ======================================================================
-//  FORM  (validates client-side, then POSTs to /api/bookings)
+//  FORM  (validates client-side, then POSTs to /api/bookings → email)
 // ======================================================================
 function setField(k, v) { state.form[k] = v; state.err = false; $("form-err").style.display = "none"; }
 
@@ -397,13 +379,9 @@ function wire() {
   $("btn-play").addEventListener("click", toggle);
   $("btn-stop").addEventListener("click", stop);
   $("btn-next").addEventListener("click", next);
-  $("tab-a").addEventListener("click", () => setSide("A"));
-  $("tab-b").addEventListener("click", () => setSide("B"));
-  $("mix-a").addEventListener("click", () => setSide("A"));
-  $("mix-b").addEventListener("click", () => setSide("B"));
   $("tour-up").addEventListener("click", () => setTour("upcoming"));
   $("tour-past").addEventListener("click", () => setTour("past"));
-  // mixtape rows (delegated — rows are re-rendered)
+  // soundtrack rows (delegated — rows are re-rendered)
   $("mix-list").addEventListener("click", (e) => {
     const row = e.target.closest("[data-pick]");
     if (row) pick(Number(row.dataset.pick));
@@ -426,7 +404,7 @@ async function loadContent() {
     const res = await fetch("/api/content");
     if (res.ok) {
       const data = await res.json();
-      if (data && data.tracks && data.tour) DATA = data;
+      if (data && Array.isArray(data.tracks) && data.tracks.length && data.tour) DATA = data;
     }
   } catch { /* keep FALLBACK */ }
 }
@@ -435,7 +413,7 @@ async function main() {
   wire();
   await loadContent();
   setPage("home");
-  renderMixtape();
+  renderSoundtrack();
   renderGigs();
   renderTransport();
 }

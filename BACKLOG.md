@@ -24,15 +24,15 @@
 ### Content & copy
 - [ ] **D1-01 — Personalize 100% of site copy for '92 Subaru.** Replace all remaining generic/placeholder language via a **copy refinement session** with owner. `[needs your input]`
   - _Accept:_ every user-facing string reviewed + approved; no sample text remains.
-- [ ] **D1-02 — Rewrite the About page as a simple page:** band theme, available for gigs across **Dallas Fort Worth**, 90s-cover-band info. Remove the redacted "PERSONNEL ████" block and the SPECS table.
+- [x] **D1-02 — Rewrite the About page as a simple page:** band theme, available for gigs across **Dallas Fort Worth**, 90s-cover-band info. Remove the redacted "PERSONNEL ████" block and the SPECS table.
   - _Accept:_ About shows theme + DFW gig availability + 90s-cover info; no placeholder personnel/specs.
-- [ ] **D1-03 — Set location to "Dallas Fort Worth"** everywhere (was "1998 · Denton, TX", etc.).
+- [x] **D1-03 — Set location to "Dallas Fort Worth"** everywhere (was "1998 · Denton, TX", etc.).
   - _Accept:_ location reads "Dallas Fort Worth" site-wide.
 
 ### Home / Soundtrack (formerly "Mixtape")
-- [ ] **D1-04 — Rename "Mixtape" → "Soundtrack"** across the entire site (headings, labels, copy, `<title>`/meta, user-facing identifiers).
+- [x] **D1-04 — Rename "Mixtape" → "Soundtrack"** across the entire site (headings, labels, copy, `<title>`/meta, user-facing identifiers).
   - _Accept:_ no user-visible "Mixtape" remains; "Soundtrack" used consistently.
-- [ ] **D1-05 — Remove "Side A / Side B" entirely:** deck A/B tabs, SIDE A/SIDE B toggle, cassette flip. Collapse the two-sided data into a **single track list**.
+- [x] **D1-05 — Remove "Side A / Side B" entirely:** deck A/B tabs, SIDE A/SIDE B toggle, cassette flip. Collapse the two-sided data into a **single track list**.
   - _Accept:_ no A/B controls anywhere; one continuous soundtrack list; cassette still renders (no flip).
 - [ ] **D1-06 — Replace the synth deck with an embedded YouTube player.** Track selection loads the matching YouTube video/playlist. `[needs your input: YouTube URLs]`
   - _Accept:_ playing a track plays real audio via embedded YouTube; controls reflect play/pause.
@@ -49,11 +49,11 @@
 - [ ] **D1-11 — [User follow-up] Provide the real destination email** (replace `booking@92subaru.fm`). `[needs your input]`
 - [ ] **D1-12 — Spam protection:** Cloudflare Turnstile + honeypot + server-side rate limit.
   - _Accept:_ bot submissions blocked; legitimate submits pass invisibly.
-- [ ] **D1-13 — Remove Deno KV.** Email (D1-10) is the system of record; no datastore on Vercel. Delete KV code/tasks/tests tied to persistence.
+- [x] **D1-13 — Remove Deno KV.** Email (D1-10) is the system of record; no datastore on Vercel. Delete KV code/tasks/tests tied to persistence.
   - _Accept:_ bookings work on Vercel with no Deno-KV dependency; no KV code paths remain.
 
 ### Social / contact endpoints
-- [ ] **D1-14 — Blank out placeholder social links** (guessed instagram/youtube/bandcamp URLs). Remove/hide until real ones exist.
+- [x] **D1-14 — Blank out placeholder social links** (guessed instagram/youtube/bandcamp URLs). Remove/hide until real ones exist.
   - _Accept:_ no fake social URLs shipped.
 - [ ] **D1-15 — [User follow-up] Provide official social endpoints** (platforms + real URLs/handles). `[needs your input]`
 

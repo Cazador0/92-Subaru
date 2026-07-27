@@ -18,13 +18,9 @@ primary_region = "dfw" # Dallas–Fort Worth
   min_machines_running = 0
 
 [env]
-  KV_PATH = "/data/kv.sqlite"
   PORT = "8000"
 
-# Persistent volume so the Deno KV / SQLite booking store survives restarts.
-[mounts]
-  source = "subaru_data"
-  destination = "/data"
+# No volume needed — bookings are delivered by email (server/email.ts).
 
 [[vm]]
   size = "shared-cpu-1x"
