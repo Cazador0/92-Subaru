@@ -58,8 +58,7 @@
 - [ ] **D1-15 — [User follow-up] Provide official social endpoints** (platforms + real URLs/handles). `[needs your input]`
 
 ### Pages
-- [ ] **D1-16 — EPK / Press Kit page.** Bio, photos, what-they-play, booking CTA, downloadable assets. `[needs your input: bio, photos]`
-  - _Accept:_ a linkable EPK page suitable to send to venues.
+- [ ] **D1-16 — EPK / Press Kit — EPIC, status: In Refinement** ([#18](https://github.com/Cazador0/92-Subaru/issues/18)). Kept simple per owner; **not launch-blocking** until refinement lands scope (skeleton + questions live in the issue). `[needs your input: refinement answers]`
 
 ### Production & ops
 - [ ] **D1-17 — Vercel deployment setup for the Deno app** (runtime/adapter, static serving from `public/`, env vars/secrets). Park/remove the existing Deno Deploy CI + Fly.io config.

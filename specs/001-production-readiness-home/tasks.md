@@ -43,7 +43,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 
 ## Phase 4: US3 — Press kit (Priority: P2)
 
-- [ ] T018 ⛔ [US3] EPK / Press Kit page: bio, photos, repertoire, booking CTA, downloadable assets. — `public/epk.html` (D1-16, FR-015)
+- [ ] T018 ⛔ [US3] EPK / Press Kit — **EPIC, In Refinement** (#18; not launch-blocking until scoped). — `public/epk.html` (D1-16, FR-015)
 
 ## Phase 5: US4 — Fast, shareable, compliant site (Priority: P1)
 
