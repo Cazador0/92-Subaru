@@ -24,3 +24,6 @@ research/
 
 # macOS
 .DS_Store
+
+# Lockfile
+deno.lock
