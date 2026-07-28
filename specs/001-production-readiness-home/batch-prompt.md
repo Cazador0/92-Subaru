@@ -16,7 +16,7 @@ We are executing the 8-issue launch batch for the '92 Subaru site on branch `001
 Run these speckit commands in order:
 
 1. `/speckit-git-validate` — confirm we're on `001-production-readiness-home` (never commit to main).
-2. `/speckit-git-commit` with a message like `spec: encode launch-batch decisions (email, Resend, Umami, dropdowns, vercel.app, 404/reCAPTCHA/Gigs semantics)` — the spec/tasks/checklist updates are sitting uncommitted in the working tree; commit them before touching code.
+2. Safety check: `git status` should be clean — the decision record is already committed (`b2c2e21`). If anything is uncommitted, `/speckit-git-commit` it before touching code.
 3. `/speckit-implement` scoped to **only** these tasks, in this order (mobile pass last so it covers pages created earlier; Vercel first as the highest-risk item):
    - **T001** (#1) Vercel config: `vercel.json` + README (env vars `BOOKING_EMAIL`, `RESEND_API_KEY`, `RECAPTCHA_SECRET_KEY`, Umami website ID; launch domain is `<project>.vercel.app`). Delete `.github/workflows/deno.yml`, `Dockerfile`, `fly.toml`.
    - **T004** (#4) Booking form fields per FR-001 — Event Type and Budget are dropdowns with the exact options listed in FR-001.
