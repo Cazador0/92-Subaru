@@ -25,16 +25,9 @@ const PROPS = {
 // ---- fallback content (used if the API is unreachable) ---------------------
 const FALLBACK = {
   tracks: [
-    { n: "01", t: "Wonderwall", a: "Oasis", y: 1995, d: 258 },
-    { n: "02", t: "Semi-Charmed Life", a: "Third Eye Blind", y: 1997, d: 268 },
-    { n: "03", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289 },
-    { n: "04", t: "Zombie", a: "The Cranberries", y: 1994, d: 306 },
-    { n: "05", t: "Don't Speak", a: "No Doubt", y: 1996, d: 263 },
-    { n: "06", t: "Creep", a: "Radiohead", y: 1992, d: 236 },
-    { n: "07", t: "Basket Case", a: "Green Day", y: 1994, d: 181 },
-    { n: "08", t: "What's Up?", a: "4 Non Blondes", y: 1993, d: 295 },
-    { n: "09", t: "Hey Jealousy", a: "Gin Blossoms", y: 1992, d: 236 },
-    { n: "10", t: "All Star", a: "Smash Mouth", y: 1999, d: 200 },
+    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk" },
+    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms" },
+    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s" },
   ],
   tour: {
     upcoming: [
@@ -102,26 +95,41 @@ const trackCount = () => DATA.tracks.length;
 // ======================================================================
 let _timer = null;
 
+function updateYtPlayer(autoplay = false) {
+  const track = DATA.tracks[state.idx];
+  if (!track || !track.yt) return;
+  const player = $("yt-player");
+  if (player) {
+    const targetSrc = `https://www.youtube-nocookie.com/embed/${track.yt}?autoplay=${autoplay ? 1 : 0}&enablejsapi=1&rel=0`;
+    if (player.src !== targetSrc) {
+      player.src = targetSrc;
+    }
+  }
+}
+
 function toggle() { state.playing ? pause() : play(); }
-function play() { state.playing = true; startTimer(); startAudio(); renderTransport(); }
+function play() { state.playing = true; startTimer(); startAudio(); updateYtPlayer(true); renderTransport(); }
 function pause() { state.playing = false; stopTimer(); stopAudio(); renderTransport(); }
-function stop() { state.playing = false; state.elapsed = 0; stopTimer(); stopAudio(); renderTransport(); }
+function stop() { state.playing = false; state.elapsed = 0; stopTimer(); stopAudio(); updateYtPlayer(false); renderTransport(); }
 
 function prev() {
   state.idx = (state.idx + trackCount() - 1) % trackCount();
   state.elapsed = 0;
   if (state.playing) restartAudio();
+  updateYtPlayer(state.playing);
   renderSoundtrack(); renderTransport();
 }
 function next() {
   state.idx = (state.idx + 1) % trackCount();
   state.elapsed = 0;
   if (state.playing) restartAudio();
+  updateYtPlayer(state.playing);
   renderSoundtrack(); renderTransport();
 }
 function pick(i) {
   state.idx = i; state.elapsed = 0; state.playing = true;
   startTimer(); startAudio();
+  updateYtPlayer(true);
   renderSoundtrack(); renderTransport();
 }
 function setTour(tf) { state.tf = tf; renderGigs(); }
@@ -323,11 +331,14 @@ function renderSoundtrack() {
     const adorn = active
       ? '<div style="position:absolute; left:44px; right:70px; bottom:6px; height:6px; background:#d83a2b; opacity:.45; transform:rotate(-.5deg); border-radius:3px; pointer-events:none;"></div>' + MINI_EQ
       : "";
+    const ytBtn = t.yt
+      ? `<a href="https://youtu.be/${esc(t.yt)}" target="_blank" rel="noopener" style="background:#d83a2b; color:#efe8d6; font-family:'Anton',sans-serif; font-size:11px; letter-spacing:1px; padding:3px 8px; border-radius:2px; text-decoration:none; margin-left:8px; display:inline-flex; align-items:center; gap:4px;" onclick="event.stopPropagation();">▶ YOUTUBE</a>`
+      : "";
     return (
       `<div class="mix-row" data-pick="${i}" style="position:relative; display:flex; align-items:center; gap:16px; padding:11px 6px; cursor:pointer; border-bottom:1px dotted #17140f;">` +
       `<div style="font-family:'Courier Prime',monospace; font-weight:700; font-size:15px; width:30px;">${esc(t.n)}</div>` +
       `<div style="flex:1; min-width:0;"><span style="font-family:'Courier Prime',monospace; font-weight:700; font-size:17px;">${esc(t.t)}</span>` +
-      `<span style="font-size:12px; opacity:.7;"> — ${esc(t.a)}, ${esc(t.y)}</span></div>` +
+      `<span style="font-size:12px; opacity:.7;"> — ${esc(t.a)}, ${esc(t.y)}</span>${ytBtn}</div>` +
       `<div style="font-family:'Courier Prime',monospace; font-size:14px;">${fmt(t.d)}</div>` +
       adorn +
       `</div>`
@@ -488,6 +499,7 @@ async function main() {
   renderSoundtrack();
   if (SHOW_GIGS) renderGigs();
   renderTransport();
+  updateYtPlayer(false);
 }
 
 main();
