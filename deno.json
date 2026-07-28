@@ -1,4 +1,5 @@
 {
+  "lock": false,
   "tasks": {
     "start": "deno run --allow-net --allow-read --allow-env server/main.ts",
     "dev": "deno run --watch --allow-net --allow-read --allow-env server/main.ts",
