@@ -11,7 +11,7 @@ Take the existing Deno + vanilla-JS '92 Subaru site from prototype to production
 ## Technical Context
 
 **Language/Version**: TypeScript on Deno 2.x (server); vanilla HTML/CSS/JS (front-end, no framework).
-**Primary Dependencies**: `Deno.serve` (HTTP); an email API for booking delivery (e.g. Resend or SMTP); Cloudflare Turnstile (spam); privacy-analytics script (Umami or Plausible).
+**Primary Dependencies**: `Deno.serve` (HTTP); Resend for booking email delivery (decided 2026-07-28); Google reCAPTCHA v2 (spam; swapped from Cloudflare Turnstile 2026-07-28); Umami analytics (decided 2026-07-28).
 **Storage**: None — email is the system of record. **Deno KV is removed** (incompatible with Vercel).
 **Testing**: `deno test` for server logic (validation, email-payload shaping); manual/headless browser check for booking flow, mobile, and soundtrack.
 **Target Platform**: Vercel (Deno runtime), served globally; modern browsers + mobile (360–414px).

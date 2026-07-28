@@ -15,7 +15,7 @@
 - **Storage:** **email is the system of record — remove Deno KV** (no datastore on Vercel). See D1-10/D1-13.
 - **Scope:** full Day 1 load kept as-is (EPK + audio-file hosting stay Day 1).
 - **Analytics:** Umami (self-host) or Plausible — final pick in D1-19.
-- **Spam:** Cloudflare Turnstile + honeypot + rate limit (D1-12).
+- **Spam:** Google reCAPTCHA v2 + honeypot + rate limit (D1-12; swapped from Turnstile 2026-07-28).
 
 ---
 
@@ -47,7 +47,7 @@
 - [ ] **D1-10 — Build email delivery of booking submissions** (system of record). On submit, email the booking to the band's inbox (server-side, e.g. Resend/SMTP).
   - _Accept:_ a submitted booking arrives as a formatted email; user sees the "TAPE RECEIVED" confirmation.
 - [ ] **D1-11 — [User follow-up] Provide the real destination email** (replace `booking@92subaru.fm`). `[needs your input]`
-- [ ] **D1-12 — Spam protection:** Cloudflare Turnstile + honeypot + server-side rate limit.
+- [ ] **D1-12 — Spam protection:** Google reCAPTCHA v2 + honeypot + server-side rate limit (swapped from Turnstile 2026-07-28).
   - _Accept:_ bot submissions blocked; legitimate submits pass invisibly.
 - [x] **D1-13 — Remove Deno KV.** Email (D1-10) is the system of record; no datastore on Vercel. Delete KV code/tasks/tests tied to persistence.
   - _Accept:_ bookings work on Vercel with no Deno-KV dependency; no KV code paths remain.

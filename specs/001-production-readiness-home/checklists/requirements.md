@@ -21,11 +21,11 @@
 - [ ] CHK010 Are the soundtrack player "loading and error states" defined with specific triggers and messages? [Clarity, Spec §FR-009]
 - [ ] CHK011 Is "protected from automated abuse" quantified (rate-limit threshold, honeypot behavior, what counts as blocked)? [Clarity, Spec §FR-004]
 - [ ] CHK012 Is "privacy-friendly analytics with no cookie-consent banner" tied to a concrete acceptance condition? [Clarity, Spec §FR-018 / SC-006]
-- [ ] CHK013 Is "Dallas Fort Worth" location wording specified consistently (spacing/en-dash vs. plain) to avoid drift? [Clarity, Spec §FR-012]
+- [x] CHK013 Is "Dallas Fort Worth" location wording specified consistently (spacing/en-dash vs. plain) to avoid drift? [Clarity, Spec §FR-012] — **Resolved 2026-07-28, amended same day: approved copy-deck strings win ("Dallas–Fort Worth metroplex" in About prose, "DALLAS // FORT WORTH" footer); plain "Dallas Fort Worth" applies only where no approved string exists. FR-012 carries the precedence rule.**
 
 ## Requirement Consistency
 
-- [ ] CHK014 Do the form fields (FR-001) and the "data retained" list (Key Entities / FR-019) agree on which fields are stored vs. only emailed? [Consistency, Spec §FR-001 / §FR-019]
+- [x] CHK014 Do the form fields (FR-001) and the "data retained" list (Key Entities / FR-019) agree on which fields are stored vs. only emailed? [Consistency, Spec §FR-001 / §FR-019] — **Resolved 2026-07-28: retained list = First/Last Name, Email, Phone, Event Date, Location/Venue, Budget, Message (see launch-batch.md CHK045; Event Type confirmed included 2026-07-28 — notice matches FR-001 exactly)**
 - [ ] CHK015 Does "email is the system of record; not persisted" conflict with any implied read-back of past bookings (e.g., a GET listing)? [Conflict, Spec §FR-002 / Key Entities]
 - [x] CHK016 Is the primary page name consistent ("Book" vs "Contact") across user stories and requirements? [Consistency, Spec §US1 / §FR] — **Resolved 2026-07-26: page is "Book"; nav = HOME / ABOUT / BOOK (see copy-deck.md)**
 - [ ] CHK017 Are FR-008 (embedded YouTube) and FR-010 (owner audio files) reconciled on which is authoritative and when? [Consistency, Spec §FR-008 / §FR-010]
@@ -48,18 +48,18 @@
 
 - [ ] CHK026 Are page load / performance targets quantified anywhere? [Gap, NFR]
 - [ ] CHK027 Are accessibility requirements specified (contrast, keyboard focus, alt text) given motion is intentionally kept? [Gap, NFR, Spec §Assumptions]
-- [ ] CHK028 Are data-handling/retention requirements for emailed PII (First/Last Name, Email, Phone) specified beyond "not persisted on the server"? [Gap, NFR/Privacy, Spec §FR-019]
+- [ ] CHK028 Are data-handling/retention requirements for emailed PII (per the FR-019 retained list, updated 2026-07-28) specified beyond "not persisted on the server"? [Gap, NFR/Privacy, Spec §FR-019]
 
 ## Dependencies & Assumptions
 
 - [ ] CHK029 Is the Vercel + Deno feasibility treated as a validated dependency or an open risk with a fallback? [Assumption, plan.md Complexity Tracking]
 - [ ] CHK030 Is each owner-provided input (booking email, YouTube URLs, socials, final copy, EPK bio/photos) tied to a needed-by point within the 3-day window? [Assumption, Spec §Assumptions]
-- [ ] CHK031 Is the email provider chosen (e.g., Resend vs SMTP), since FR-002 depends on it? [Dependency, Ambiguity, Spec §FR-002]
-- [ ] CHK032 Is the analytics tool decided (Umami vs Plausible), since FR-018 leaves it open? [Ambiguity, Spec §FR-018]
+- [x] CHK031 Is the email provider chosen (e.g., Resend vs SMTP), since FR-002 depends on it? [Dependency, Ambiguity, Spec §FR-002] — **Resolved 2026-07-28: Resend (verified sender domain + `RESEND_API_KEY` required). FR-002, plan.md, T003 updated.**
+- [x] CHK032 Is the analytics tool decided (Umami vs Plausible), since FR-018 leaves it open? [Ambiguity, Spec §FR-018] — **Resolved 2026-07-28: Umami (cookieless, free hobby tier). FR-018, plan.md, T020 updated.**
 
 ## Ambiguities & Open Clarifications
 
-- [ ] CHK033 Are all `[NEEDS CLARIFICATION]` markers (FR-005, FR-008, FR-010, FR-013, FR-014, FR-015, FR-018) tracked with an owner and a resolution path? [Ambiguity, Spec §Requirements]
+- [ ] CHK033 Are all `[NEEDS CLARIFICATION]` markers (FR-008, FR-010, FR-013, FR-015) tracked with an owner and a resolution path? [Ambiguity, Spec §Requirements] — *FR-005 (booking email = 92subaruband@gmail.com) and FR-018 (Umami) resolved 2026-07-28; FR-014 resolved via copy-deck.*
 
 ## Notes
 

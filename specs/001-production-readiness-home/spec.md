@@ -24,7 +24,7 @@ A prospective client (venue booker, event planner, private host) lands on the si
 
 1. **Given** a visitor on the Book page, **When** they submit with First Name, Last Name, Email, Event Date, Location, and Message filled, **Then** they see the "TAPE RECEIVED" confirmation and the band receives an email with all fields.
 2. **Given** a visitor who omits a required field, **When** they submit, **Then** an inline error names the missing field(s) and no email is sent.
-3. **Given** an automated bot, **When** it submits the form, **Then** the submission is rejected (Turnstile/honeypot/rate limit) and no email is sent.
+3. **Given** an automated bot, **When** it submits the form, **Then** the submission is rejected (reCAPTCHA/honeypot/rate limit) and no email is sent.
 
 ---
 
@@ -71,7 +71,7 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 1. **Given** the production URL, **When** shared on social/chat, **Then** a branded title, description, and image preview appear; a favicon is present.
 2. **Given** a phone (360–414px), **When** any page loads, **Then** there is no horizontal overflow and all controls are usable.
 3. **Given** an unknown path, **When** requested, **Then** a themed 404 renders instead of a raw error.
-4. **Given** the booking form, **When** viewed, **Then** it links a privacy policy and states the data retained (First Name, Last Name, Email, Phone).
+4. **Given** the booking form, **When** viewed, **Then** it links a privacy policy and states the data retained (all nine submitted fields: First Name, Last Name, Email, Phone, Event Date, Event Type, Location/Venue, Budget, Message).
 
 ### Edge Cases
 
@@ -86,11 +86,11 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 ### Functional Requirements
 
 **Booking (US1)**
-- **FR-001**: The booking form MUST collect First Name*, Last Name*, Email*, Phone (optional), Event Date*, Event Type, Location/Venue*, Budget, and Message* (\* = required).
-- **FR-002**: On valid submission, the system MUST deliver the booking to the band by email as the system of record (no separate datastore).
-- **FR-003**: The system MUST validate required fields server-side and reject incomplete submissions with a clear message.
-- **FR-004**: The form MUST be protected from automated abuse (Cloudflare Turnstile + honeypot + rate limiting).
-- **FR-005**: The destination booking email MUST be configurable. [NEEDS CLARIFICATION: real destination email address — placeholder `booking@92subaru.fm`]
+- **FR-001**: The booking form MUST collect First Name*, Last Name*, Email*, Phone (optional), Event Date*, Event Type, Location/Venue*, Budget, and Message* (\* = required). Event Type and Budget are dropdowns (decided 2026-07-28): Event Type = Wedding / Corporate / Private party / Venue-bar / Other; Budget = <$1k / $1–2.5k / $2.5–5k / $5k+ / Not sure.
+- **FR-002**: On valid submission, the system MUST deliver the booking to the band by email as the system of record (no separate datastore), via Resend (decided 2026-07-28; `RESEND_API_KEY`). At launch there is no custom domain, so the Resend onboarding sender is used — it can only deliver to the Resend account owner's email, so the Resend account MUST be created under `92subaruband@gmail.com` (the booking destination); a verified band domain lifts this later.
+- **FR-003**: The system MUST validate required fields server-side and reject incomplete submissions with a clear message. Event Date MUST be today or later (decided 2026-07-28); Email must be well-formed; field lengths are capped at sane defaults.
+- **FR-004**: The form MUST be protected from automated abuse (Google reCAPTCHA v2 checkbox + honeypot + rate limiting; provider swapped from Cloudflare Turnstile 2026-07-28, owner decision). If the reCAPTCHA script fails to load client-side, the form MUST fail open — submission proceeds without a token, with honeypot and server-side rate limiting still enforced (decided 2026-07-28). A honeypot hit returns the normal confirmation but sends no email (fake success, decided 2026-07-28). reCAPTCHA scaffolding is done when the widget renders and tokens verify server-side end-to-end under Google's public v2 test keys (pass and fail paths both exercised); the production-key swap is a tracked credential-wiring task (T030, keys created under the band's Google account).
+- **FR-005**: The destination booking email MUST be configurable via env var (`BOOKING_EMAIL`); destination is `92subaruband@gmail.com` (decided 2026-07-28).
 
 **Home / Soundtrack (US2)**
 - **FR-006**: The site MUST use the term "Soundtrack" (not "Mixtape") in all user-facing text.
@@ -101,7 +101,7 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 
 **About / copy (US2)**
 - **FR-011**: The About page MUST describe the band theme, '90s/early-2000s cover focus, and Dallas–Fort Worth gig availability, without a redacted personnel block or a specs table. Owner copy received 2026-07-26 — approved verbatim in [copy-deck.md](copy-deck.md) §About.
-- **FR-012**: Location MUST read "Dallas Fort Worth" wherever location appears.
+- **FR-012**: Approved copy-deck strings take precedence for location wording ("Dallas–Fort Worth metroplex" in About prose; "DALLAS // FORT WORTH" in the footer). Where no approved string exists (meta tags, form labels, privacy page), location reads plain "Dallas Fort Worth" — no en-dash, not "DFW" (decided 2026-07-28, superseding the earlier plain-everywhere ruling).
 - **FR-013**: 100% of user-facing copy MUST be personalized for '92 Subaru with no sample/placeholder text. [NEEDS CLARIFICATION: final copy — requires owner refinement session]
 - **FR-014**: Social links MUST be deleted entirely (hero eyebrow included); the owner will reconstruct the link architecture later. Approved copy for Home, nav, and footer is in [copy-deck.md](copy-deck.md) and is authoritative.
 
@@ -109,12 +109,12 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 - **FR-015**: The site MUST provide an EPK/Press Kit page with bio, photos, repertoire, and a booking CTA. [NEEDS CLARIFICATION: bio text + photos]
 
 **Production readiness (US4)**
-- **FR-016**: The site MUST deploy and run on Vercel (built in Deno), serving static assets and the booking endpoint.
-- **FR-017**: The site MUST include a favicon and Open Graph / Twitter Card metadata with a share preview image.
-- **FR-018**: The site MUST include privacy-friendly analytics that do not require a cookie-consent banner. [NEEDS CLARIFICATION: Umami vs Plausible — final choice]
-- **FR-019**: The site MUST include a privacy policy (linked in the footer) and a form notice of data retained (First/Last Name, Email, Phone).
-- **FR-020**: All pages MUST be responsive with no horizontal overflow at 360–414px widths.
-- **FR-021**: Unknown routes MUST render a themed 404 page.
+- **FR-016**: The site MUST deploy and run on Vercel (built in Deno), serving static assets and the booking endpoint. Launch domain is the free `<project>.vercel.app` subdomain (decided 2026-07-28); a custom domain attaches later.
+- **FR-017**: The site MUST include a favicon and Open Graph / Twitter Card metadata with a share preview image (1200×630). The launch image is generated, but MUST receive owner approval before launch (decided 2026-07-28). Absolute OG URLs point at the `vercel.app` launch domain. OG/Twitter title and description MUST use approved copy-deck strings (wordmark + hero tagline; description drawn from About ¶1) — no new copy (decided 2026-07-28).
+- **FR-018**: The site MUST include privacy-friendly analytics that do not require a cookie-consent banner: Umami (decided 2026-07-28; cookieless, free hobby cloud tier).
+- **FR-019**: The site MUST include a privacy policy (linked in the footer) and a form notice of data retained: all nine submitted fields (First/Last Name, Email, Phone, Event Date, Event Type, Location/Venue, Budget, Message — decided 2026-07-28; matches FR-001 exactly). The policy MUST disclose the third-party processors: Google reCAPTCHA (IP/browser signals, subject to Google's Privacy Policy and Terms), Umami (anonymized page views), and Resend (the booking fields). The draft MUST receive owner approval before the first production deploy (both decided 2026-07-28).
+- **FR-020**: All pages MUST be responsive with no horizontal overflow at 360–414px widths. The booking form MUST render single-column in FR-001 field order with ≥44px tap targets at these widths (decided 2026-07-28).
+- **FR-021**: Unknown page routes MUST render a themed 404 page ("SIDE B NOT FOUND — rewind ◂") with a link back home, served with a real HTTP 404 status; unknown API routes MUST return a JSON error instead of the themed page (decided 2026-07-28).
 
 ### Key Entities
 
@@ -129,7 +129,7 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 - **SC-002**: A visitor can go from Home to a submitted booking in under 90 seconds.
 - **SC-003**: 0 user-facing strings contain placeholder/sample content at launch (spot-checked across all pages).
 - **SC-004**: 0 "Mixtape" / "Side A/B" references remain in the shipped UI.
-- **SC-005**: All pages pass a mobile check (no horizontal overflow) at 360px, 390px, and 414px.
+- **SC-005**: All pages — Home, About, Book, privacy, 404 (and EPK when it ships) — pass a mobile check (no horizontal overflow) at 360px, 390px, and 414px.
 - **SC-006**: Shared links render a branded preview (title, description, image) on at least one major platform.
 - **SC-007**: Automated bot submissions are blocked in testing; a genuine submission succeeds.
 
@@ -137,6 +137,6 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 
 - Launch window is ~3 days (target ~2026-07-27); the Day 1 backlog is in scope, Gigs is deferred (Day 2).
 - Email is the booking system of record; no database is required (removes the Deno KV dependency and its Vercel incompatibility).
-- The owner will provide, during the launch window: final copy, real booking email, official social URLs, YouTube links for the soundtrack, and EPK bio/photos.
+- The owner will provide, during the launch window: final copy, official social URLs, YouTube links for the soundtrack, and EPK bio/photos. (Booking email decided 2026-07-28: `92subaruband@gmail.com`.)
 - Motion/animation is intentionally kept; a `prefers-reduced-motion` accommodation is deferred (Future).
 - The owner maintains content directly for now; a headless CMS is a future goal.

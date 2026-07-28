@@ -49,6 +49,8 @@ Requirements (D1-02): simple page — no personnel block, no specs table. Owner-
 
 Page name is **Book** (Q6). Fields per FR-001. Straightforward voice.
 
+- **Spam-protection UI (2026-07-28)**: Google reCAPTCHA **v2 checkbox** sits above the submit button (swapped from Cloudflare Turnstile, owner decision). The widget carries Google's own branding; the consent line beneath the form names Google reCAPTCHA per FR-019.
+
 ## EPK — pending (Page 4)
 
 Straightforward voice. Needs owner bio + photos (#18).
