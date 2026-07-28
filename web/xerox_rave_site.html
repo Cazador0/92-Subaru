@@ -18,6 +18,14 @@
                     href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&display=swap"
                     rel="stylesheet"
                 />
+                <title>
+                    '92 Subaru — The Songs You Remember. The Night You Won't
+                    Forget.
+                </title>
+                <meta
+                    name="description"
+                    content="'92 Subaru — a Dallas–Fort Worth cover band playing the biggest hits of the '90s and early 2000s. The songs you remember, the night you won't forget. Book the tape."
+                />
                 <style>
                     * {
                         box-sizing: border-box;
@@ -198,28 +206,25 @@
                                 padding: 60px 44px 40px;
                             "
                         >
-                            <sc-if
-                                value="{{ doorsStamp }}"
-                                hint-placeholder-val="{{ true }}"
+                            <span
+                                onClick="{{ goContact }}"
+                                style="
+                                    position: absolute;
+                                    top: 52px;
+                                    right: 44px;
+                                    font-family: &quot;Anton&quot;, sans-serif;
+                                    font-size: 15px;
+                                    letter-spacing: 1px;
+                                    background: #d83a2b;
+                                    color: #efe8d6;
+                                    padding: 8px 15px;
+                                    transform: rotate(4deg);
+                                    display: inline-block;
+                                    cursor: pointer;
+                                    box-shadow: 4px 4px 0 #17140f;
+                                "
+                                >BOOK &#9656;</span
                             >
-                                <span
-                                    style="
-                                        position: absolute;
-                                        top: 52px;
-                                        right: 44px;
-                                        font-family:
-                                            &quot;Anton&quot;, sans-serif;
-                                        font-size: 14px;
-                                        letter-spacing: 1px;
-                                        color: #d83a2b;
-                                        border: 2px solid #d83a2b;
-                                        padding: 4px 10px;
-                                        transform: rotate(4deg);
-                                        display: inline-block;
-                                    "
-                                    >TODO - Place the Book Button</span
-                                >
-                            </sc-if>
                             <div
                                 style="
                                     font-family:
@@ -232,8 +237,28 @@
                                     animation: xpulse 2s ease-in-out infinite;
                                 "
                             >
-                                &#9666; Socials &middot; Link &middot; To&quot;
-                                Do &#9656;
+                                &#9666;
+                                <a
+                                    href="https://instagram.com/92subaru"
+                                    target="_blank"
+                                    rel="noopener"
+                                    >INSTAGRAM</a
+                                >
+                                &middot;
+                                <a
+                                    href="https://youtube.com/@92subaru"
+                                    target="_blank"
+                                    rel="noopener"
+                                    >YOUTUBE</a
+                                >
+                                &middot;
+                                <a
+                                    href="https://92subaru.bandcamp.com"
+                                    target="_blank"
+                                    rel="noopener"
+                                    >BANDCAMP</a
+                                >
+                                &#9656;
                             </div>
                             <div
                                 style="
@@ -254,40 +279,21 @@
                                     display: inline-block;
                                     background: #fffdf5;
                                     border: 2px dashed #17140f;
-                                    padding: 10px 16px;
+                                    padding: 12px 18px;
                                     transform: rotate(-0.5deg);
-                                    font-size: 14px;
-                                    letter-spacing: 0.5px;
+                                    font-size: clamp(12px, 3.4vw, 17px);
+                                    font-weight: 700;
+                                    letter-spacing: 1px;
+                                    line-height: 1.5;
+                                    text-transform: uppercase;
                                 "
                             >
-                                // MAX VOLUME TRIBUTE TO THE DECADE OF THE DROP
-                                //
-                            </div>
-                            <div style="margin-top: 22px">
-                                <span
-                                    style="
-                                        display: inline-block;
-                                        background: #efe8d6;
-                                        border: 2px solid #17140f;
-                                        padding: 12px 16px;
-                                        box-shadow: 4px 4px 0 #17140f;
-                                    "
+                                <span style="display: block"
+                                    >The songs you remember.</span
                                 >
-                                    <span
-                                        style="
-                                            display: inline-block;
-                                            margin-left: 10px;
-                                            border: 2px solid #d83a2b;
-                                            color: #d83a2b;
-                                            font-family:
-                                                &quot;Anton&quot;, sans-serif;
-                                            font-size: 13px;
-                                            padding: 2px 8px;
-                                            transform: rotate(-4deg);
-                                        "
-                                        >SOLD OUT</span
-                                    >
-                                </span>
+                                <span style="display: block; color: #d83a2b"
+                                    >The night you won't forget.</span
+                                >
                             </div>
                             <div
                                 style="

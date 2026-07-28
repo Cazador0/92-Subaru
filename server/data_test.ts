@@ -1,37 +1,43 @@
-// Use an ephemeral in-memory KV before importing the store.
-Deno.env.set("KV_PATH", ":memory:");
-
 import { assertEquals } from "@std/assert";
-import { addBooking, CONTENT, listBookings } from "./data.ts";
+import { CONTENT } from "./data.ts";
 
-Deno.test("content model has both cassette sides and both tour lists", () => {
-  assertEquals(CONTENT.tracks.A.length, 5);
-  assertEquals(CONTENT.tracks.B.length, 5);
+Deno.test("soundtrack is a single ordered list (no A/B sides)", () => {
+  assertEquals(Array.isArray(CONTENT.tracks), true);
+  assertEquals(CONTENT.tracks.length, 10);
+  assertEquals(CONTENT.tracks[0].n, "01");
+  assertEquals(CONTENT.tracks.at(-1)?.n, "10");
+});
+
+Deno.test("all soundtrack artists come from the band's stated set list", () => {
+  const setList = new Set([
+    "Goo Goo Dolls",
+    "The Cranberries",
+    "Gin Blossoms",
+    "Oasis",
+    "Third Eye Blind",
+    "Stone Temple Pilots",
+    "Hootie & the Blowfish",
+    "Matchbox Twenty",
+    "No Doubt",
+    "Radiohead",
+    "Green Day",
+    "Sixpence None the Richer",
+    "Deep Blue Something",
+    "4 Non Blondes",
+    "Alanis Morissette",
+    "Sheryl Crow",
+    "Aerosmith",
+    "The Cure",
+    "Smash Mouth",
+    "Sugar Ray",
+    "Barenaked Ladies",
+  ]);
+  for (const t of CONTENT.tracks) {
+    assertEquals(setList.has(t.a), true, `${t.a} not in the band's set list`);
+  }
+});
+
+Deno.test("tour lists remain intact (hidden later, Day 2)", () => {
   assertEquals(CONTENT.tour.upcoming.length, 5);
   assertEquals(CONTENT.tour.past.length, 4);
-  assertEquals(CONTENT.tracks.A[0].t, "Smells Like Teen Spirit");
-});
-
-Deno.test("addBooking persists and listBookings returns it", async () => {
-  const before = (await listBookings()).length;
-  const b = await addBooking({
-    date: "2026-09-01",
-    location: "Trees, Deep Ellum",
-    message: "Saturday show",
-  });
-  assertEquals(typeof b.id, "string");
-  assertEquals(typeof b.receivedAt, "string");
-
-  const all = await listBookings();
-  assertEquals(all.length, before + 1);
-  assertEquals(all.some((x) => x.id === b.id), true);
-});
-
-Deno.test("bookings come back in chronological order", async () => {
-  await addBooking({ date: "2026-10-01", location: "A", message: "one" });
-  await addBooking({ date: "2026-10-02", location: "B", message: "two" });
-  const all = await listBookings();
-  const times = all.map((b) => b.receivedAt);
-  const sorted = [...times].sort();
-  assertEquals(times, sorted);
 });

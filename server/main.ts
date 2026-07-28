@@ -1,21 +1,19 @@
 /**
- * '92 Subaru — Deno web server.
+ * '92 Subaru — local Deno web server.
  *
- * Serves the static app from ../public and a small JSON API:
- *   GET  /api/content   -> { tracks, tour }        (mixtape + gig data)
- *   GET  /api/bookings  -> Booking[]               (submitted booking requests)
- *   POST /api/bookings  -> { ok, booking }         (submit a booking request)
- *   GET  /health        -> { ok, uptime }
+ * Serves the static app from ../public plus the JSON API in server/api.ts
+ * (the same handler the Vercel deployment runs via api/[...slug].ts):
+ *   GET  /api/content   -> { tracks, tour }   (soundtrack + gig data)
+ *   POST /api/bookings  -> { ok }             (submit a booking request → email)
+ *   GET  /health        -> { ok, uptime }     (local liveness only)
+ *
+ * Bookings are delivered by email (system of record — spec FR-002); nothing
+ * is persisted server-side. See server/email.ts for configuration.
  *
  * Run:  deno task start   (or `deno task dev` for auto-reload)
  */
 
-import {
-  addBooking,
-  type BookingInput,
-  CONTENT,
-  listBookings,
-} from "./data.ts";
+import { handleApi, json } from "./api.ts";
 
 const PORT = Number(Deno.env.get("PORT") ?? 8000);
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
@@ -39,91 +37,68 @@ const CONTENT_TYPES: Record<string, string> = {
   ".txt": "text/plain; charset=utf-8",
 };
 
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "content-type": "application/json; charset=utf-8" },
-  });
+async function readPublic(
+  rel: string,
+): Promise<{ body: Uint8Array; type: string } | null> {
+  const target = new URL(rel, PUBLIC_DIR);
+  try {
+    const stat = await Deno.stat(target);
+    if (stat.isDirectory) return null;
+    const body = await Deno.readFile(target);
+    const dot = rel.lastIndexOf(".");
+    const type = (dot >= 0 ? CONTENT_TYPES[rel.slice(dot)] : undefined) ??
+      "application/octet-stream";
+    return { body, type };
+  } catch {
+    return null;
+  }
 }
 
 async function serveStatic(pathname: string): Promise<Response> {
   // Normalize + block path traversal before touching the filesystem.
   let rel = decodeURIComponent(pathname);
   if (rel.endsWith("/")) rel += "index.html";
-  const clean = rel.replace(/\\/g, "/").split("/").filter((s) =>
-    s && s !== "." && s !== ".."
-  ).join("/");
-  const target = new URL(clean, PUBLIC_DIR);
+  const clean =
+    rel.replace(/\\/g, "/").split("/").filter((s) =>
+      s && s !== "." && s !== ".."
+    ).join("/") || "index.html";
 
-  try {
-    const stat = await Deno.stat(target);
-    if (stat.isDirectory) return serveStatic(pathname + "/");
-    const body = await Deno.readFile(target);
-    const dot = clean.lastIndexOf(".");
-    const type = dot >= 0 ? CONTENT_TYPES[clean.slice(dot)] : undefined;
-    return new Response(body, {
-      headers: { "content-type": type ?? "application/octet-stream" },
+  let file = await readPublic(clean);
+  // Clean URLs (mirrors `cleanUrls` on Vercel): /privacy -> privacy.html.
+  if (!file && !clean.includes(".")) file = await readPublic(clean + ".html");
+  if (file) {
+    return new Response(file.body, {
+      headers: { "content-type": file.type },
     });
-  } catch {
-    // Unknown path with no file extension -> let the single-page app handle it.
-    if (!clean.includes(".")) return serveStatic("/");
-    return new Response("Not Found", { status: 404 });
   }
-}
 
-async function handlePostBooking(req: Request): Promise<Response> {
-  let payload: Partial<BookingInput>;
-  try {
-    payload = await req.json();
-  } catch {
-    return json({ ok: false, error: "Invalid JSON body." }, 400);
+  // Unknown page route -> themed 404 with a real 404 status (FR-021).
+  // (Vercel does the same natively: a 404.html in the output directory.)
+  const themed = await readPublic("404.html");
+  if (themed) {
+    return new Response(themed.body, {
+      status: 404,
+      headers: { "content-type": themed.type },
+    });
   }
-  const date = (payload.date ?? "").trim();
-  const location = (payload.location ?? "").trim();
-  const message = (payload.message ?? "").trim();
-  if (!date || !location || !message) {
-    return json({
-      ok: false,
-      error: "Fill in event date, location, and message.",
-    }, 422);
-  }
-  const booking = await addBooking({
-    date,
-    location,
-    message,
-    type: (payload.type ?? "").trim(),
-    budget: (payload.budget ?? "").trim(),
-  });
-  console.info(`[booking] ${booking.id} — ${date} @ ${location}`);
-  return json({ ok: true, booking }, 201);
+  return new Response("Not Found", { status: 404 });
 }
 
 Deno.serve({
   port: PORT,
   onListen: ({ port }) =>
     console.info(`'92 Subaru running → http://localhost:${port}`),
-}, async (req) => {
+}, (req) => {
   const { pathname } = new URL(req.url);
 
   if (pathname === "/health") {
     return json({ ok: true, uptime: (Date.now() - STARTED) / 1000 });
   }
 
-  if (pathname === "/api/content") {
-    if (req.method !== "GET") {
-      return json({ ok: false, error: "Method Not Allowed" }, 405);
-    }
-    return json(CONTENT);
-  }
-
-  if (pathname === "/api/bookings") {
-    if (req.method === "POST") return handlePostBooking(req);
-    if (req.method === "GET") return json(await listBookings());
-    return json({ ok: false, error: "Method Not Allowed" }, 405);
-  }
+  if (pathname.startsWith("/api/")) return handleApi(req);
 
   if (req.method !== "GET" && req.method !== "HEAD") {
-    return new Response("Not Found", { status: 404 });
+    return json({ ok: false, error: "Method Not Allowed" }, 405);
   }
   return serveStatic(pathname);
 });
