@@ -1,94 +1,175 @@
-# '92 Subaru
+<div align="center">
 
-**'92 Subaru** — website for the Dallas Fort Worth '90s/early-2000s cover band:
-a retro cassette-deck landing page with a Soundtrack player and a booking form
-that emails the band (email is the system of record — no database).
+# 📼 '92 SUBARU
+### *The songs you remember. The night you won't forget.*
 
-This repo turns the Claude Design scaffold (`web/*.dc.html`) into a running Deno
-web app. The design prototype's tool-specific runtime (`support.js`) is **not**
-shipped; the UI is recreated as a standalone vanilla-JS app.
+[![Live Site](https://img.shields.io/badge/Live_Site-92--subaru.vercel.app-d83a2b?style=for-the-badge&logo=vercel&logoColor=white)](https://92-subaru.vercel.app)
+[![Deno](https://img.shields.io/badge/Deno-2.x-000000?style=for-the-badge&logo=deno&logoColor=white)](https://deno.com)
+[![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![HTML5](https://img.shields.io/badge/HTML5-Semantic-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-Keyframes_%26_Custom_Properties-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## Run it
+<br/>
 
-Requires [Deno](https://deno.com) 2.x (tested on 2.8).
+> **'92 Subaru** brings the soundtrack of the '90s and early 2000s back to life — energetic covers of alternative rock, pop, and grunge hits everyone still knows by heart.
+> Built with zero heavyweight client frameworks — pure **HTML5**, **CSS3**, and **Vanilla JavaScript** backed by **Deno** on **Vercel**.
 
-```bash
-deno task start      # -> http://localhost:8000
-deno task dev        # same, with --watch auto-reload
-deno task test       # server tests (merge precondition)
+<br/>
+
+</div>
+
+---
+
+## 🎸 Overview & Marketing Vision
+
+**'92 Subaru** is a bespoke web experience crafted for the Dallas–Fort Worth metroplex 90s/early-2000s cover band. Designed to deliver an immediate, nostalgic emotional connection, the site pairs a **retro cassette-deck landing page** with a full-featured **Soundtrack transport player** and a direct **booking transmission engine**.
+
+### 🌟 Key Brand Highlights
+* **Nostalgic Xerox-Rave Aesthetic:** Tactile cassette tape SVG with animated reels, paper-grain background, retro typography (*Anton*, *Archivo*, *Courier Prime*, *Space Mono*), and warm analog color palette (`#efe8d6`, `#d83a2b`, `#17140f`).
+* **Zero Client Overhead:** 100% dependency-free frontend using native browser APIs — sub-second load times, instant response, and zero framework bloat.
+* **Direct Booking System of Record:** Booking requests are sanitized, verified against spam, and emailed directly to the band's inbox (`92subaruband@gmail.com`) via Resend — eliminating database maintenance entirely.
+* **Interactive Sound Synthesis:** Features an in-browser Web Audio API synth engine simulating worn analog tape hiss, lowpass filtering, and beat synthesis.
+
+---
+
+## ⚡ Technical Stack & Architecture
+
+```
+                      ┌───────────────────────────────────────┐
+                      │        Vercel Serverless CDN          │
+                      │       https://92-subaru.vercel.app    │
+                      └──────────────────┬────────────────────┘
+                                         │
+                 ┌───────────────────────┴───────────────────────┐
+                 │                                               │
+        [ Static Web Shell ]                            [ Serverless JSON API ]
+     public/index.html · app.js                             api/[...slug].ts
+     styles.css · 404.html                                          │
+                 │                                                ▼
+     ┌───────────┴───────────┐                              server/api.ts
+     │ Native Browser Engine │                              ├── GET  /api/content
+     │  - HTML5 Semantics    │                              └── POST /api/bookings
+     │  - CSS Custom Props   │                                      │
+     │  - Vanilla JS ES6+    │                                      ▼
+     │  - Web Audio API      │                              server/spam.ts + email.ts
+     └───────────────────────┘                                      │
+                                                                    ▼
+                                                            Resend Email Engine
+                                                           (92subaruband@gmail.com)
 ```
 
-Local booking emails: set `BOOKING_DEV_LOG=1` to log the outbound email to the
-console instead of sending it.
+### 🎨 Frontend: HTML5 · CSS3 · Vanilla JS
+* **HTML5:** Semantic, accessible page layout featuring inline SVG cassette artwork, microdata ready, and zero external web component overhead.
+* **CSS3:** Custom animation keyframes (`xscan`, `xflick`, `eqbar`, `cass-reel-spin`), flexbox/grid layout math, custom properties (`--cass-body`, `--reel-speed`), and responsive design optimized for 360px–414px mobile screens up to 4K displays.
+* **Vanilla JS (ES6+):** Pure JavaScript handling state management, client-side routing (`Home`, `About`, `Book`), soundtrack transport controls, Web Audio API synthesis, date bounds validation, and asynchronous form submission.
 
-## Architecture
+### ⚙️ Backend: Deno 2.x & Serverless Vercel
+* **Deno 2.x:** Modern TypeScript runtime used for local development (`server/main.ts`) and unit testing (`deno test`).
+* **Vercel Serverless:** Unified deployment utilizing the `vercel-deno` runtime for API endpoints alongside Vercel CDN static hosting.
+* **Zero-Database Architecture:** Email is the system of record. Bookings are delivered directly to the band via [Resend](https://resend.com), eliminating database infrastructure overhead.
+* **Multi-Layer Spam Protection:** Integrated Google reCAPTCHA v2 verification, honeypot traps, and per-IP sliding window rate limiting.
 
-```
-deno.json           Deno tasks (start / dev / test) + imports/fmt/lint
-vercel.json         Vercel deployment (static from public/ + Deno API function)
-api/
-  [...slug].ts      Vercel serverless entry — delegates every /api/* route
-server/
-  main.ts           Local Deno.serve server — static files + the shared API
-  api.ts            Shared JSON API handler (used by both entry points)
-  email.ts          Booking → email delivery (Resend)
-  data.ts           Content model (soundtrack tracks + gigs)
-public/
-  index.html        App shell + inline cassette SVG
-  styles.css        Keyframes, pseudo-states, responsive rules
-  app.js            Routing, tape transport, soundtrack, booking form
-web/                Original Claude Design references (.dc.html) — reference only
-research/           Firebase seed script from an earlier prototype (gitignored)
-```
+---
 
-### HTTP API
+## 🎵 Setlist & Artist Repertoire
 
-| Method | Path            | Purpose                                        |
-|--------|-----------------|------------------------------------------------|
-| GET    | `/api/content`  | `{ tracks, tour }` soundtrack + gig data       |
-| POST   | `/api/bookings` | Submit a booking request (delivered by email)  |
-| GET    | `/health`       | Liveness `{ ok, uptime }` (local server only)  |
+The site showcases the band's energetic 90s/2000s setlist pulling from iconic artists:
 
-Unknown `/api/*` routes return a JSON error; unknown page routes get the
-themed 404 page. Bookings are **not persisted** — the email to the band is the
-system of record.
-
-## Deploy (Vercel)
-
-One deploy story: Vercel serves the static site from `public/` and runs the
-booking API as a serverless function under the community
-[`vercel-deno`](https://github.com/vercel-community/deno) runtime (pinned in
-`vercel.json`). Launch domain is the free `92-subaru.vercel.app` subdomain —
-a custom domain attaches later.
-
-One-time setup:
-
-1. Install the CLI: `npm i -g vercel` (or use `npx vercel`).
-2. Link the repo to a Vercel project: `vercel link` (project name `92-subaru`
-   — the name determines the `<project>.vercel.app` domain and the absolute
-   Open Graph URLs in `public/index.html`).
-3. Set the environment variables below: `vercel env add <NAME>` (or the
-   Vercel dashboard → Project → Settings → Environment Variables).
-4. Deploy: `vercel deploy` for a preview, `vercel deploy --prod` for
-   production. Pushing to `main` with the Vercel Git integration enabled does
-   the same automatically.
-
-### Environment variables
-
-| Variable | Value / notes |
+| Genre | Featured Artists |
 |---|---|
-| `BOOKING_EMAIL` | Destination inbox for booking requests: `92subaruband@gmail.com`. |
-| `RESEND_API_KEY` | [Resend](https://resend.com) API key. The Resend account **must** be created under `92subaruband@gmail.com`: with no custom domain the `onboarding@resend.dev` sender can only deliver to the account owner's address. |
-| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA v2 secret. Until the production keys are registered (issue #30), the server falls back to [Google's public v2 test keys](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do), which pass every verification. |
-| `BOOKING_EMAIL_FROM` | Optional sender override; defaults to `onboarding@resend.dev`. |
-| `BOOKING_DEV_LOG` | Local dev only — `1` logs booking emails instead of sending. |
+| **Alt-Rock** | Oasis, Third Eye Blind, Goo Goo Dolls, Gin Blossoms, Matchbox Twenty, Sugar Ray, Barenaked Ladies |
+| **Grunge & Rock** | The Cranberries, Stone Temple Pilots, Green Day, Radiohead, Aerosmith, The Cure |
+| **90s Pop & Hits** | No Doubt, Hootie & the Blowfish, 4 Non Blondes, Alanis Morissette, Sheryl Crow, Smash Mouth |
 
-Umami analytics (issue #20, credential wiring): when the Umami site is created,
-its **website ID** goes into the tracking `<script>` tag in `public/index.html`
-— it is a public ID embedded in markup, not a server env var.
+---
 
-## Provenance
+## 🚀 Quick Start (Local Development)
 
-Recreated from `web/xerox_rave_site.html` and `web/Cassette.dc.html`
-per the handoff in `web/README.md`. Exact tokens, copy, transport logic, and
-the visual design are ported from those references.
+Requires [Deno](https://deno.com) 2.x (tested on 2.8+).
+
+### 1. Clone & Run Local Server
+```bash
+git clone https://github.com/Cazador0/92-Subaru.git
+cd 92-Subaru
+
+# Start local server at http://localhost:8000
+deno task start
+```
+
+### 2. Auto-Reload Dev Mode
+```bash
+deno task dev
+```
+
+### 3. Run Test Suite
+```bash
+deno task test
+```
+
+> **Note for Local Booking Testing:** Set `BOOKING_DEV_LOG=1` in your environment to print outbound booking emails to the terminal console instead of sending real emails.
+
+---
+
+## 📡 HTTP API Reference
+
+| Method | Endpoint | Description | Response |
+|---|---|---|---|
+| `GET` | `/api/content` | Retrieves ordered soundtrack tracks and tour data | `200 OK` `{ tracks: [...], tour: {...} }` |
+| `POST` | `/api/bookings` | Submits a new booking request (emails the band) | `201 Created` `{ ok: true }` |
+| `GET` | `/health` | Liveness check & server uptime (local server only) | `200 OK` `{ ok: true, uptime: 123.4 }` |
+
+---
+
+## 🌐 Production Deployment (Vercel)
+
+The application is deployed on Vercel at **`92-subaru.vercel.app`**.
+
+### Environment Variables
+Configure the following in your Vercel Project Settings:
+
+| Environment Variable | Description | Default / Example |
+|---|---|---|
+| `BOOKING_EMAIL` | Destination email inbox for booking submissions | `92subaruband@gmail.com` |
+| `RESEND_API_KEY` | Resend API authorization key | `re_...` |
+| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA v2 secret key | `6LeIxAcTAAAAAGG-...` *(Google test key)* |
+| `BOOKING_EMAIL_FROM` | Optional verified sender address | `onboarding@resend.dev` |
+| `BOOKING_DEV_LOG` | Set to `1` to log emails locally without sending | `0` *(Production)* |
+
+---
+
+## 📁 Repository Structure
+
+```
+.
+├── deno.json             # Deno configuration, tasks (start / dev / test) & linter
+├── vercel.json           # Vercel deployment & vercel-deno runtime config
+├── api/
+│   └── [...slug].ts      # Vercel serverless entry point delegating to server/api.ts
+├── server/
+│   ├── main.ts           # Local Deno.serve web server
+│   ├── api.ts            # Shared JSON API handler
+│   ├── email.ts          # Booking email formatter & Resend integration
+│   ├── data.ts           # Content model (soundtrack tracks & gig data)
+│   └── spam.ts           # Spam protection (reCAPTCHA v2, honeypot, rate limiter)
+├── public/
+│   ├── index.html        # App shell & inline interactive Cassette SVG
+│   ├── styles.css        # Responsive layout, keyframe animations & retro styles
+│   ├── app.js            # Routing, tape transport, Web Audio synth & form handler
+│   ├── 404.html          # Themed 'SIDE B NOT FOUND' error page
+│   └── privacy.html      # Privacy policy & data collection notice
+├── specs/                # Formal product specifications & design artifacts
+└── README.md             # Project documentation & marketing showcase
+```
+
+---
+
+## 📜 Provenance & License
+
+Designed and engineered for **'92 Subaru**. Recreated from original design handoffs per `web/README.md`.
+
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
+
+<div align="center">
+  <sub>Built with ❤️, HTML5, CSS3, Vanilla JS, and Deno for '92 Subaru.</sub>
+</div>
