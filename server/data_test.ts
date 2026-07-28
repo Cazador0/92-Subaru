@@ -1,11 +1,14 @@
 import { assertEquals } from "@std/assert";
 import { CONTENT } from "./data.ts";
 
-Deno.test("soundtrack is a single ordered list (no A/B sides)", () => {
+Deno.test("soundtrack is a single ordered list with official YouTube recordings", () => {
   assertEquals(Array.isArray(CONTENT.tracks), true);
-  assertEquals(CONTENT.tracks.length, 10);
+  assertEquals(CONTENT.tracks.length, 3);
   assertEquals(CONTENT.tracks[0].n, "01");
-  assertEquals(CONTENT.tracks.at(-1)?.n, "10");
+  assertEquals(CONTENT.tracks[0].t, "Iris");
+  assertEquals(CONTENT.tracks[1].t, "Kiss Me");
+  assertEquals(CONTENT.tracks[2].t, "Dreams");
+  assertEquals(CONTENT.tracks.at(-1)?.n, "03");
 });
 
 Deno.test("all soundtrack artists come from the band's stated set list", () => {
@@ -34,6 +37,7 @@ Deno.test("all soundtrack artists come from the band's stated set list", () => {
   ]);
   for (const t of CONTENT.tracks) {
     assertEquals(setList.has(t.a), true, `${t.a} not in the band's set list`);
+    assertEquals(typeof t.yt, "string", `track ${t.t} has a YouTube ID`);
   }
 });
 
