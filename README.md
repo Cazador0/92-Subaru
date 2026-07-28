@@ -21,6 +21,65 @@
 
 ---
 
+## 🎨 Home Page & UI Showcase
+
+Below is a preview of the **'92 Subaru** Home Page interface, capturing the retro 90s cassette mixtape aesthetic, dynamic deck transport controls, and soundtrack J-card tracklist:
+
+<div align="center">
+
+![Home Page UI Banner](public/assets/og.png)
+
+</div>
+
+<br/>
+
+### 🖥️ Interactive UI Component Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  '92 SUBARU                        [ HOME ]   [ ABOUT ]   [ BOOK ▸ ]        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│                            '92 SUBARU                                       │
+│              ┌──────────────────────────────────────────┐                   │
+│              │    THE SONGS YOU REMEMBER.               │                   │
+│              │    THE NIGHT YOU WON'T FORGET.           │                   │
+│              └──────────────────────────────────────────┘                   │
+│                              |||||||||||||                                  │
+│                                                                             │
+│         ┌─────────────────────────────────────────────────────────┐         │
+│         │ 📼 CASSETTE TAPE DECK (Normal Bias 120µs EQ / SIDE A)   │         │
+│         │   [ ◯  LEFT REEL ]   [ WINDOW ]   [ RIGHT REEL ◯ ]      │         │
+│         └─────────────────────────────────────────────────────────┘         │
+│                                                                             │
+│ ┌─────────────────────────────────────────────────────────────────────────┐ │
+│ │ ▶ NOW PLAYING: WONDERWALL — Oasis (1995)                                │ │
+│ │ 0:00 [████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░] 4:18          │ │
+│ │ [ ◄◄ PREV ]     [ ▶ PLAY / ❚❚ PAUSE ]     [ ◼ STOP ]     [ NEXT ►► ]    │ │
+│ └─────────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│ ─── THE SOUNDTRACK (J-CARD SETLIST) ─────────────────────────────────────── │
+│  01. Wonderwall — Oasis (1995) ..................................... 4:18   │
+│  02. Semi-Charmed Life — Third Eye Blind (1997) .─────────────────── 4:28   │
+│  03. Iris — Goo Goo Dolls (1998) ................................... 4:49   │
+│  04. Zombie — The Cranberries (1994) ............................... 5:06   │
+│  05. Don't Speak — No Doubt (1996) ................................. 4:23   │
+│  06. Creep — Radiohead (1992) ...................................... 3:56   │
+│  07. Basket Case — Green Day (1994) ................................ 3:01   │
+│  08. What's Up? — 4 Non Blondes (1993) ............................. 4:55   │
+│  09. Hey Jealousy — Gin Blossoms (1992) ............................ 3:56   │
+│  10. All Star — Smash Mouth (1999) ................................. 3:20   │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 🛠️ Featured UI Elements
+- **Retro Cassette Deck Engine:** Vector SVG cassette tape shell with spinning reel animations driven by CSS keyframes (`--reel-play: running`).
+- **Deck Transport Controls:** Real-time playback timer, animated progress bar, track pick selection, and Web Audio API tape-hiss synthesis.
+- **Soundtrack J-Card Listing:** Single continuous tracklist featuring animated miniature graphic equalizers for active tracks.
+- **Single-Page Navigation:** Instant view switching between **Home**, **About**, and **Book** without full page reloads.
+
+---
+
 ## 🎸 Overview & Marketing Vision
 
 **'92 Subaru** is a bespoke web experience crafted for the Dallas–Fort Worth metroplex 90s/early-2000s cover band. Designed to deliver an immediate, nostalgic emotional connection, the site pairs a **retro cassette-deck landing page** with a full-featured **Soundtrack transport player** and a direct **booking transmission engine**.
