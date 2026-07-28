@@ -35,3 +35,37 @@ a:hover { color: #d83a2b; }
 
 /* Submit button — press nudge (was style-active). */
 .submit-btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #17140f; }
+
+/* ============ Mobile responsive pass (FR-020 / SC-005) ============
+   The markup keeps the prototype's inline styles, so these overrides
+   need !important to win. No horizontal overflow at 360–414px; booking
+   form single-column in FR-001 order with ≥44px tap targets. */
+
+.spec-field { min-height: 44px; }
+.g-recaptcha { max-width: 100%; }
+
+@media (max-width: 700px) {
+  .nav-bar { padding: 12px 16px !important; }
+  .nav-bar > div { gap: 14px !important; }
+
+  .wrap { padding-left: 18px !important; padding-right: 18px !important; }
+
+  /* Hero: BOOK ▸ drops out of the corner into the flow above the title. */
+  .hero-inner { padding-top: 30px !important; }
+  #hero-book { position: static !important; margin-bottom: 22px; transform: rotate(2deg); }
+  .hero-title { font-size: clamp(52px, 17.5vw, 96px) !important; text-shadow: 4px 4px 0 #d83a2b !important; }
+
+  .page-title { font-size: clamp(44px, 14.5vw, 96px) !important; text-shadow: 4px 4px 0 #d83a2b !important; }
+
+  /* Book page: form + info panel stack; form rows collapse to one column
+     (DOM order is the FR-001 field order). */
+  .book-grid { grid-template-columns: 1fr !important; gap: 26px !important; }
+  .form-grid { grid-template-columns: 1fr !important; }
+  #form-body { padding: 20px 14px !important; }
+}
+
+/* The reCAPTCHA v2 checkbox iframe is a fixed 304px wide — scale it down
+   slightly where the single column gets narrower than that. */
+@media (max-width: 380px) {
+  .g-recaptcha { transform: scale(.9); transform-origin: 0 0; }
+}
