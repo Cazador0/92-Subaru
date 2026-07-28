@@ -51,7 +51,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 - [ ] T020 [P] [US4] Install privacy-friendly analytics (Umami; no cookie banner). — `public/index.html` (D1-19, FR-018)
 - [ ] T021 [US4] Privacy policy page + consent line on the form (retains all nine submitted fields; discloses Google reCAPTCHA, Umami, Resend — per FR-019). ⛔ owner approval of the draft before first production deploy. — `public/privacy.html`, `public/index.html` (D1-20, FR-019)
 - [ ] T022 [US4] Mobile responsive pass (hero scaling, 2-col grids, deck/nav; booking form single-column, ≥44px tap targets) — no overflow at 360–414px on all pages incl. privacy + 404. — `public/styles.css`, `public/index.html` (D1-21, FR-020, SC-005)
-- [ ] T023 [P] [US4] Themed 404 page ("SIDE B NOT FOUND — rewind ◂") with home link, served with real HTTP 404 status; unknown API routes return JSON errors. — `public/404.html`, `server/main.ts` (D1-22, FR-021)
+- [x] T023 [P] [US4] Themed 404 page ("SIDE B NOT FOUND — rewind ◂") with home link, served with real HTTP 404 status; unknown API routes return JSON errors. — `public/404.html`, `server/main.ts` (D1-22, FR-021)
 
 ## Phase 6: Content & final polish
 

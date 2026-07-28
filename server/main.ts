@@ -72,11 +72,13 @@ async function serveStatic(pathname: string): Promise<Response> {
     });
   }
 
-  // Unknown page route -> SPA fallback (themed 404 lands with issue #23).
-  const home = await readPublic("index.html");
-  if (home) {
-    return new Response(home.body, {
-      headers: { "content-type": home.type },
+  // Unknown page route -> themed 404 with a real 404 status (FR-021).
+  // (Vercel does the same natively: a 404.html in the output directory.)
+  const themed = await readPublic("404.html");
+  if (themed) {
+    return new Response(themed.body, {
+      status: 404,
+      headers: { "content-type": themed.type },
     });
   }
   return new Response("Not Found", { status: 404 });
