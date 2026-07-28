@@ -15,7 +15,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 
 ## Phase 1: Foundational (blocking prerequisites)
 
-- [ ] T001 [US4] Configure Vercel deployment for the Deno app (runtime, static serving from `public/`, env/secrets); document in `README.md` (env vars: `BOOKING_EMAIL`, `RESEND_API_KEY`, `RECAPTCHA_SECRET_KEY`, Umami website ID); delete the Deno Deploy CI workflow, Dockerfile, and fly.toml (decided 2026-07-28 — one deploy story; git history preserves them). DoD (CHK043): app builds + serves locally under the Vercel-compatible entry point, `vercel.json` validates, `deno test` green, README documents link-account/deploy/env steps. — `vercel.json`, `.github/workflows/deno.yml`, `Dockerfile`, `fly.toml` (D1-17) — **highest risk, do first**
+- [x] T001 [US4] Configure Vercel deployment for the Deno app (runtime, static serving from `public/`, env/secrets); document in `README.md` (env vars: `BOOKING_EMAIL`, `RESEND_API_KEY`, `RECAPTCHA_SECRET_KEY`, Umami website ID); delete the Deno Deploy CI workflow, Dockerfile, and fly.toml (decided 2026-07-28 — one deploy story; git history preserves them). DoD (CHK043): app builds + serves locally under the Vercel-compatible entry point, `vercel.json` validates, `deno test` green, README documents link-account/deploy/env steps. — `vercel.json`, `.github/workflows/deno.yml`, `Dockerfile`, `fly.toml` (D1-17) — **highest risk, do first**
 - [ ] T002 [US1] Remove Deno KV; make email the system of record. Delete KV store + its tests. — `server/data.ts`, `server/main.ts`, `server/data_test.ts` (D1-13)
 - [ ] T003 [P] [US1] Add email-delivery module (Resend client + formatted booking template; `RESEND_API_KEY` env var). — `server/email.ts` (D1-10, FR-002)
 

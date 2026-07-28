@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "vercel-deno@3.1.0"
+    }
+  }
+}

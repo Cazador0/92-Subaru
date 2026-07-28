@@ -3,7 +3,7 @@
  *
  * Configuration (env):
  *   RESEND_API_KEY      Resend API key (https://resend.com)
- *   BOOKING_EMAIL_TO    destination inbox — owner-provided, see issue #9
+ *   BOOKING_EMAIL       destination inbox (spec FR-005: 92subaruband@gmail.com)
  *   BOOKING_EMAIL_FROM  verified sender (default: onboarding@resend.dev for testing)
  *   BOOKING_DEV_LOG=1   local/dev mode — log the email instead of sending
  *
@@ -28,11 +28,13 @@ export interface BookingEmail {
 /** Single-line fields: strip CR/LF + control chars so user input can never
  * inject headers or extra recipients into the outbound email (CHK024). */
 function line(s: string | undefined): string {
+  // deno-lint-ignore no-control-regex -- stripping control chars is the point
   return (s ?? "").replace(/[\r\n\t\x00-\x1f\x7f]+/g, " ").trim();
 }
 
 /** Multi-line body text: keep newlines, drop other control chars. */
 function block(s: string | undefined): string {
+  // deno-lint-ignore no-control-regex -- stripping control chars is the point
   return (s ?? "").replace(/[\x00-\x09\x0b\x0c\x0e-\x1f\x7f]+/g, " ").trim();
 }
 
@@ -61,11 +63,11 @@ export async function sendBookingEmail(b: BookingInput): Promise<void> {
   }
 
   const key = Deno.env.get("RESEND_API_KEY");
-  const to = Deno.env.get("BOOKING_EMAIL_TO");
+  const to = Deno.env.get("BOOKING_EMAIL");
   const from = Deno.env.get("BOOKING_EMAIL_FROM") ?? "onboarding@resend.dev";
   if (!key || !to) {
     throw new Error(
-      "Email delivery not configured (set RESEND_API_KEY and BOOKING_EMAIL_TO, or BOOKING_DEV_LOG=1 for local dev)",
+      "Email delivery not configured (set RESEND_API_KEY and BOOKING_EMAIL, or BOOKING_DEV_LOG=1 for local dev)",
     );
   }
 
