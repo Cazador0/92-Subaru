@@ -29,16 +29,30 @@ async function handlePostBooking(req: Request): Promise<Response> {
     return json({ ok: false, error: "Invalid JSON body." }, 400);
   }
   const booking: BookingInput = {
+    firstName: (payload.firstName ?? "").trim(),
+    lastName: (payload.lastName ?? "").trim(),
+    email: (payload.email ?? "").trim(),
+    phone: (payload.phone ?? "").trim(),
     date: (payload.date ?? "").trim(),
-    location: (payload.location ?? "").trim(),
-    message: (payload.message ?? "").trim(),
     type: (payload.type ?? "").trim(),
+    location: (payload.location ?? "").trim(),
     budget: (payload.budget ?? "").trim(),
+    message: (payload.message ?? "").trim(),
   };
-  if (!booking.date || !booking.location || !booking.message) {
+  // Required fields per FR-001 (deeper validation — date bounds, email
+  // format, length caps — is issue #6).
+  const missing = ([
+    ["firstName", "first name"],
+    ["lastName", "last name"],
+    ["email", "email"],
+    ["date", "event date"],
+    ["location", "location"],
+    ["message", "message"],
+  ] as const).filter(([k]) => !booking[k]).map(([, label]) => label);
+  if (missing.length) {
     return json({
       ok: false,
-      error: "Fill in event date, location, and message.",
+      error: `Fill in: ${missing.join(", ")}.`,
     }, 422);
   }
   try {

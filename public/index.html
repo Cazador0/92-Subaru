@@ -252,47 +252,70 @@
           </div>
 
           <div id="form-body" style="padding:26px 24px;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+            <!-- Fields in FR-001 order; two-up rows collapse to one column on mobile (FR-020). -->
+            <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
               <div>
-                <label style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">EVENT DATE *</label>
-                <input id="f-date" type="date" min="2026-07-11" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
+                <label for="f-first" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">FIRST NAME *</label>
+                <input id="f-first" type="text" autocomplete="given-name" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
               </div>
               <div>
-                <label style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">EVENT TYPE</label>
+                <label for="f-last" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">LAST NAME *</label>
+                <input id="f-last" type="text" autocomplete="family-name" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
+              </div>
+            </div>
+
+            <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px;">
+              <div>
+                <label for="f-email" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">EMAIL *</label>
+                <input id="f-email" type="email" autocomplete="email" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
+              </div>
+              <div>
+                <label for="f-phone" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">PHONE (OPTIONAL)</label>
+                <input id="f-phone" type="tel" autocomplete="tel" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
+              </div>
+            </div>
+
+            <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px;">
+              <div>
+                <label for="f-date" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">EVENT DATE *</label>
+                <input id="f-date" type="date" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
+              </div>
+              <div>
+                <label for="f-type" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">EVENT TYPE</label>
                 <select id="f-type" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
                   <option value="">— select —</option>
-                  <option value="Bar / Club">Bar / Club</option>
-                  <option value="Private Party">Private Party</option>
                   <option value="Wedding">Wedding</option>
-                  <option value="Corporate / Brand">Corporate / Brand</option>
-                  <option value="Festival">Festival</option>
+                  <option value="Corporate">Corporate</option>
+                  <option value="Private party">Private party</option>
+                  <option value="Venue-bar">Venue-bar</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
 
             <div style="margin-top:18px;">
-              <label style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">LOCATION / VENUE *</label>
+              <label for="f-location" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">LOCATION / VENUE *</label>
               <input id="f-location" type="text" placeholder="e.g. Trees, Deep Ellum" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
             </div>
 
             <div style="margin-top:18px;">
-              <label style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">BUDGET RANGE</label>
+              <label for="f-budget" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">BUDGET</label>
               <select id="f-budget" class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none;">
                 <option value="">— select —</option>
-                <option value="Under $1,500">Under $1,500</option>
-                <option value="$1,500 – 3,000">$1,500 – 3,000</option>
-                <option value="$3,000 – 6,000">$3,000 – 6,000</option>
-                <option value="$6,000+">$6,000+</option>
-                <option value="Let's talk">Let's talk</option>
+                <option value="&lt;$1k">&lt;$1k</option>
+                <option value="$1–2.5k">$1–2.5k</option>
+                <option value="$2.5–5k">$2.5–5k</option>
+                <option value="$5k+">$5k+</option>
+                <option value="Not sure">Not sure</option>
               </select>
             </div>
 
             <div style="margin-top:18px;">
-              <label style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">MESSAGE *</label>
+              <label for="f-message" style="font-family:'Anton',sans-serif; font-size:13px; letter-spacing:1px; display:block; margin-bottom:6px;">MESSAGE *</label>
               <textarea id="f-message" rows="4" placeholder="Tell us about the gig..." class="spec-field" style="width:100%; font-family:'Courier Prime',monospace; font-size:15px; padding:11px 12px; background:#efe8d6; border:2px solid #17140f; color:#17140f; outline:none; resize:vertical;"></textarea>
             </div>
 
-            <div id="form-err" style="display:none; margin-top:16px; color:#d83a2b; font-weight:700; font-size:13px;">⚠ Fill in event date, location, and message.</div>
+            <div id="form-err" style="display:none; margin-top:16px; color:#d83a2b; font-weight:700; font-size:13px;">⚠ Fill in the required fields.</div>
 
             <div id="submit" class="submit-btn" style="margin-top:22px; background:#d83a2b; color:#efe8d6; font-family:'Anton',sans-serif; font-size:20px; letter-spacing:1px; text-align:center; padding:15px; cursor:pointer; box-shadow:5px 5px 0 #17140f;">SEND TRANSMISSION ▸</div>
           </div>

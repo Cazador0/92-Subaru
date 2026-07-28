@@ -12,7 +12,12 @@
  * request (spec edge case / checklist CHK001).
  */
 
+/** The nine booking fields (FR-001). Optional: phone, type, budget. */
 export interface BookingInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
   date: string;
   type?: string;
   location: string;
@@ -23,6 +28,7 @@ export interface BookingInput {
 export interface BookingEmail {
   subject: string;
   text: string;
+  replyTo: string;
 }
 
 /** Single-line fields: strip CR/LF + control chars so user input can never
@@ -39,10 +45,16 @@ function block(s: string | undefined): string {
 }
 
 export function buildBookingEmail(b: BookingInput): BookingEmail {
-  const subject = `Booking request — ${line(b.date)} @ ${line(b.location)}`;
+  const name = `${line(b.firstName)} ${line(b.lastName)}`.trim();
+  const subject = `Booking request — ${line(b.date)} @ ${
+    line(b.location)
+  } — ${name}`;
   const text = [
     "New booking request via 92subaru site",
     "",
+    `Name       : ${name}`,
+    `Email      : ${line(b.email)}`,
+    `Phone      : ${line(b.phone) || "—"}`,
     `Event date : ${line(b.date)}`,
     `Event type : ${line(b.type) || "—"}`,
     `Location   : ${line(b.location)}`,
@@ -51,7 +63,7 @@ export function buildBookingEmail(b: BookingInput): BookingEmail {
     "Message:",
     block(b.message),
   ].join("\n");
-  return { subject, text };
+  return { subject, text, replyTo: line(b.email) };
 }
 
 export async function sendBookingEmail(b: BookingInput): Promise<void> {
@@ -80,6 +92,7 @@ export async function sendBookingEmail(b: BookingInput): Promise<void> {
     body: JSON.stringify({
       from,
       to: [to],
+      reply_to: mail.replyTo,
       subject: mail.subject,
       text: mail.text,
     }),

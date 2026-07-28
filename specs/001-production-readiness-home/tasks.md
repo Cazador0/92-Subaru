@@ -21,7 +21,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 
 ## Phase 2: US1 — Book the band (Priority: P1) 🎯 MVP
 
-- [ ] T004 [US1] Rework booking form fields → First Name*, Last Name*, Email*, Phone(optional), Event Date*, Event Type (dropdown), Location/Venue*, Budget (dropdown), Message*; dropdown options per FR-001. — `public/index.html` (D1-09, FR-001)
+- [x] T004 [US1] Rework booking form fields → First Name*, Last Name*, Email*, Phone(optional), Event Date*, Event Type (dropdown), Location/Venue*, Budget (dropdown), Message*; dropdown options per FR-001. — `public/index.html` (D1-09, FR-001)
 - [ ] T005 [US1] Wire form submit → email endpoint; keep the "TAPE RECEIVED" confirmation. — `public/app.js`, `server/main.ts`, `server/email.ts` (D1-10, FR-002)
 - [ ] T006 [US1] Server-side validation of required fields (incl. Event Date today-or-later, well-formed email, length caps) + email-failure handling (surface error, don't lose the request). — `server/main.ts` (FR-003, CHK001/CHK022)
 - [ ] T007 [US1] Input sanitization so field content cannot inject into the outbound email. — `server/email.ts` (CHK024)

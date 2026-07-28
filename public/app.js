@@ -56,10 +56,31 @@ const state = {
   idx: 0,
   elapsed: 0,
   tf: "upcoming",
-  form: { date: "", type: "", location: "", budget: "", message: "" },
+  form: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    date: "",
+    type: "",
+    location: "",
+    budget: "",
+    message: "",
+  },
   sent: false,
   err: false,
 };
+
+// Required booking fields (FR-001) in form order, with the labels the
+// inline "missing field" error uses.
+const REQUIRED_FIELDS = [
+  ["firstName", "first name"],
+  ["lastName", "last name"],
+  ["email", "email"],
+  ["date", "event date"],
+  ["location", "location"],
+  ["message", "message"],
+];
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) =>
@@ -330,8 +351,12 @@ function setField(k, v) { state.form[k] = v; state.err = false; $("form-err").st
 
 async function submit() {
   const f = state.form;
-  if (!f.date || !f.location || !f.message) {
-    state.err = true; $("form-err").style.display = "block"; return;
+  const missing = REQUIRED_FIELDS.filter(([k]) => !f[k].trim()).map(([, label]) => label);
+  if (missing.length) {
+    state.err = true;
+    $("form-err").textContent = "⚠ Fill in: " + missing.join(", ") + ".";
+    $("form-err").style.display = "block";
+    return;
   }
   try {
     const res = await fetch("/api/bookings", {
@@ -359,8 +384,11 @@ async function submit() {
 }
 function resetForm() {
   state.sent = false; state.err = false;
-  state.form = { date: "", type: "", location: "", budget: "", message: "" };
-  ["f-date", "f-type", "f-location", "f-budget", "f-message"].forEach((id) => { $(id).value = ""; });
+  state.form = {
+    firstName: "", lastName: "", email: "", phone: "",
+    date: "", type: "", location: "", budget: "", message: "",
+  };
+  ["f-first", "f-last", "f-email", "f-phone", "f-date", "f-type", "f-location", "f-budget", "f-message"].forEach((id) => { $(id).value = ""; });
   $("form-err").style.display = "none";
   $("form-body").style.display = "block";
   $("form-sent").style.display = "none";
@@ -386,7 +414,11 @@ function wire() {
     const row = e.target.closest("[data-pick]");
     if (row) pick(Number(row.dataset.pick));
   });
-  // form
+  // form (fields per FR-001)
+  $("f-first").addEventListener("input", (e) => setField("firstName", e.target.value));
+  $("f-last").addEventListener("input", (e) => setField("lastName", e.target.value));
+  $("f-email").addEventListener("input", (e) => setField("email", e.target.value));
+  $("f-phone").addEventListener("input", (e) => setField("phone", e.target.value));
   $("f-date").addEventListener("input", (e) => setField("date", e.target.value));
   $("f-type").addEventListener("change", (e) => setField("type", e.target.value));
   $("f-location").addEventListener("input", (e) => setField("location", e.target.value));
@@ -394,6 +426,13 @@ function wire() {
   $("f-message").addEventListener("input", (e) => setField("message", e.target.value));
   $("submit").addEventListener("click", submit);
   $("reset").addEventListener("click", resetForm);
+
+  // Event Date can't be in the past (FR-003) — set min to today, local time.
+  const now = new Date();
+  const today = now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+  $("f-date").min = today;
 
   // design knobs
   if (!PROPS.sweep) $("hero-sweep").style.display = "none";
