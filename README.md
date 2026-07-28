@@ -3,7 +3,7 @@
 # 📼 '92 SUBARU
 ### *The songs you remember. The night you won't forget.*
 
-[![Live Site](https://img.shields.io/badge/Live_Site-92--subaru.vercel.app-d83a2b?style=for-the-badge&logo=vercel&logoColor=white)](https://92-subaru.vercel.app)
+[![Live Site](https://img.shields.io/badge/Live_Site-92subaruband.com-d83a2b?style=for-the-badge&logo=vercel&logoColor=white)](https://92subaruband.com)
 [![Deno](https://img.shields.io/badge/Deno-2.x-000000?style=for-the-badge&logo=deno&logoColor=white)](https://deno.com)
 [![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![HTML5](https://img.shields.io/badge/HTML5-Semantic-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
