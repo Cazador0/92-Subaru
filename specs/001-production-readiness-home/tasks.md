@@ -25,7 +25,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 - [ ] T005 [US1] Wire form submit → email endpoint; keep the "TAPE RECEIVED" confirmation. — `public/app.js`, `server/main.ts`, `server/email.ts` (D1-10, FR-002)
 - [ ] T006 [US1] Server-side validation of required fields (incl. Event Date today-or-later, well-formed email, length caps) + email-failure handling (surface error, don't lose the request). — `server/main.ts` (FR-003, CHK001/CHK022)
 - [ ] T007 [US1] Input sanitization so field content cannot inject into the outbound email. — `server/email.ts` (CHK024)
-- [ ] T008 [US1] Spam protection: Google reCAPTCHA v2 checkbox + honeypot + server-side rate limit; reCAPTCHA fails open if the script doesn't load; honeypot hit = fake success (confirmation shown, no email). DoD: E2E token verification under Google's public v2 test keys, pass + fail paths (FR-004). — `public/index.html`, `public/app.js`, `server/main.ts` (D1-12, FR-004)
+- [x] T008 [US1] Spam protection: Google reCAPTCHA v2 checkbox + honeypot + server-side rate limit; reCAPTCHA fails open if the script doesn't load; honeypot hit = fake success (confirmation shown, no email). DoD: E2E token verification under Google's public v2 test keys, pass + fail paths (FR-004). — `public/index.html`, `public/app.js`, `server/main.ts` (D1-12, FR-004)
 - [ ] T009 [US1] Set the destination booking email env var: `BOOKING_EMAIL=92subaruband@gmail.com` (decided 2026-07-28; unblocked). — config (D1-11, FR-005)
 
 **Checkpoint:** US1 is independently shippable — a valid booking emails the band; bots are blocked.

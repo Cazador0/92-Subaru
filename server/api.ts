@@ -13,6 +13,9 @@
 
 import { CONTENT } from "./data.ts";
 import { type BookingInput, sendBookingEmail } from "./email.ts";
+import { clientIp, RateLimiter, verifyRecaptcha } from "./spam.ts";
+
+const limiter = new RateLimiter();
 
 export function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -22,12 +25,50 @@ export function json(body: unknown, status = 200): Response {
 }
 
 async function handlePostBooking(req: Request): Promise<Response> {
-  let payload: Partial<BookingInput>;
+  // Rate limit before doing any work (FR-004).
+  if (!limiter.allow(clientIp(req))) {
+    return json({
+      ok: false,
+      error: "Too many requests — please wait a few minutes and try again.",
+    }, 429);
+  }
+
+  let payload: Partial<BookingInput> & {
+    website?: string;
+    recaptchaToken?: string;
+  };
   try {
     payload = await req.json();
   } catch {
     return json({ ok: false, error: "Invalid JSON body." }, 400);
   }
+
+  // Honeypot: humans never see the "website" field. A filled honeypot gets
+  // the normal confirmation but no email is sent (fake success, FR-004).
+  if ((payload.website ?? "").trim()) {
+    console.info("[booking] honeypot hit — fake success, no email");
+    return json({ ok: true }, 201);
+  }
+
+  // reCAPTCHA v2: verify when a token arrives. No token = the script never
+  // loaded client-side -> fail open (honeypot + rate limit still apply).
+  const token = (payload.recaptchaToken ?? "").trim();
+  if (token) {
+    try {
+      const verdict = await verifyRecaptcha(token);
+      if (!verdict.success) {
+        console.warn("[booking] reCAPTCHA rejected:", verdict.errorCodes);
+        return json({
+          ok: false,
+          error: "reCAPTCHA verification failed — please try again.",
+        }, 403);
+      }
+    } catch (e) {
+      // Google unreachable from the server: fail open, same as no script.
+      console.warn("[booking] reCAPTCHA verify unavailable, failing open:", e);
+    }
+  }
+
   const booking: BookingInput = {
     firstName: (payload.firstName ?? "").trim(),
     lastName: (payload.lastName ?? "").trim(),
