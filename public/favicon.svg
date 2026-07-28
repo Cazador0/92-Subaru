@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- '92 Subaru cassette mark — site palette (#17140f / #efe8d6 / #d83a2b) -->
+  <rect width="64" height="64" rx="10" fill="#17140f"/>
+  <rect x="7" y="13" width="50" height="28" rx="4" fill="#efe8d6"/>
+  <rect x="7" y="13" width="50" height="8" rx="4" fill="#d83a2b"/>
+  <rect x="7" y="17" width="50" height="4" fill="#d83a2b"/>
+  <circle cx="21" cy="32" r="6.5" fill="#17140f"/>
+  <circle cx="43" cy="32" r="6.5" fill="#17140f"/>
+  <circle cx="21" cy="32" r="2.5" fill="#efe8d6"/>
+  <circle cx="43" cy="32" r="2.5" fill="#efe8d6"/>
+  <rect x="29" y="28" width="6" height="8" fill="#17140f"/>
+  <path d="M19 47 h26 l-4 8 h-18 z" fill="none" stroke="#efe8d6" stroke-width="2.5"/>
+</svg>

@@ -47,7 +47,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 
 ## Phase 5: US4 — Fast, shareable, compliant site (Priority: P1)
 
-- [ ] T019 [P] [US4] SEO: favicon + Open Graph/Twitter meta + generated 1200×630 share image (⛔ owner approval of the image before launch, FR-017; absolute URLs use the `vercel.app` launch domain). — `public/index.html`, `public/assets/` (D1-18, FR-017)
+- [x] T019 [P] [US4] SEO: favicon + Open Graph/Twitter meta + generated 1200×630 share image (⛔ owner approval of the image before launch, FR-017; absolute URLs use the `vercel.app` launch domain). — `public/index.html`, `public/assets/` (D1-18, FR-017)
 - [ ] T020 [P] [US4] Install privacy-friendly analytics (Umami; no cookie banner). — `public/index.html` (D1-19, FR-018)
 - [x] T021 [US4] Privacy policy page + consent line on the form (retains all nine submitted fields; discloses Google reCAPTCHA, Umami, Resend — per FR-019). ⛔ owner approval of the draft before first production deploy. — `public/privacy.html`, `public/index.html` (D1-20, FR-019)
 - [ ] T022 [US4] Mobile responsive pass (hero scaling, 2-col grids, deck/nav; booking form single-column, ≥44px tap targets) — no overflow at 360–414px on all pages incl. privacy + 404. — `public/styles.css`, `public/index.html` (D1-21, FR-020, SC-005)
