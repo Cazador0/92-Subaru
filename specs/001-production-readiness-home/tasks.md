@@ -60,7 +60,7 @@ description: "Task list for Production Readiness — '92 Subaru site"
 
 ## Day 2
 
-- [ ] T026 Hide the Gigs panel via a single config flag (e.g., `SHOW_GIGS`) that removes it from nav + DOM; re-enable is a one-line flip. — `public/index.html`, `public/app.js` (D2-01)
+- [x] T026 Hide the Gigs panel via a single config flag (e.g., `SHOW_GIGS`) that removes it from nav + DOM; re-enable is a one-line flip. — `public/index.html`, `public/app.js` (D2-01)
 - [ ] T030 ⛔ Swap reCAPTCHA test keys → production keys (register the vercel.app hostname in Google's reCAPTCHA admin console under `92subaruband@gmail.com` — no new vendor account needed; set `RECAPTCHA_SECRET_KEY` + site key on Vercel). Credential-wiring batch (FR-004, CHK040). — config
 
 ## Future

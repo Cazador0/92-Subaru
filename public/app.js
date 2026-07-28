@@ -10,6 +10,11 @@
  */
 "use strict";
 
+// ---- launch config ----------------------------------------------------------
+// Gigs is hidden for launch (issue #26): false removes the panel from the DOM
+// (it has no nav entry). Re-enabling is this one-line flip.
+const SHOW_GIGS = false;
+
 // ---- design knobs (via ?query) ---------------------------------------------
 const params = new URLSearchParams(location.search);
 const PROPS = {
@@ -432,8 +437,10 @@ function wire() {
   $("btn-play").addEventListener("click", toggle);
   $("btn-stop").addEventListener("click", stop);
   $("btn-next").addEventListener("click", next);
-  $("tour-up").addEventListener("click", () => setTour("upcoming"));
-  $("tour-past").addEventListener("click", () => setTour("past"));
+  if (SHOW_GIGS) {
+    $("tour-up").addEventListener("click", () => setTour("upcoming"));
+    $("tour-past").addEventListener("click", () => setTour("past"));
+  }
   // soundtrack rows (delegated — rows are re-rendered)
   $("mix-list").addEventListener("click", (e) => {
     const row = e.target.closest("[data-pick]");
@@ -474,11 +481,12 @@ async function loadContent() {
 }
 
 async function main() {
+  if (!SHOW_GIGS) $("gigs-section").remove();
   wire();
   await loadContent();
   setPage("home");
   renderSoundtrack();
-  renderGigs();
+  if (SHOW_GIGS) renderGigs();
   renderTransport();
 }
 
