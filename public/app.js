@@ -25,9 +25,9 @@ const PROPS = {
 // ---- fallback content (used if the API is unreachable) ---------------------
 const FALLBACK = {
   tracks: [
-    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk" },
-    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms" },
-    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s" },
+    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk", src: "/assets/audio/iris.mp4" },
+    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms", src: "/assets/audio/kiss-me.mp4" },
+    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s", src: "/assets/audio/dreams.mp4" },
   ],
   tour: {
     upcoming: [
@@ -91,80 +91,42 @@ function fmt(s) {
 const trackCount = () => DATA.tracks.length;
 
 // ======================================================================
-//  YOUTUBE AUDIO STREAM ENGINE & TRANSPORT
+//  NATIVE HTML5 AUDIO ENGINE & TRANSPORT (Option 1)
 // ======================================================================
-let _ytPlayer = null;
-let _ytReady = false;
+let _audioEngine = null;
+let _timer = null;
 
-window.onYouTubeIframeAPIReady = function () {
-  try {
-    const track = DATA.tracks[state.idx] || DATA.tracks[0];
-    _ytPlayer = new YT.Player("yt-player", {
-      height: "1",
-      width: "1",
-      videoId: track ? track.yt : "nzMBn6Q89zk",
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        modestbranding: 1,
-        rel: 0,
-      },
-      events: {
-        onReady: () => {
-          _ytReady = true;
-        },
-        onStateChange: (event) => {
-          if (window.YT && event.data === window.YT.PlayerState.PLAYING) {
-            state.playing = true;
-            startTimer();
-            renderTransport();
-            renderSoundtrack();
-          } else if (window.YT && event.data === window.YT.PlayerState.PAUSED) {
-            state.playing = false;
-            stopTimer();
-            renderTransport();
-            renderSoundtrack();
-          } else if (window.YT && event.data === window.YT.PlayerState.ENDED) {
-            next();
-          }
-        },
-      },
+function getAudioEngine() {
+  if (!_audioEngine) {
+    _audioEngine = new Audio();
+    _audioEngine.preload = "auto";
+    _audioEngine.addEventListener("ended", () => {
+      next();
     });
-  } catch {
-    _ytReady = false;
-  }
-};
-
-function playYtTrack(autoplay = true) {
-  const track = DATA.tracks[state.idx];
-  if (!track || !track.yt) return;
-
-  if (_ytReady && _ytPlayer) {
-    try {
-      const currentData = _ytPlayer.getVideoData ? _ytPlayer.getVideoData() : null;
-      if (currentData && currentData.video_id === track.yt) {
-        if (autoplay && typeof _ytPlayer.playVideo === "function") _ytPlayer.playVideo();
-      } else {
-        if (autoplay && typeof _ytPlayer.loadVideoById === "function") {
-          _ytPlayer.loadVideoById(track.yt);
-        } else if (typeof _ytPlayer.cueVideoById === "function") {
-          _ytPlayer.cueVideoById(track.yt);
-        }
+    _audioEngine.addEventListener("timeupdate", () => {
+      if (state.playing && typeof _audioEngine.currentTime === "number" && _audioEngine.currentTime > 0) {
+        state.elapsed = _audioEngine.currentTime;
+        renderTime();
       }
-      return;
-    } catch {
-      /* fallback */
-    }
+    });
   }
+  return _audioEngine;
+}
 
-  const playerFrame = $("yt-player");
-  if (playerFrame && playerFrame.tagName === "IFRAME") {
-    const targetSrc = `https://www.youtube-nocookie.com/embed/${track.yt}?autoplay=${autoplay ? 1 : 0}&enablejsapi=1&rel=0`;
-    if (playerFrame.src !== targetSrc) {
-      playerFrame.src = targetSrc;
-    }
+function playTrack(autoplay = true) {
+  const track = DATA.tracks[state.idx];
+  if (!track) return;
+  const audio = getAudioEngine();
+  const src = track.src || `/assets/audio/${track.t.toLowerCase().replace(/[^a-z0-9]/g, "-")}.mp4`;
+  
+  if (audio.src !== window.location.origin + src && !audio.src.endsWith(src)) {
+    audio.src = src;
+    audio.currentTime = 0;
+  }
+  if (autoplay) {
+    audio.play().catch(() => {
+      startAudio();
+    });
   }
 }
 
@@ -172,8 +134,8 @@ function toggle() { state.playing ? pause() : play(); }
 
 function play() {
   state.playing = true;
+  playTrack(true);
   startTimer();
-  playYtTrack(true);
   renderTransport();
   renderSoundtrack();
 }
@@ -181,9 +143,8 @@ function play() {
 function pause() {
   state.playing = false;
   stopTimer();
-  if (_ytReady && _ytPlayer && typeof _ytPlayer.pauseVideo === "function") {
-    try { _ytPlayer.pauseVideo(); } catch { /* */ }
-  }
+  if (_audioEngine) _audioEngine.pause();
+  stopAudio();
   renderTransport();
   renderSoundtrack();
 }
@@ -192,9 +153,11 @@ function stop() {
   state.playing = false;
   state.elapsed = 0;
   stopTimer();
-  if (_ytReady && _ytPlayer && typeof _ytPlayer.stopVideo === "function") {
-    try { _ytPlayer.stopVideo(); } catch { /* */ }
+  if (_audioEngine) {
+    _audioEngine.pause();
+    _audioEngine.currentTime = 0;
   }
+  stopAudio();
   renderTransport();
   renderSoundtrack();
 }
@@ -202,7 +165,7 @@ function stop() {
 function prev() {
   state.idx = (state.idx + trackCount() - 1) % trackCount();
   state.elapsed = 0;
-  playYtTrack(state.playing);
+  playTrack(state.playing);
   if (state.playing) startTimer();
   renderSoundtrack();
   renderTransport();
@@ -211,7 +174,7 @@ function prev() {
 function next() {
   state.idx = (state.idx + 1) % trackCount();
   state.elapsed = 0;
-  playYtTrack(state.playing);
+  playTrack(state.playing);
   if (state.playing) startTimer();
   renderSoundtrack();
   renderTransport();
@@ -221,8 +184,8 @@ function pick(i) {
   state.idx = i;
   state.elapsed = 0;
   state.playing = true;
+  playTrack(true);
   startTimer();
-  playYtTrack(true);
   renderSoundtrack();
   renderTransport();
 }
@@ -232,20 +195,15 @@ function setTour(tf) { state.tf = tf; renderGigs(); }
 function startTimer() {
   stopTimer();
   _timer = setInterval(() => {
-    const dur = DATA.tracks[state.idx].d;
+    const dur = DATA.tracks[state.idx] ? DATA.tracks[state.idx].d : 240;
     let e = state.elapsed + 0.25;
-    if (_ytReady && _ytPlayer && typeof _ytPlayer.getCurrentTime === "function") {
-      try {
-        const cur = _ytPlayer.getCurrentTime();
-        if (typeof cur === "number" && cur > 0) e = cur;
-      } catch {
-        /* fallback to elapsed increment */
-      }
+    if (_audioEngine && typeof _audioEngine.currentTime === "number" && _audioEngine.currentTime > 0) {
+      e = _audioEngine.currentTime;
     }
     if (e >= dur) {
       state.idx = (state.idx + 1) % trackCount();
       state.elapsed = 0;
-      playYtTrack(true);
+      playTrack(true);
       renderSoundtrack();
       renderTransport();
     } else {
@@ -603,7 +561,7 @@ async function main() {
   renderSoundtrack();
   if (SHOW_GIGS) renderGigs();
   renderTransport();
-  playYtTrack(false);
+  playTrack(false);
 }
 
 main();

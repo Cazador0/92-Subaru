@@ -38,6 +38,7 @@ Deno.test("all soundtrack artists come from the band's stated set list", () => {
   for (const t of CONTENT.tracks) {
     assertEquals(setList.has(t.a), true, `${t.a} not in the band's set list`);
     assertEquals(typeof t.yt, "string", `track ${t.t} has a YouTube ID`);
+    assertEquals(typeof t.src, "string", `track ${t.t} has an audio src URL`);
   }
 });
 

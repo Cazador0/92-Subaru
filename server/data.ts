@@ -16,6 +16,7 @@ export interface Track {
   y: number; // year
   d: number; // duration, seconds
   yt: string; // YouTube Video ID
+  src: string; // static audio URL
 }
 
 export interface Gig {
@@ -32,9 +33,9 @@ export interface Content {
 
 export const CONTENT: Content = {
   tracks: [
-    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk" },
-    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms" },
-    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s" },
+    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk", src: "/assets/audio/iris.mp4" },
+    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms", src: "/assets/audio/kiss-me.mp4" },
+    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s", src: "/assets/audio/dreams.mp4" },
   ],
   tour: {
     upcoming: [
