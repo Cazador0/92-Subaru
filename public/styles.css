@@ -42,7 +42,6 @@ a:hover { color: #d83a2b; }
    form single-column in FR-001 order with ≥44px tap targets. */
 
 .spec-field { min-height: 44px; }
-.g-recaptcha { max-width: 100%; }
 
 @media (max-width: 700px) {
   .nav-bar { padding: 12px 16px !important; }
@@ -64,8 +63,6 @@ a:hover { color: #d83a2b; }
   #form-body { padding: 20px 14px !important; }
 }
 
-/* The reCAPTCHA v2 checkbox iframe is a fixed 304px wide — scale it down
-   slightly where the single column gets narrower than that. */
 /* Artist logo vault badges & hover effects */
 .artist-badge {
   display: inline-flex;
