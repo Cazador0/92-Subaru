@@ -37,64 +37,44 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Use exact models enabled for this API key: gemini-2.0-flash has high quota and zero rate limits
-  const models = [
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite-001",
-    "gemini-2.0-flash-001",
-    "gemini-2.5-pro",
-  ];
-  const apiVersions = ["v1beta", "v1"];
-  const errors: string[] = [];
+  // Single target model call (prevents burst 429 rate limiting caused by rapid looping)
+  const model = "gemini-2.5-flash";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-  for (const ver of apiVersions) {
-    for (const model of models) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/${ver}/models/${model}:generateContent?key=${apiKey}`;
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-          }),
-        });
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
 
-        if (!res.ok) {
-          const errText = await res.text().catch(() => "");
-          const msg = `${ver}/${model} (${res.status}: ${errText.slice(0, 70)})`;
-          errors.push(msg);
-          console.warn(`[ai:gemini] ${msg}`);
-          continue;
-        }
-
+      if (res.ok) {
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (text) return { brief: text.trim() };
-      } catch (e) {
-        errors.push(`${ver}/${model} (Err: ${String(e)})`);
       }
+
+      const errText = await res.text().catch(() => "");
+      console.warn(`[ai:gemini] Attempt ${attempt} HTTP ${res.status}: ${errText.slice(0, 100)}`);
+
+      if (res.status === 429 && attempt === 1) {
+        // Rate limited — backoff 1.2s before retry
+        await new Promise((r) => setTimeout(r, 1200));
+        continue;
+      }
+
+      return { brief: null, error: `HTTP ${res.status}: ${errText.slice(0, 150)}` };
+    } catch (e) {
+      if (attempt === 1) {
+        await new Promise((r) => setTimeout(r, 1200));
+        continue;
+      }
+      return { brief: null, error: `Network error: ${String(e)}` };
     }
   }
 
-  // Diagnostic: Query available models for this key to diagnose 404
-  let diagInfo = "";
-  try {
-    const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
-    const listRes = await fetch(listUrl);
-    const listJson = await listRes.json().catch(() => null);
-    if (listJson?.models) {
-      const modelNames = listJson.models
-        .map((m: { name?: string }) => (m.name || "").replace("models/", ""))
-        .filter((n: string) => n.includes("flash") || n.includes("pro"))
-        .slice(0, 5)
-        .join(", ");
-      diagInfo = ` (Key available models: [${modelNames}])`;
-    } else if (listJson?.error) {
-      diagInfo = ` (GCP Key Error: ${listJson.error.message})`;
-    }
-  } catch (e) {
-    diagInfo = ` (List check err: ${String(e)})`;
-  }
-
-  return { brief: null, error: (errors.join(" | ") + diagInfo) };
+  return { brief: null, error: "Gemini API returned no candidates" };
 }
