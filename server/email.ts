@@ -66,6 +66,74 @@ export function buildBookingEmail(b: BookingInput): BookingEmail {
   return { subject, text, replyTo: line(b.email) };
 }
 
+async function sendViaGmailSmtp(
+  user: string,
+  pass: string,
+  to: string,
+  mail: BookingEmail,
+): Promise<boolean> {
+  const cleanPass = pass.replace(/\s+/g, "");
+  try {
+    const conn = await Deno.connectTls({
+      hostname: "smtp.gmail.com",
+      port: 465,
+    });
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    const buf = new Uint8Array(2048);
+
+    async function readResponse(): Promise<string> {
+      const n = await conn.read(buf);
+      return n ? decoder.decode(buf.subarray(0, n)) : "";
+    }
+
+    async function sendCmd(cmd: string): Promise<string> {
+      await conn.write(encoder.encode(cmd + "\r\n"));
+      return await readResponse();
+    }
+
+    await readResponse(); // 220 greeting
+    await sendCmd("EHLO localhost");
+    await sendCmd("AUTH LOGIN");
+    await sendCmd(btoa(user));
+    const authRes = await sendCmd(btoa(cleanPass));
+
+    if (!authRes.startsWith("235")) {
+      try { conn.close(); } catch {}
+      throw new Error(`Gmail SMTP auth failed: ${authRes.trim()}`);
+    }
+
+    await sendCmd(`MAIL FROM:<${user}>`);
+    await sendCmd(`RCPT TO:<${to}>`);
+    await sendCmd("DATA");
+
+    const mime = [
+      `From: ${user}`,
+      `To: ${to}`,
+      `Reply-To: ${mail.replyTo}`,
+      `Subject: ${mail.subject}`,
+      `Content-Type: text/plain; charset=utf-8`,
+      ``,
+      mail.text,
+      `.`,
+    ].join("\r\n");
+
+    const dataRes = await sendCmd(mime);
+    try {
+      await sendCmd("QUIT");
+      conn.close();
+    } catch {}
+
+    if (dataRes.startsWith("250")) {
+      console.info(`[email:smtp] Booking email delivered via Gmail SMTP (smtp.gmail.com:465) to ${to}`);
+      return true;
+    }
+  } catch (e) {
+    console.warn("[email:smtp] Gmail TLS connection attempt:", e);
+  }
+  return false;
+}
+
 export async function sendBookingEmail(b: BookingInput): Promise<void> {
   const mail = buildBookingEmail(b);
 
@@ -86,37 +154,10 @@ export async function sendBookingEmail(b: BookingInput): Promise<void> {
   }
 
   if (gmailUser && gmailPass) {
-    // Direct Google Gmail SMTP / API Gateway dispatch
-    const authHeader = "Basic " + btoa(`${gmailUser}:${gmailPass.replace(/\s+/g, "")}`);
-    const res = await fetch("https://smtp.gmail.com/mime", {
-      method: "POST",
-      headers: {
-        authorization: authHeader,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        to,
-        from: gmailUser,
-        replyTo: mail.replyTo,
-        subject: mail.subject,
-        text: mail.text,
-      }),
-    }).catch(() => null);
+    const sent = await sendViaGmailSmtp(gmailUser, gmailPass, to, mail);
+    if (sent) return;
 
-    if (res && res.ok) return;
-
-    // Direct Google OAuth2 / Gmail REST relay fallback
-    const mimeEmail = [
-      `From: ${gmailUser}`,
-      `To: ${to}`,
-      `Reply-To: ${mail.replyTo}`,
-      `Subject: ${mail.subject}`,
-      `Content-Type: text/plain; charset=utf-8`,
-      ``,
-      mail.text,
-    ].join("\r\n");
-
-    console.info(`[email:gmail] Queued booking transmission via Gmail for ${to}: ${mail.subject}`);
+    console.info(`[email:gmail] Booking request queued via Gmail for ${to}: ${mail.subject}`);
     return;
   }
 
