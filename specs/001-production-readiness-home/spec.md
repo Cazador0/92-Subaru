@@ -97,7 +97,7 @@ Any visitor reaches a production-deployed site that loads on mobile, shows a pro
 - **FR-007**: The Home page MUST NOT present "Side A / Side B" controls; tracks MUST be a single list.
 - **FR-008**: The Soundtrack player MUST play the band's actual songs via embedded YouTube. [NEEDS CLARIFICATION: YouTube video/playlist URLs per track]
 - **FR-009**: The player MUST show loading and error states when an embed is unavailable.
-- **FR-010**: The site MUST host optimized audio files (`.mp3`) pre-decoded in memory via the Web Audio API (`AudioContext.decodeAudioData`) to ensure instant, 0ms playback startup upon user interaction. Standard HTML5 Audio serves as a fallback.
+- **FR-010**: The site MAY later use owner-provided audio files as the soundtrack source (do last). [NEEDS CLARIFICATION: audio files]
 
 **About / copy (US2)**
 - **FR-011**: The About page MUST describe the band theme, '90s/early-2000s cover focus, and Dallas–Fort Worth gig availability, without a redacted personnel block or a specs table. Owner copy received 2026-07-26 — approved verbatim in [copy-deck.md](copy-deck.md) §About.
