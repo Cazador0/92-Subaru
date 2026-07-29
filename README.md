@@ -175,7 +175,7 @@ deno task test
 
 ## 🌐 Production Deployment (Vercel)
 
-The application is deployed on Vercel at **`92-subaru.vercel.app`**.
+The application is deployed live at **`https://92subaruband.com`** (backed by Vercel).
 
 ### Environment Variables
 Configure the following in your Vercel Project Settings:
