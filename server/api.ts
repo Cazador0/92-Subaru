@@ -13,7 +13,7 @@
 
 import { CONTENT } from "./data.ts";
 import { type BookingInput, sendBookingEmail } from "./email.ts";
-import { clientIp, RateLimiter, verifyRecaptcha } from "./spam.ts";
+import { clientIp, RateLimiter } from "./spam.ts";
 
 const limiter = new RateLimiter();
 
@@ -33,10 +33,7 @@ async function handlePostBooking(req: Request): Promise<Response> {
     }, 429);
   }
 
-  let payload: Partial<BookingInput> & {
-    website?: string;
-    recaptchaToken?: string;
-  };
+  let payload: Partial<BookingInput> & { website?: string };
   try {
     payload = await req.json();
   } catch {
@@ -48,25 +45,6 @@ async function handlePostBooking(req: Request): Promise<Response> {
   if ((payload.website ?? "").trim()) {
     console.info("[booking] honeypot hit — fake success, no email");
     return json({ ok: true }, 201);
-  }
-
-  // reCAPTCHA v2: verify when a token arrives. No token = the script never
-  // loaded client-side -> fail open (honeypot + rate limit still apply).
-  const token = (payload.recaptchaToken ?? "").trim();
-  if (token) {
-    try {
-      const verdict = await verifyRecaptcha(token);
-      if (!verdict.success) {
-        console.warn("[booking] reCAPTCHA rejected:", verdict.errorCodes);
-        return json({
-          ok: false,
-          error: "reCAPTCHA verification failed — please try again.",
-        }, 403);
-      }
-    } catch (e) {
-      // Google unreachable from the server: fail open, same as no script.
-      console.warn("[booking] reCAPTCHA verify unavailable, failing open:", e);
-    }
   }
 
   const booking: BookingInput = {

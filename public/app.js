@@ -434,27 +434,12 @@ async function submit() {
     return;
   }
 
-  // reCAPTCHA v2 (FR-004): when the script loaded, the checkbox is required;
-  // when it never loaded (null), fail open — the server still applies the
-  // honeypot and rate limit.
-  let recaptchaToken = null;
-  if (window.grecaptcha && typeof grecaptcha.getResponse === "function") {
-    try { recaptchaToken = grecaptcha.getResponse(); } catch { recaptchaToken = null; }
-  }
-  if (recaptchaToken === "") {
-    state.err = true;
-    $("form-err").textContent = "⚠ Please confirm you're not a robot.";
-    $("form-err").style.display = "block";
-    return;
-  }
-
   try {
     const res = await fetch("/api/bookings", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(Object.assign({}, f, {
         website: $("f-website").value,
-        recaptchaToken: recaptchaToken || "",
       })),
     });
     if (!res.ok) {
@@ -462,23 +447,18 @@ async function submit() {
       state.err = true;
       $("form-err").textContent = "⚠ " + (body.error || "Something went wrong — try again.");
       $("form-err").style.display = "block";
-      resetRecaptcha(); // tokens are single-use
       return;
     }
   } catch {
     state.err = true;
     $("form-err").textContent = "⚠ Couldn't reach the server — check your connection.";
     $("form-err").style.display = "block";
-    resetRecaptcha();
     return;
   }
   state.sent = true;
   $("form-body").style.display = "none";
   $("form-sent").style.display = "block";
   try { window.scrollTo(0, 0); } catch { /* */ }
-}
-function resetRecaptcha() {
-  try { if (window.grecaptcha) grecaptcha.reset(); } catch { /* */ }
 }
 
 function resetForm() {

@@ -1,52 +1,11 @@
 /**
  * Booking-form spam protection (spec FR-004):
  *
- *   1. Google reCAPTCHA v2 checkbox — token verified server-side. If the
- *      client script never loaded, the form fails OPEN: no token arrives and
- *      the submission proceeds, still guarded by 2. and 3.
- *   2. Honeypot — a hidden "website" field humans never see. A filled
+ *   1. Honeypot — a hidden "website" field humans never see. A filled
  *      honeypot gets a fake success (confirmation shown, no email sent).
- *   3. Rate limit — per-IP sliding window, in-memory. On serverless each
+ *   2. Rate limit — per-IP sliding window, in-memory. On serverless each
  *      instance keeps its own window; good enough for scaffolding.
- *
- * RECAPTCHA_SECRET_KEY defaults to Google's public v2 TEST secret, which
- * verifies every token (and pairs with the test site key in index.html).
- * Swapping in production keys is issue #30.
  */
-
-/** Google's published universal v2 test secret — always verifies. */
-export const RECAPTCHA_TEST_SECRET = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
-
-const SITEVERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
-
-export interface RecaptchaResult {
-  success: boolean;
-  errorCodes: string[];
-}
-
-/** Verify a reCAPTCHA v2 token with Google. `fetchFn` is injectable for
- * deterministic tests; default secret is the public test key (issue #30). */
-export async function verifyRecaptcha(
-  token: string,
-  opts: { secret?: string; fetchFn?: typeof fetch } = {},
-): Promise<RecaptchaResult> {
-  const secret = opts.secret ??
-    Deno.env.get("RECAPTCHA_SECRET_KEY") ?? RECAPTCHA_TEST_SECRET;
-  const fetchFn = opts.fetchFn ?? fetch;
-  const res = await fetchFn(SITEVERIFY_URL, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ secret, response: token }),
-  });
-  if (!res.ok) {
-    throw new Error(`reCAPTCHA verify HTTP ${res.status}`);
-  }
-  const body = await res.json();
-  return {
-    success: body.success === true,
-    errorCodes: Array.isArray(body["error-codes"]) ? body["error-codes"] : [],
-  };
-}
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;

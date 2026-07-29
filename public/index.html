@@ -28,7 +28,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@800;900&family=Courier+Prime:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 <div style="min-height:100vh; background:#efe8d6; background-image:radial-gradient(#0000001a 1.1px, transparent 1.2px); background-size:5px 5px; color:#17140f; font-family:'Courier Prime',monospace;">
@@ -408,19 +407,12 @@
               <input id="f-website" type="text" name="website" tabindex="-1" autocomplete="off">
             </div>
 
-            <!-- Google reCAPTCHA v2 checkbox (FR-004). Public TEST site key —
-                 the production-key swap is issue #30. The widget carries
-                 Google's own branding/links. Fails open if it never loads. -->
-            <div style="margin-top:22px;">
-              <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
-            </div>
-
             <div id="form-err" style="display:none; margin-top:16px; color:#d83a2b; font-weight:700; font-size:13px;">⚠ Fill in the required fields.</div>
 
             <div id="submit" class="submit-btn" style="margin-top:22px; background:#d83a2b; color:#efe8d6; font-family:'Anton',sans-serif; font-size:20px; letter-spacing:1px; text-align:center; padding:15px; cursor:pointer; box-shadow:5px 5px 0 #17140f;">SEND TRANSMISSION ▸</div>
 
             <!-- Consent line (FR-019): retained data + direct processing. -->
-            <p style="margin:16px 0 0; font-size:12px; line-height:1.6; opacity:.8;">By sending, you agree we receive everything you submit — first name, last name, email, phone, event date, event type, location/venue, budget, and message — delivered directly to our band inbox. This form is protected by Google reCAPTCHA and this site uses cookieless Umami analytics. See our <a href="/privacy" style="text-decoration:underline;">privacy policy</a>.</p>
+            <p style="margin:16px 0 0; font-size:12px; line-height:1.6; opacity:.8;">By sending, you agree we receive everything you submit — first name, last name, email, phone, event date, event type, location/venue, budget, and message — delivered directly to our band inbox. This site uses cookieless Umami analytics. See our <a href="/privacy" style="text-decoration:underline;">privacy policy</a>.</p>
           </div>
 
           <div id="form-sent" style="display:none; padding:52px 30px; text-align:center;">
