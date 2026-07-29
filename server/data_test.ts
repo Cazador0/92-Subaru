@@ -5,9 +5,9 @@ Deno.test("soundtrack is a single ordered list with official YouTube recordings"
   assertEquals(Array.isArray(CONTENT.tracks), true);
   assertEquals(CONTENT.tracks.length, 3);
   assertEquals(CONTENT.tracks[0].n, "01");
-  assertEquals(CONTENT.tracks[0].t, "Iris");
-  assertEquals(CONTENT.tracks[1].t, "Kiss Me");
-  assertEquals(CONTENT.tracks[2].t, "Dreams");
+  assertEquals(CONTENT.tracks[0].t, "Dreams");
+  assertEquals(CONTENT.tracks[1].t, "Iris");
+  assertEquals(CONTENT.tracks[2].t, "Kiss Me");
   assertEquals(CONTENT.tracks.at(-1)?.n, "03");
 });
 
