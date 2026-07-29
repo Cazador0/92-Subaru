@@ -77,6 +77,16 @@ export async function buildBookingEmail(b: BookingInput): Promise<BookingEmail> 
       "--------------------------------------------------------------------",
       aiBriefing,
     );
+  } else {
+    const keyState = Deno.env.get("GEMINI_API_KEY")
+      ? "Gemini API call failed (check Vercel function logs)"
+      : "GEMINI_API_KEY environment variable is missing on Vercel";
+    textLines.push(
+      "",
+      "--------------------------------------------------------------------",
+      `🤖 AI BRIEFING STATUS: ${keyState}`,
+      "--------------------------------------------------------------------",
+    );
   }
 
   return { subject, text: textLines.join("\n"), replyTo: line(b.email) };
