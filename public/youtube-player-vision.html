@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>'92 Subaru — YouTube Soundtrack Player Vision (D1-06)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #efe8d6; background-image: radial-gradient(#0000001a 1.1px, transparent 1.2px); background-size: 5px 5px; color: #17140f; font-family: 'Courier Prime', monospace; padding: 40px 20px; min-height: 100vh; }
+    .container { max-width: 1080px; margin: 0 auto; }
+
+    .header-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; border-bottom: 3px solid #17140f; padding-bottom: 16px; }
+    .page-title { font-family: 'Anton', sans-serif; font-size: 38px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 3px 3px 0 #d83a2b; }
+    .badge-tag { background: #17140f; color: #efe8d6; font-family: 'Anton', sans-serif; font-size: 13px; letter-spacing: 1.5px; padding: 5px 12px; transform: rotate(-1deg); }
+
+    /* DECK & CRT PLAYER WRAPPER */
+    .deck-player-wrapper { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; background: #fffdf5; border: 3px solid #17140f; box-shadow: 8px 8px 0 rgba(23,20,15,0.3); padding: 28px; position: relative; margin-bottom: 32px; }
+
+    /* CRT MONITOR TV CONTAINER */
+    .crt-monitor { border: 4px solid #17140f; background: #000; box-shadow: 5px 5px 0 #17140f; position: relative; overflow: hidden; border-radius: 4px; }
+    .crt-screen-header { background: #17140f; color: #efe8d6; padding: 8px 14px; font-family: 'Anton', sans-serif; font-size: 14px; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
+    .status-dot { width: 10px; height: 10px; background: #00e676; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #00e676; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .crt-screen-body { position: relative; width: 100%; aspect-ratio: 16/9; background: #111; display: flex; align-items: center; justify-content: center; }
+    .crt-iframe { width: 100%; height: 100%; border: none; }
+
+    /* CASSETTE TAPE TRANSPORT PANEL */
+    .tape-panel { display: flex; flex-direction: column; justify-content: space-between; background: #efe8d6; border: 3px solid #17140f; padding: 20px; box-shadow: 4px 4px 0 rgba(23,20,15,0.2); }
+    .lcd-display { background: #17140f; color: #00adef; font-family: 'VT323', monospace; padding: 12px 16px; border: 2px solid #17140f; margin-bottom: 18px; box-shadow: inset 0 0 10px rgba(0,173,239,0.3); }
+    .lcd-track-title { font-size: 22px; letter-spacing: 1px; color: #ffea00; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lcd-stats { display: flex; justify-content: space-between; font-size: 16px; margin-top: 4px; color: #efe8d6; }
+
+    /* PHYSICAL TAPE BUTTONS */
+    .controls-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .tape-btn { flex: 1; font-family: 'Anton', sans-serif; font-size: 14px; letter-spacing: 1px; padding: 12px 6px; background: #17140f; color: #efe8d6; border: 2px solid #17140f; cursor: pointer; text-align: center; box-shadow: 3px 3px 0 #d83a2b; transition: all 0.1s ease; }
+    .tape-btn:hover { background: #ffea00; color: #17140f; transform: translateY(-2px); }
+    .tape-btn:active { transform: translateY(1px); box-shadow: 1px 1px 0 #17140f; }
+    .tape-btn.btn-play { background: #d83a2b; color: #efe8d6; }
+
+    /* TRACK LIST */
+    .track-list-section { background: #fffdf5; border: 3px solid #17140f; padding: 22px; box-shadow: 6px 6px 0 rgba(23,20,15,0.2); }
+    .section-heading { font-family: 'Anton', sans-serif; font-size: 22px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; border-bottom: 2px dashed #17140f; padding-bottom: 8px; }
+    .track-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 2px solid #17140f; background: #efe8d6; margin-bottom: 10px; cursor: pointer; transition: all 0.15s ease; }
+    .track-item:hover { background: #ffea00; transform: translateX(6px); }
+    .track-item.active { background: #17140f; color: #efe8d6; border-color: #17140f; box-shadow: 4px 4px 0 #d83a2b; }
+    .track-item.active .track-artist { color: #00adef; }
+    .track-number { font-family: 'Anton', sans-serif; font-size: 18px; width: 30px; }
+    .track-info { flex: 1; margin: 0 12px; }
+    .track-name { font-family: 'Anton', sans-serif; font-size: 16px; letter-spacing: 0.5px; }
+    .track-artist { font-size: 13px; opacity: 0.85; }
+    .track-duration { font-family: 'VT323', monospace; font-size: 20px; font-weight: bold; }
+
+    @media (max-width: 820px) {
+      .deck-player-wrapper { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- HEADER BAR -->
+    <div class="header-bar">
+      <div>
+        <h1 class="page-title">'92 SUBARU — YOUTUBE SOUNDTRACK VISION</h1>
+        <p style="font-size:14px; opacity:0.8; margin-top:2px;">Embedded YouTube CRT Player Synchronized with Cassette Transport Controls (D1-06)</p>
+      </div>
+      <div class="badge-tag">MODEL '92 // AUDIO SYSTEM</div>
+    </div>
+
+    <!-- MAIN HYBRID PLAYER DECK -->
+    <div class="deck-player-wrapper">
+      
+      <!-- LEFT: CRT MONITOR YOUTUBE EMBED -->
+      <div class="crt-monitor">
+        <div class="crt-screen-header">
+          <span>CRT BROADCAST // YOUTUBE FEED</span>
+          <span style="display:flex; align-items:center; gap:6px;">
+            <span class="status-dot"></span> LIVE AUDIO
+          </span>
+        </div>
+        <div class="crt-screen-body">
+          <iframe id="youtube-iframe" class="crt-iframe" 
+            src="https://www.youtube-nocookie.com/embed/Yam5uK6e-bQ?autoplay=1&enablejsapi=1" 
+            title="The Cranberries - Dreams" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <!-- RIGHT: CASSETTE TRANSPORT LCD PANEL -->
+      <div class="tape-panel">
+        <div>
+          <div style="font-family:'Anton',sans-serif; font-size:18px; letter-spacing:1px; margin-bottom:10px; display:flex; justify-content:space-between;">
+            <span>SOUNDTRACK DECK</span>
+            <span style="font-size:12px; background:#17140f; color:#efe8d6; padding:2px 6px;">STEREO</span>
+          </div>
+
+          <!-- LCD DIGITAL READOUT DISPLAY -->
+          <div class="lcd-display">
+            <div id="lcd-title" class="lcd-track-title">01. DREAMS — THE CRANBERRIES</div>
+            <div class="lcd-stats">
+              <span>RELEASE: 1992</span>
+              <span id="lcd-time">TRACK 01 / 06</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAPE PHYSICAL BUTTONS -->
+        <div>
+          <div class="controls-row">
+            <button class="tape-btn" onclick="prevTrack()">◂◂ PREV</button>
+            <button class="tape-btn btn-play" onclick="playCurrent()">▶ PLAY</button>
+            <button class="tape-btn" onclick="pauseCurrent()">❚❚ PAUSE</button>
+            <button class="tape-btn" onclick="nextTrack()">NEXT ▸▸</button>
+          </div>
+          <div style="font-size:12px; opacity:0.75; text-align:center; font-family:'Courier Prime',monospace;">
+            Clicking any soundtrack track automatically syncs the CRT monitor video.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TRACKLIST SOUNDTRACK SELECTION -->
+    <div class="track-list-section">
+      <div class="section-heading">FEATURED TRACKLIST (THE SOUNDTRACK)</div>
+      
+      <div id="tracklist-container">
+        <!-- TRACK 1 -->
+        <div class="track-item active" onclick="loadTrack(0)">
+          <div class="track-number">01</div>
+          <div class="track-info">
+            <div class="track-name">Dreams</div>
+            <div class="track-artist">The Cranberries (1992)</div>
+          </div>
+          <div class="track-duration">4:29</div>
+        </div>
+
+        <!-- TRACK 2 -->
+        <div class="track-item" onclick="loadTrack(1)">
+          <div class="track-number">02</div>
+          <div class="track-info">
+            <div class="track-name">Iris</div>
+            <div class="track-artist">Goo Goo Dolls (1998)</div>
+          </div>
+          <div class="track-duration">4:49</div>
+        </div>
+
+        <!-- TRACK 3 -->
+        <div class="track-item" onclick="loadTrack(2)">
+          <div class="track-number">03</div>
+          <div class="track-info">
+            <div class="track-name">Kiss Me</div>
+            <div class="track-artist">Sixpence None the Richer (1997)</div>
+          </div>
+          <div class="track-duration">3:28</div>
+        </div>
+
+        <!-- TRACK 4 -->
+        <div class="track-item" onclick="loadTrack(3)">
+          <div class="track-number">04</div>
+          <div class="track-info">
+            <div class="track-name">Semi-Charmed Life</div>
+            <div class="track-artist">Third Eye Blind (1997)</div>
+          </div>
+          <div class="track-duration">4:28</div>
+        </div>
+
+        <!-- TRACK 5 -->
+        <div class="track-item" onclick="loadTrack(4)">
+          <div class="track-number">05</div>
+          <div class="track-info">
+            <div class="track-name">Wonderwall</div>
+            <div class="track-artist">Oasis (1995)</div>
+          </div>
+          <div class="track-duration">4:18</div>
+        </div>
+
+        <!-- TRACK 6 -->
+        <div class="track-item" onclick="loadTrack(5)">
+          <div class="track-number">06</div>
+          <div class="track-info">
+            <div class="track-name">Santeria</div>
+            <div class="track-artist">Sublime (1996)</div>
+          </div>
+          <div class="track-duration">3:03</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const tracks = [
+      { num: "01", name: "Dreams", artist: "The Cranberries", year: "1992", dur: "4:29", youtubeId: "Yam5uK6e-bQ" },
+      { num: "02", name: "Iris", artist: "Goo Goo Dolls", year: "1998", dur: "4:49", youtubeId: "NdYWuo9OFAw" },
+      { num: "03", name: "Kiss Me", artist: "Sixpence None the Richer", year: "1997", dur: "3:28", youtubeId: "8N-qO3sPMjc" },
+      { num: "04", name: "Semi-Charmed Life", artist: "Third Eye Blind", year: "1997", dur: "4:28", youtubeId: "MyjTrwOMSO4" },
+      { num: "05", name: "Wonderwall", artist: "Oasis", year: "1995", dur: "4:18", youtubeId: "6hzrDeceEKc" },
+      { num: "06", name: "Santeria", artist: "Sublime", year: "1996", dur: "3:03", youtubeId: "A0QBE5o3T08" }
+    ];
+
+    let currentIndex = 0;
+
+    function loadTrack(index) {
+      currentIndex = index;
+      const t = tracks[index];
+
+      // Update IFrame URL
+      const iframe = document.getElementById("youtube-iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${t.youtubeId}?autoplay=1&enablejsapi=1`;
+
+      // Update LCD Display
+      document.getElementById("lcd-title").textContent = `${t.num}. ${t.name.toUpperCase()} — ${t.artist.toUpperCase()}`;
+      document.getElementById("lcd-time").textContent = `TRACK ${t.num} / 06`;
+
+      // Update active highlight class
+      const items = document.querySelectorAll(".track-item");
+      items.forEach((item, idx) => {
+        if (idx === index) item.classList.add("active");
+        else item.classList.remove("active");
+      });
+    }
+
+    function prevTrack() {
+      const newIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+      loadTrack(newIndex);
+    }
+
+    function nextTrack() {
+      const newIndex = (currentIndex + 1) % tracks.length;
+      loadTrack(newIndex);
+    }
+
+    function playCurrent() {
+      loadTrack(currentIndex);
+    }
+
+    function pauseCurrent() {
+      const iframe = document.getElementById("youtube-iframe");
+      iframe.src = "";
+    }
+  </script>
+</body>
+</html>
