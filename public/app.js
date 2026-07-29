@@ -393,14 +393,11 @@ function renderSoundtrack() {
     const adorn = active
       ? '<div style="position:absolute; left:44px; right:70px; bottom:6px; height:6px; background:#d83a2b; opacity:.45; transform:rotate(-.5deg); border-radius:3px; pointer-events:none;"></div>' + MINI_EQ
       : "";
-    const ytBtn = t.yt
-      ? `<a href="https://youtu.be/${esc(t.yt)}" target="_blank" rel="noopener" style="background:#d83a2b; color:#efe8d6; font-family:'Anton',sans-serif; font-size:11px; letter-spacing:1px; padding:3px 8px; border-radius:2px; text-decoration:none; margin-left:8px; display:inline-flex; align-items:center; gap:4px;" onclick="event.stopPropagation();">▶ YOUTUBE</a>`
-      : "";
     return (
       `<div class="mix-row" data-pick="${i}" style="position:relative; display:flex; align-items:center; gap:16px; padding:11px 6px; cursor:pointer; border-bottom:1px dotted #17140f;">` +
       `<div style="font-family:'Courier Prime',monospace; font-weight:700; font-size:15px; width:30px;">${esc(t.n)}</div>` +
       `<div style="flex:1; min-width:0;"><span style="font-family:'Courier Prime',monospace; font-weight:700; font-size:17px;">${esc(t.t)}</span>` +
-      `<span style="font-size:12px; opacity:.7;"> — ${esc(t.a)}, ${esc(t.y)}</span>${ytBtn}</div>` +
+      `<span style="font-size:12px; opacity:.7;"> — ${esc(t.a)}, ${esc(t.y)}</span></div>` +
       `<div style="font-family:'Courier Prime',monospace; font-size:14px;">${fmt(t.d)}</div>` +
       adorn +
       `</div>`
