@@ -468,7 +468,6 @@ function resetForm() {
     date: "", type: "", location: "", budget: "", message: "",
   };
   ["f-first", "f-last", "f-email", "f-phone", "f-date", "f-type", "f-location", "f-budget", "f-message", "f-website"].forEach((id) => { $(id).value = ""; });
-  resetRecaptcha();
   $("form-err").style.display = "none";
   $("form-body").style.display = "block";
   $("form-sent").style.display = "none";
