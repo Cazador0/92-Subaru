@@ -9,7 +9,9 @@ import type { BookingInput } from "./email.ts";
 export async function generateBookingBrief(
   b: BookingInput,
 ): Promise<string | null> {
-  const apiKey = Deno.env.get("GEMINI_API_KEY");
+  const rawKey = Deno.env.get("GEMINI_API_KEY");
+  if (!rawKey) return null;
+  const apiKey = rawKey.trim();
   if (!apiKey) return null;
 
   const prompt = `You are an executive booking manager and venue researcher for "'92 Subaru", a premier Dallas-Fort Worth '90s and early-2000s cover band (playing Goo Goo Dolls, Cranberries, Third Eye Blind, Oasis, Stone Temple Pilots, Green Day, Nirvana, Sublime, etc.).
@@ -31,26 +33,32 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    });
+  // Try standard Google AI Studio models in order of availability
+  const models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash"];
 
-    if (!res.ok) {
-      console.warn(`[ai:gemini] API HTTP ${res.status}: ${await res.text()}`);
-      return null;
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
+
+      if (!res.ok) {
+        console.warn(`[ai:gemini] Model ${model} HTTP ${res.status}: ${await res.text().catch(() => "")}`);
+        continue;
+      }
+
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) return text.trim();
+    } catch (e) {
+      console.warn(`[ai:gemini] Error calling model ${model}:`, e);
     }
-
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    return text ? text.trim() : null;
-  } catch (e) {
-    console.warn("[ai:gemini] Error generating booking briefing:", e);
-    return null;
   }
+
+  return null;
 }
