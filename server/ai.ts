@@ -37,8 +37,13 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Use official Google AI Studio production model identifiers
-  const models = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp"];
+  // Use standard Google AI Studio models
+  const models = [
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-latest",
+    "gemini-1.5-pro",
+    "gemini-pro",
+  ];
   const errors: string[] = [];
 
   for (const model of models) {
@@ -68,6 +73,14 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
       console.warn(`[ai:gemini] Error calling model ${model}:`, e);
     }
   }
+
+  // Diagnostic: Query available models for this key
+  try {
+    const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+    const listRes = await fetch(listUrl);
+    const listBody = await listRes.text().catch(() => "");
+    console.info("[ai:gemini] Available models check:", listRes.status, listBody.slice(0, 200));
+  } catch {}
 
   return { brief: null, error: errors.join(" | ") || "Gemini API returned no candidates" };
 }
