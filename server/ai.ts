@@ -8,16 +8,14 @@ import type { BookingInput } from "./email.ts";
  */
 export async function generateBookingBrief(
   b: BookingInput,
-): Promise<string | null> {
+): Promise<{ brief: string | null; error?: string }> {
   const rawKey = Deno.env.get("GEMINI_API_KEY");
   if (!rawKey) {
-    console.info("[ai:gemini] GEMINI_API_KEY env var is not set in Vercel environment.");
-    return null;
+    return { brief: null, error: "GEMINI_API_KEY environment variable is not set on Vercel" };
   }
-  const apiKey = rawKey.trim();
+  const apiKey = rawKey.trim().replace(/^["']|["']$/g, "").trim();
   if (!apiKey) {
-    console.info("[ai:gemini] GEMINI_API_KEY env var is empty after trimming.");
-    return null;
+    return { brief: null, error: "GEMINI_API_KEY environment variable is empty" };
   }
 
   const prompt = `You are an executive booking manager and venue researcher for "'92 Subaru", a premier Dallas-Fort Worth '90s and early-2000s cover band (playing Goo Goo Dolls, Cranberries, Third Eye Blind, Oasis, Stone Temple Pilots, Green Day, Nirvana, Sublime, etc.).
@@ -41,6 +39,7 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
 
   // Try standard Google AI Studio models in order of availability
   const models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash"];
+  let lastErr = "";
 
   for (const model of models) {
     try {
@@ -54,17 +53,20 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
       });
 
       if (!res.ok) {
-        console.warn(`[ai:gemini] Model ${model} HTTP ${res.status}: ${await res.text().catch(() => "")}`);
+        const errText = await res.text().catch(() => "");
+        lastErr = `HTTP ${res.status}: ${errText.slice(0, 120)}`;
+        console.warn(`[ai:gemini] Model ${model} ${lastErr}`);
         continue;
       }
 
       const data = await res.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) return text.trim();
+      if (text) return { brief: text.trim() };
     } catch (e) {
+      lastErr = String(e);
       console.warn(`[ai:gemini] Error calling model ${model}:`, e);
     }
   }
 
-  return null;
+  return { brief: null, error: lastErr || "Gemini API returned no candidates" };
 }

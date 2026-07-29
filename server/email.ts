@@ -52,7 +52,7 @@ export async function buildBookingEmail(b: BookingInput): Promise<BookingEmail> 
     line(b.location)
   } — ${name}`;
   
-  const aiBriefing = await generateBookingBrief(b).catch(() => null);
+  const aiRes = await generateBookingBrief(b).catch((e) => ({ brief: null, error: String(e) }));
 
   const textLines = [
     "New booking request via 92subaru site",
@@ -69,22 +69,19 @@ export async function buildBookingEmail(b: BookingInput): Promise<BookingEmail> 
     block(b.message),
   ];
 
-  if (aiBriefing) {
+  if (aiRes.brief) {
     textLines.push(
       "",
       "--------------------------------------------------------------------",
       "🤖 AI BOOKING INTELLIGENCE BRIEFING (Powered by Gemini)",
       "--------------------------------------------------------------------",
-      aiBriefing,
+      aiRes.brief,
     );
   } else {
-    const keyState = Deno.env.get("GEMINI_API_KEY")
-      ? "Gemini API call failed (check Vercel function logs)"
-      : "GEMINI_API_KEY environment variable is missing on Vercel";
     textLines.push(
       "",
       "--------------------------------------------------------------------",
-      `🤖 AI BRIEFING STATUS: ${keyState}`,
+      `🤖 AI BRIEFING STATUS: ${aiRes.error || "Failed to generate brief"}`,
       "--------------------------------------------------------------------",
     );
   }
