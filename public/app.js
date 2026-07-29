@@ -91,59 +91,163 @@ function fmt(s) {
 const trackCount = () => DATA.tracks.length;
 
 // ======================================================================
-//  TRANSPORT
+//  YOUTUBE AUDIO STREAM ENGINE & TRANSPORT
 // ======================================================================
-let _timer = null;
+let _ytPlayer = null;
+let _ytReady = false;
 
-function updateYtPlayer(autoplay = false) {
+window.onYouTubeIframeAPIReady = function () {
+  try {
+    const track = DATA.tracks[state.idx] || DATA.tracks[0];
+    _ytPlayer = new YT.Player("yt-player", {
+      height: "1",
+      width: "1",
+      videoId: track ? track.yt : "nzMBn6Q89zk",
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        modestbranding: 1,
+        rel: 0,
+      },
+      events: {
+        onReady: () => {
+          _ytReady = true;
+        },
+        onStateChange: (event) => {
+          if (window.YT && event.data === window.YT.PlayerState.PLAYING) {
+            state.playing = true;
+            startTimer();
+            renderTransport();
+            renderSoundtrack();
+          } else if (window.YT && event.data === window.YT.PlayerState.PAUSED) {
+            state.playing = false;
+            stopTimer();
+            renderTransport();
+            renderSoundtrack();
+          } else if (window.YT && event.data === window.YT.PlayerState.ENDED) {
+            next();
+          }
+        },
+      },
+    });
+  } catch {
+    _ytReady = false;
+  }
+};
+
+function playYtTrack(autoplay = true) {
   const track = DATA.tracks[state.idx];
   if (!track || !track.yt) return;
-  const player = $("yt-player");
-  if (player) {
+
+  if (_ytReady && _ytPlayer) {
+    try {
+      const currentData = _ytPlayer.getVideoData ? _ytPlayer.getVideoData() : null;
+      if (currentData && currentData.video_id === track.yt) {
+        if (autoplay && typeof _ytPlayer.playVideo === "function") _ytPlayer.playVideo();
+      } else {
+        if (autoplay && typeof _ytPlayer.loadVideoById === "function") {
+          _ytPlayer.loadVideoById(track.yt);
+        } else if (typeof _ytPlayer.cueVideoById === "function") {
+          _ytPlayer.cueVideoById(track.yt);
+        }
+      }
+      return;
+    } catch {
+      /* fallback */
+    }
+  }
+
+  const playerFrame = $("yt-player");
+  if (playerFrame && playerFrame.tagName === "IFRAME") {
     const targetSrc = `https://www.youtube-nocookie.com/embed/${track.yt}?autoplay=${autoplay ? 1 : 0}&enablejsapi=1&rel=0`;
-    if (player.src !== targetSrc) {
-      player.src = targetSrc;
+    if (playerFrame.src !== targetSrc) {
+      playerFrame.src = targetSrc;
     }
   }
 }
 
 function toggle() { state.playing ? pause() : play(); }
-function play() { state.playing = true; startTimer(); startAudio(); updateYtPlayer(true); renderTransport(); }
-function pause() { state.playing = false; stopTimer(); stopAudio(); renderTransport(); }
-function stop() { state.playing = false; state.elapsed = 0; stopTimer(); stopAudio(); updateYtPlayer(false); renderTransport(); }
+
+function play() {
+  state.playing = true;
+  startTimer();
+  playYtTrack(true);
+  renderTransport();
+  renderSoundtrack();
+}
+
+function pause() {
+  state.playing = false;
+  stopTimer();
+  if (_ytReady && _ytPlayer && typeof _ytPlayer.pauseVideo === "function") {
+    try { _ytPlayer.pauseVideo(); } catch { /* */ }
+  }
+  renderTransport();
+  renderSoundtrack();
+}
+
+function stop() {
+  state.playing = false;
+  state.elapsed = 0;
+  stopTimer();
+  if (_ytReady && _ytPlayer && typeof _ytPlayer.stopVideo === "function") {
+    try { _ytPlayer.stopVideo(); } catch { /* */ }
+  }
+  renderTransport();
+  renderSoundtrack();
+}
 
 function prev() {
   state.idx = (state.idx + trackCount() - 1) % trackCount();
   state.elapsed = 0;
-  if (state.playing) restartAudio();
-  updateYtPlayer(state.playing);
-  renderSoundtrack(); renderTransport();
+  playYtTrack(state.playing);
+  if (state.playing) startTimer();
+  renderSoundtrack();
+  renderTransport();
 }
+
 function next() {
   state.idx = (state.idx + 1) % trackCount();
   state.elapsed = 0;
-  if (state.playing) restartAudio();
-  updateYtPlayer(state.playing);
-  renderSoundtrack(); renderTransport();
+  playYtTrack(state.playing);
+  if (state.playing) startTimer();
+  renderSoundtrack();
+  renderTransport();
 }
+
 function pick(i) {
-  state.idx = i; state.elapsed = 0; state.playing = true;
-  startTimer(); startAudio();
-  updateYtPlayer(true);
-  renderSoundtrack(); renderTransport();
+  state.idx = i;
+  state.elapsed = 0;
+  state.playing = true;
+  startTimer();
+  playYtTrack(true);
+  renderSoundtrack();
+  renderTransport();
 }
+
 function setTour(tf) { state.tf = tf; renderGigs(); }
 
 function startTimer() {
   stopTimer();
   _timer = setInterval(() => {
     const dur = DATA.tracks[state.idx].d;
-    const e = state.elapsed + 0.25;
+    let e = state.elapsed + 0.25;
+    if (_ytReady && _ytPlayer && typeof _ytPlayer.getCurrentTime === "function") {
+      try {
+        const cur = _ytPlayer.getCurrentTime();
+        if (typeof cur === "number" && cur > 0) e = cur;
+      } catch {
+        /* fallback to elapsed increment */
+      }
+    }
     if (e >= dur) {
       state.idx = (state.idx + 1) % trackCount();
       state.elapsed = 0;
-      restartAudio();
-      renderSoundtrack(); renderTransport();
+      playYtTrack(true);
+      renderSoundtrack();
+      renderTransport();
     } else {
       state.elapsed = e;
       renderTime();
@@ -499,7 +603,7 @@ async function main() {
   renderSoundtrack();
   if (SHOW_GIGS) renderGigs();
   renderTransport();
-  updateYtPlayer(false);
+  playYtTrack(false);
 }
 
 main();
