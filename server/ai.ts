@@ -37,14 +37,12 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Try v1beta and v1 endpoints across Gemini models (including Gemini 2.5 Pro & Flash)
+  // Use exact models enabled for this API key: gemini-2.0-flash has high quota and zero rate limits
   const models = [
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite-001",
+    "gemini-2.0-flash-001",
     "gemini-2.5-pro",
-    "gemini-2.5-flash",
-    "gemini-2.0-pro-exp",
-    "gemini-1.5-pro",
-    "gemini-1.5-flash",
-    "gemini-pro",
   ];
   const apiVersions = ["v1beta", "v1"];
   const errors: string[] = [];
