@@ -25,9 +25,9 @@ const PROPS = {
 // ---- fallback content (used if the API is unreachable) ---------------------
 const FALLBACK = {
   tracks: [
-    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk", src: "/assets/audio/iris.mp4" },
-    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms", src: "/assets/audio/kiss-me.mp4" },
-    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s", src: "/assets/audio/dreams.mp4" },
+    { n: "01", t: "Iris", a: "Goo Goo Dolls", y: 1998, d: 289, yt: "nzMBn6Q89zk", src: "/assets/audio/iris.mp3" },
+    { n: "02", t: "Kiss Me", a: "Sixpence None the Richer", y: 1997, d: 208, yt: "8OhiOI-b4ms", src: "/assets/audio/kiss-me.mp3" },
+    { n: "03", t: "Dreams", a: "The Cranberries", y: 1992, d: 269, yt: "q8UCkjbgn5s", src: "/assets/audio/dreams.mp3" },
   ],
   tour: {
     upcoming: [
@@ -91,10 +91,56 @@ function fmt(s) {
 const trackCount = () => DATA.tracks.length;
 
 // ======================================================================
-//  NATIVE HTML5 AUDIO ENGINE & TRANSPORT (Option 1)
+//  ZERO-LATENCY IN-MEMORY WEB AUDIO ENGINE & TRANSPORT (0ms Playback)
 // ======================================================================
 let _audioEngine = null;
 let _timer = null;
+const _audioBufferCache = new Map();
+let _acInstance = null;
+let _activeBufferSource = null;
+let _bufferStartTime = 0;
+
+function getAudioCtx() {
+  if (!_acInstance) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    _acInstance = new AC();
+  }
+  if (_acInstance.state === "suspended") {
+    _acInstance.resume().catch(() => {});
+  }
+  return _acInstance;
+}
+
+// Background pre-decoding of all setlist audio buffers for 0ms instant play
+async function preloadAllTrackBuffers() {
+  if (!DATA || !Array.isArray(DATA.tracks)) return;
+  const ac = getAudioCtx();
+  for (const t of DATA.tracks) {
+    const src = t.src || `/assets/audio/${t.t.toLowerCase().replace(/[^a-z0-9]/g, "-")}.mp3`;
+    if (!_audioBufferCache.has(src)) {
+      try {
+        const res = await fetch(src);
+        if (res.ok) {
+          const ab = await res.arrayBuffer();
+          const decoded = await ac.decodeAudioData(ab);
+          _audioBufferCache.set(src, decoded);
+        }
+      } catch {
+        /* fallback */
+      }
+    }
+  }
+}
+
+function stopBufferSource() {
+  if (_activeBufferSource) {
+    try {
+      _activeBufferSource.stop();
+      _activeBufferSource.disconnect();
+    } catch { /* */ }
+    _activeBufferSource = null;
+  }
+}
 
 function getAudioEngine() {
   if (!_audioEngine) {
@@ -104,7 +150,7 @@ function getAudioEngine() {
       next();
     });
     _audioEngine.addEventListener("timeupdate", () => {
-      if (state.playing && typeof _audioEngine.currentTime === "number" && _audioEngine.currentTime > 0) {
+      if (state.playing && !_activeBufferSource && typeof _audioEngine.currentTime === "number" && _audioEngine.currentTime > 0) {
         state.elapsed = _audioEngine.currentTime;
         renderTime();
       }
@@ -116,9 +162,37 @@ function getAudioEngine() {
 function playTrack(autoplay = true) {
   const track = DATA.tracks[state.idx];
   if (!track) return;
+  const src = track.src || `/assets/audio/${track.t.toLowerCase().replace(/[^a-z0-9]/g, "-")}.mp3`;
+
+  // 1. Instant 0ms playback via pre-decoded Web Audio buffer
+  const decodedBuffer = _audioBufferCache.get(src);
+  if (decodedBuffer) {
+    stopBufferSource();
+    if (_audioEngine) { try { _audioEngine.pause(); } catch { /* */ } }
+
+    if (autoplay) {
+      const ac = getAudioCtx();
+      const source = ac.createBufferSource();
+      source.buffer = decodedBuffer;
+      source.connect(ac.destination);
+
+      const offset = state.elapsed < decodedBuffer.duration ? state.elapsed : 0;
+      _bufferStartTime = ac.currentTime - offset;
+      source.start(0, offset);
+      _activeBufferSource = source;
+
+      source.onended = () => {
+        if (state.playing && _activeBufferSource === source) {
+          next();
+        }
+      };
+    }
+    return;
+  }
+
+  // 2. Fallback to HTML5 Audio element
+  stopBufferSource();
   const audio = getAudioEngine();
-  const src = track.src || `/assets/audio/${track.t.toLowerCase().replace(/[^a-z0-9]/g, "-")}.mp4`;
-  
   if (audio.src !== window.location.origin + src && !audio.src.endsWith(src)) {
     audio.src = src;
     audio.currentTime = 0;
@@ -143,6 +217,7 @@ function play() {
 function pause() {
   state.playing = false;
   stopTimer();
+  stopBufferSource();
   if (_audioEngine) _audioEngine.pause();
   stopAudio();
   renderTransport();
@@ -153,6 +228,7 @@ function stop() {
   state.playing = false;
   state.elapsed = 0;
   stopTimer();
+  stopBufferSource();
   if (_audioEngine) {
     _audioEngine.pause();
     _audioEngine.currentTime = 0;
@@ -197,7 +273,9 @@ function startTimer() {
   _timer = setInterval(() => {
     const dur = DATA.tracks[state.idx] ? DATA.tracks[state.idx].d : 240;
     let e = state.elapsed + 0.25;
-    if (_audioEngine && typeof _audioEngine.currentTime === "number" && _audioEngine.currentTime > 0) {
+    if (_activeBufferSource && _acInstance) {
+      e = _acInstance.currentTime - _bufferStartTime;
+    } else if (_audioEngine && typeof _audioEngine.currentTime === "number" && _audioEngine.currentTime > 0) {
       e = _audioEngine.currentTime;
     }
     if (e >= dur) {
@@ -583,6 +661,11 @@ async function main() {
   if (SHOW_GIGS) renderGigs();
   renderTransport();
   playTrack(false);
+  if (window.requestIdleCallback) {
+    requestIdleCallback(() => preloadAllTrackBuffers());
+  } else {
+    setTimeout(() => preloadAllTrackBuffers(), 500);
+  }
 }
 
 main();

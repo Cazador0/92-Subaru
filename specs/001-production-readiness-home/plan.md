@@ -16,7 +16,7 @@ Take the existing Deno + vanilla-JS '92 Subaru site from prototype to production
 **Testing**: `deno test` for server logic (validation, email-payload shaping); manual/headless browser check for booking flow, mobile, and soundtrack.
 **Target Platform**: Vercel (Deno runtime), served globally; modern browsers + mobile (360–414px).
 **Project Type**: Web application (static front-end in `public/` + small Deno API in `server/`).
-**Performance Goals**: Fast first load; booking email delivered < 1 min (SC-001).
+**Performance Goals**: Fast first load; booking email delivered < 1 min (SC-001); 0ms zero-latency audio playback startup via pre-decoded Web Audio API ArrayBuffers (`AudioContext.decodeAudioData`).
 **Constraints**: ~3-day launch window; no cookie-consent banner (privacy-friendly analytics); motion kept.
 **Scale/Scope**: Small brochure + booking site; 4 pages (Home, About, Contact/Book, EPK) + 404 + privacy.
 
