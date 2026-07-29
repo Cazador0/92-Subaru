@@ -10,9 +10,15 @@ export async function generateBookingBrief(
   b: BookingInput,
 ): Promise<string | null> {
   const rawKey = Deno.env.get("GEMINI_API_KEY");
-  if (!rawKey) return null;
+  if (!rawKey) {
+    console.info("[ai:gemini] GEMINI_API_KEY env var is not set in Vercel environment.");
+    return null;
+  }
   const apiKey = rawKey.trim();
-  if (!apiKey) return null;
+  if (!apiKey) {
+    console.info("[ai:gemini] GEMINI_API_KEY env var is empty after trimming.");
+    return null;
+  }
 
   const prompt = `You are an executive booking manager and venue researcher for "'92 Subaru", a premier Dallas-Fort Worth '90s and early-2000s cover band (playing Goo Goo Dolls, Cranberries, Third Eye Blind, Oasis, Stone Temple Pilots, Green Day, Nirvana, Sublime, etc.).
 
