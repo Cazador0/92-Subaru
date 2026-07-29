@@ -18,12 +18,14 @@ description: "Task list for Production Readiness — '92 Subaru site"
 - [x] T001 [US4] Configure Vercel deployment for the Deno app (runtime, static serving from `public/`, env/secrets); document in `README.md` (env vars: `BOOKING_EMAIL`, `RESEND_API_KEY`, `RECAPTCHA_SECRET_KEY`, Umami website ID); delete the Deno Deploy CI workflow, Dockerfile, and fly.toml (decided 2026-07-28 — one deploy story; git history preserves them). DoD (CHK043): app builds + serves locally under the Vercel-compatible entry point, `vercel.json` validates, `deno test` green, README documents link-account/deploy/env steps. — `vercel.json`, `.github/workflows/deno.yml`, `Dockerfile`, `fly.toml` (D1-17) — **highest risk, do first**
 - [ ] T002 [US1] Remove Deno KV; make email the system of record. Delete KV store + its tests. — `server/data.ts`, `server/main.ts`, `server/data_test.ts` (D1-13)
 - [x] T003 [P] [US1] Replace Resend with direct Gmail dispatch module (`GMAIL_USER`, `GMAIL_APP_PASSWORD` env vars). — `server/email.ts` (D1-10, FR-002)
+- [x] T031 [US1] Build AI Booking Intelligence & Entity Research Briefing module using Google Gemini API (`gemini-2.5-flash`, `GEMINI_API_KEY`) to research client & venue and format AI briefing into outbound email with graceful fallback. — `server/ai.ts`, `server/email.ts` (FR-022)
 
 ### 📋 Manual User Setup Tasks (100% Free Gmail Integration)
 
 - [ ] **Task U1 [User]**: Enable 2-Step Verification on `92subaruband@gmail.com` at [myaccount.google.com/security](https://myaccount.google.com/security).
 - [ ] **Task U2 [User]**: Generate a 16-character **Google App Password** under Security -> App Passwords (Name: `'92 Subaru Website`).
 - [ ] **Task U3 [User]**: Set Environment Variables in Vercel Dashboard (`GMAIL_USER=92subaruband@gmail.com`, `GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx`, `BOOKING_EMAIL=92subaruband@gmail.com`).
+- [ ] **Task U4 [User]**: (Optional for AI Research Briefings) Generate a free Gemini API Key at [aistudio.google.com](https://aistudio.google.com) and add `GEMINI_API_KEY` to Vercel Environment Variables.
 
 ## Phase 2: US1 — Book the band (Priority: P1) 🎯 MVP
 

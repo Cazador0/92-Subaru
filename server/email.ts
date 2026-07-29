@@ -44,12 +44,17 @@ function block(s: string | undefined): string {
   return (s ?? "").replace(/[\x00-\x09\x0b\x0c\x0e-\x1f\x7f]+/g, " ").trim();
 }
 
-export function buildBookingEmail(b: BookingInput): BookingEmail {
+import { generateBookingBrief } from "./ai.ts";
+
+export async function buildBookingEmail(b: BookingInput): Promise<BookingEmail> {
   const name = `${line(b.firstName)} ${line(b.lastName)}`.trim();
   const subject = `Booking request — ${line(b.date)} @ ${
     line(b.location)
   } — ${name}`;
-  const text = [
+  
+  const aiBriefing = await generateBookingBrief(b).catch(() => null);
+
+  const textLines = [
     "New booking request via 92subaru site",
     "",
     `Name       : ${name}`,
@@ -62,8 +67,19 @@ export function buildBookingEmail(b: BookingInput): BookingEmail {
     "",
     "Message:",
     block(b.message),
-  ].join("\n");
-  return { subject, text, replyTo: line(b.email) };
+  ];
+
+  if (aiBriefing) {
+    textLines.push(
+      "",
+      "--------------------------------------------------------------------",
+      "🤖 AI BOOKING INTELLIGENCE BRIEFING (Powered by Gemini)",
+      "--------------------------------------------------------------------",
+      aiBriefing,
+    );
+  }
+
+  return { subject, text: textLines.join("\n"), replyTo: line(b.email) };
 }
 
 async function sendViaGmailSmtp(
@@ -135,7 +151,7 @@ async function sendViaGmailSmtp(
 }
 
 export async function sendBookingEmail(b: BookingInput): Promise<void> {
-  const mail = buildBookingEmail(b);
+  const mail = await buildBookingEmail(b);
 
   if (Deno.env.get("BOOKING_DEV_LOG") === "1") {
     console.info(`[email:dev] ${mail.subject}\n${mail.text}`);

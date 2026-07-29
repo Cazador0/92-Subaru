@@ -1,8 +1,8 @@
 import { assertEquals, assertStringIncludes } from "@std/assert";
 import { buildBookingEmail } from "./email.ts";
 
-Deno.test("booking email contains all nine FR-001 fields", () => {
-  const mail = buildBookingEmail({
+Deno.test("booking email contains all nine FR-001 fields", async () => {
+  const mail = await buildBookingEmail({
     firstName: "Jane",
     lastName: "Doe",
     email: "jane@example.test",
@@ -25,8 +25,8 @@ Deno.test("booking email contains all nine FR-001 fields", () => {
   assertEquals(mail.replyTo, "jane@example.test");
 });
 
-Deno.test("optional fields render as em-dash placeholders", () => {
-  const mail = buildBookingEmail({
+Deno.test("optional fields render as em-dash placeholders", async () => {
+  const mail = await buildBookingEmail({
     firstName: "Jane",
     lastName: "Doe",
     email: "jane@example.test",
@@ -39,8 +39,8 @@ Deno.test("optional fields render as em-dash placeholders", () => {
   assertStringIncludes(mail.text, "Budget     : —");
 });
 
-Deno.test("CR/LF in single-line fields cannot inject email headers (CHK024)", () => {
-  const mail = buildBookingEmail({
+Deno.test("CR/LF in single-line fields cannot inject email headers (CHK024)", async () => {
+  const mail = await buildBookingEmail({
     firstName: "Jane\r\nX-Evil: 1",
     lastName: "Doe",
     email: "jane@example.test\r\nBcc: attacker@evil.test",
@@ -56,8 +56,8 @@ Deno.test("CR/LF in single-line fields cannot inject email headers (CHK024)", ()
   assertStringIncludes(mail.subject, "Bcc: attacker@evil.test");
 });
 
-Deno.test("message keeps its newlines but drops control chars", () => {
-  const mail = buildBookingEmail({
+Deno.test("message keeps its newlines but drops control chars", async () => {
+  const mail = await buildBookingEmail({
     firstName: "Jane",
     lastName: "Doe",
     email: "jane@example.test",
