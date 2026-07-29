@@ -21,6 +21,7 @@ data/
 
 # Research scratch — assets, seed prototype, node_modules
 research/
+Research/
 
 # macOS
 .DS_Store
