@@ -37,40 +37,37 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Use standard Google AI Studio models
-  const models = [
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest",
-    "gemini-1.5-pro",
-    "gemini-pro",
-  ];
+  // Try v1beta and v1 endpoints across standard Gemini models
+  const models = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"];
+  const apiVersions = ["v1beta", "v1"];
   const errors: string[] = [];
 
-  for (const model of models) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      });
+  for (const ver of apiVersions) {
+    for (const model of models) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/${ver}/models/${model}:generateContent?key=${apiKey}`;
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        });
 
-      if (!res.ok) {
-        const errText = await res.text().catch(() => "");
-        const msg = `${model} (HTTP ${res.status}: ${errText.slice(0, 80)})`;
-        errors.push(msg);
-        console.warn(`[ai:gemini] ${msg}`);
-        continue;
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          const msg = `${ver}/${model} (${res.status}: ${errText.slice(0, 70)})`;
+          errors.push(msg);
+          console.warn(`[ai:gemini] ${msg}`);
+          continue;
+        }
+
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) return { brief: text.trim() };
+      } catch (e) {
+        errors.push(`${ver}/${model} (Err: ${String(e)})`);
       }
-
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) return { brief: text.trim() };
-    } catch (e) {
-      errors.push(`${model} (Error: ${String(e)})`);
-      console.warn(`[ai:gemini] Error calling model ${model}:`, e);
     }
   }
 
