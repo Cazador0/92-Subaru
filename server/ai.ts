@@ -37,8 +37,8 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Single target model call (prevents burst 429 rate limiting caused by rapid looping)
-  const model = "gemini-2.5-flash";
+  // Single target model call (gemini-2.0-flash is official production model for new keys)
+  const model = "gemini-2.0-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   for (let attempt = 1; attempt <= 2; attempt++) {
