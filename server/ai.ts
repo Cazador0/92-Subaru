@@ -71,13 +71,25 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
     }
   }
 
-  // Diagnostic: Query available models for this key
+  // Diagnostic: Query available models for this key to diagnose 404
+  let diagInfo = "";
   try {
     const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
     const listRes = await fetch(listUrl);
-    const listBody = await listRes.text().catch(() => "");
-    console.info("[ai:gemini] Available models check:", listRes.status, listBody.slice(0, 200));
-  } catch {}
+    const listJson = await listRes.json().catch(() => null);
+    if (listJson?.models) {
+      const modelNames = listJson.models
+        .map((m: { name?: string }) => (m.name || "").replace("models/", ""))
+        .filter((n: string) => n.includes("flash") || n.includes("pro"))
+        .slice(0, 5)
+        .join(", ");
+      diagInfo = ` (Key available models: [${modelNames}])`;
+    } else if (listJson?.error) {
+      diagInfo = ` (GCP Key Error: ${listJson.error.message})`;
+    }
+  } catch (e) {
+    diagInfo = ` (List check err: ${String(e)})`;
+  }
 
-  return { brief: null, error: errors.join(" | ") || "Gemini API returned no candidates" };
+  return { brief: null, error: (errors.join(" | ") + diagInfo) };
 }
