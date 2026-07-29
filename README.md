@@ -120,7 +120,7 @@ Below is a preview of the **'92 Subaru** Home Page interface, capturing the retr
 * **Deno 2.x:** Modern TypeScript runtime used for local development (`server/main.ts`) and unit testing (`deno test`).
 * **Vercel Serverless:** Unified deployment utilizing the `vercel-deno` runtime for API endpoints alongside Vercel CDN static hosting.
 * **Zero-Database Architecture:** Email is the system of record. Bookings are delivered directly to the band via [Resend](https://resend.com), eliminating database infrastructure overhead.
-* **Multi-Layer Spam Protection:** Integrated Google reCAPTCHA v2 verification, honeypot traps, and per-IP sliding window rate limiting.
+* **Multi-Layer Spam Protection:** Honeypot traps and per-IP sliding window rate limiting.
 
 ---
 
@@ -184,7 +184,6 @@ Configure the following in your Vercel Project Settings:
 |---|---|---|
 | `BOOKING_EMAIL` | Destination email inbox for booking submissions | `92subaruband@gmail.com` |
 | `RESEND_API_KEY` | Resend API authorization key | `re_...` |
-| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA v2 secret key | `6LeIxAcTAAAAAGG-...` *(Google test key)* |
 | `BOOKING_EMAIL_FROM` | Optional verified sender address | `onboarding@resend.dev` |
 | `BOOKING_DEV_LOG` | Set to `1` to log emails locally without sending | `0` *(Production)* |
 
@@ -203,7 +202,7 @@ Configure the following in your Vercel Project Settings:
 │   ├── api.ts            # Shared JSON API handler
 │   ├── email.ts          # Booking email formatter & Resend integration
 │   ├── data.ts           # Content model (soundtrack tracks & gig data)
-│   └── spam.ts           # Spam protection (reCAPTCHA v2, honeypot, rate limiter)
+│   └── spam.ts           # Spam protection (honeypot, rate limiter)
 ├── public/
 │   ├── index.html        # App shell & inline interactive Cassette SVG
 │   ├── styles.css        # Responsive layout, keyframe animations & retro styles
