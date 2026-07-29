@@ -1,26 +1,26 @@
 import type { BookingInput } from "./email.ts";
 
 /**
- * AI Booking Intelligence & Entity Research Briefing module.
- * Uses Google Gemini LLM (gemini-2.5-flash / GEMINI_API_KEY) to research
- * venue/entity context, crowd vibe, setlist recommendations, and suggested
- * band reply strategies.
+ * Multi-Provider AI Booking Intelligence & Entity Research Briefing module.
+ * Primary Provider: Groq Cloud API (GROQ_API_KEY — llama-3.3-70b-versatile — 30 req/min free tier)
+ * Fallback Provider: Google Gemini API (GEMINI_API_KEY — gemini-2.0-flash)
  */
 export async function generateBookingBrief(
   b: BookingInput,
-): Promise<{ brief: string | null; error?: string }> {
-  const rawKey = Deno.env.get("GEMINI_API_KEY");
-  if (!rawKey) {
-    return { brief: null, error: "GEMINI_API_KEY environment variable is not set on Vercel" };
-  }
-  const apiKey = rawKey.trim().replace(/^["']|["']$/g, "").trim();
-  if (!apiKey) {
-    return { brief: null, error: "GEMINI_API_KEY environment variable is empty" };
+): Promise<{ brief: string | null; error?: string; provider?: string }> {
+  const groqKey = (Deno.env.get("GROQ_API_KEY") || "").trim().replace(/^["']|["']$/g, "");
+  const geminiKey = (Deno.env.get("GEMINI_API_KEY") || "").trim().replace(/^["']|["']$/g, "");
+
+  if (!groqKey && !geminiKey) {
+    return {
+      brief: null,
+      error: "GROQ_API_KEY or GEMINI_API_KEY environment variable is missing on Vercel",
+    };
   }
 
-  const prompt = `You are an executive booking manager and venue researcher for "'92 Subaru", a premier Dallas-Fort Worth '90s and early-2000s cover band (playing Goo Goo Dolls, Cranberries, Third Eye Blind, Oasis, Stone Temple Pilots, Green Day, Nirvana, Sublime, etc.).
+  const systemPrompt = `You are an executive booking manager and venue researcher for "'92 Subaru", a premier Dallas-Fort Worth '90s and early-2000s cover band (playing Goo Goo Dolls, Cranberries, Third Eye Blind, Oasis, Stone Temple Pilots, Green Day, Nirvana, Sublime, etc.).`;
 
-Analyze this new booking inquiry submitted through the band's website:
+  const userPrompt = `Analyze this new booking inquiry submitted through the band's website:
 - Client Name: ${b.firstName} ${b.lastName}
 - Client Email: ${b.email}
 - Phone: ${b.phone || "Not provided"}
@@ -37,51 +37,98 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Single target model call (gemini-2.0-flash is official production model for new keys)
-  const model = "gemini-2.0-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  // 1. Try Groq Cloud API (Llama 3.3 70B Versatile) if GROQ_API_KEY is available
+  if (groqKey) {
+    const groqModels = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
+    for (const model of groqModels) {
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "authorization": `Bearer ${groqKey}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            temperature: 0.5,
+            max_tokens: 1000,
+          }),
+        });
 
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return { brief: text.trim() };
+        if (res.ok) {
+          const data = await res.json();
+          const text = data?.choices?.[0]?.message?.content;
+          if (text) {
+            return {
+              brief: text.trim(),
+              provider: `Groq Cloud (${model})`,
+            };
+          }
+        } else {
+          const errText = await res.text().catch(() => "");
+          console.warn(`[ai:groq] Model ${model} HTTP ${res.status}: ${errText.slice(0, 100)}`);
+        }
+      } catch (e) {
+        console.warn(`[ai:groq] Error calling ${model}:`, e);
       }
-
-      const errText = await res.text().catch(() => "");
-      console.warn(`[ai:gemini] Attempt ${attempt} HTTP ${res.status}: ${errText.slice(0, 100)}`);
-
-      if (res.status === 429 && attempt === 1) {
-        // Rate limited — backoff 2.5s before retry
-        await new Promise((r) => setTimeout(r, 2500));
-        continue;
-      }
-
-      if (res.status === 429) {
-        return {
-          brief: null,
-          error: "Gemini API free-tier rate limit active — please wait ~60 seconds before sending another test request.",
-        };
-      }
-
-      return { brief: null, error: `HTTP ${res.status}: ${errText.slice(0, 150)}` };
-    } catch (e) {
-      if (attempt === 1) {
-        await new Promise((r) => setTimeout(r, 2500));
-        continue;
-      }
-      return { brief: null, error: `Network error: ${String(e)}` };
     }
   }
 
-  return { brief: null, error: "Gemini API returned no candidates" };
+  // 2. Fallback to Google Gemini API (gemini-2.0-flash) if GEMINI_API_KEY is available
+  if (geminiKey) {
+    const model = "gemini-2.0-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`;
+
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            return {
+              brief: text.trim(),
+              provider: `Google Gemini (${model})`,
+            };
+          }
+        }
+
+        const errText = await res.text().catch(() => "");
+        console.warn(`[ai:gemini] Attempt ${attempt} HTTP ${res.status}: ${errText.slice(0, 100)}`);
+
+        if (res.status === 429 && attempt === 1) {
+          await new Promise((r) => setTimeout(r, 2500));
+          continue;
+        }
+
+        if (res.status === 429) {
+          return {
+            brief: null,
+            error: "Gemini API free-tier rate limit active — please wait ~60 seconds or set GROQ_API_KEY on Vercel.",
+          };
+        }
+
+        return { brief: null, error: `Gemini HTTP ${res.status}: ${errText.slice(0, 150)}` };
+      } catch (e) {
+        if (attempt === 1) {
+          await new Promise((r) => setTimeout(r, 2500));
+          continue;
+        }
+        return { brief: null, error: `Gemini network error: ${String(e)}` };
+      }
+    }
+  }
+
+  return { brief: null, error: "AI Briefing generation failed on all available providers" };
 }

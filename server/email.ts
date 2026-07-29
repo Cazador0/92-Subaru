@@ -70,10 +70,11 @@ export async function buildBookingEmail(b: BookingInput): Promise<BookingEmail> 
   ];
 
   if (aiRes.brief) {
+    const providerName = aiRes.provider || "AI Engine";
     textLines.push(
       "",
       "--------------------------------------------------------------------",
-      "🤖 AI BOOKING INTELLIGENCE BRIEFING (Powered by Gemini)",
+      `🤖 AI BOOKING INTELLIGENCE BRIEFING (Powered by ${providerName})`,
       "--------------------------------------------------------------------",
       aiRes.brief,
     );

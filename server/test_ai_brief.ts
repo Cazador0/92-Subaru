@@ -14,17 +14,17 @@ const input = {
 };
 
 console.log("====================================================================");
-console.log("🤖 RUNNING LOCAL GEMINI AI BRIEFING STRESS TEST");
+console.log("🤖 RUNNING LOCAL AI BRIEFING STRESS TEST (GROQ / GEMINI)");
 console.log("====================================================================");
 
-const brief = await generateBookingBrief(input);
+const res = await generateBookingBrief(input);
 
-if (brief) {
-  console.log("\n✅ GEMINI AI BRIEFING GENERATED SUCCESSFULLY:\n");
-  console.log(brief);
+if (res.brief) {
+  console.log(`\n✅ AI BRIEFING GENERATED SUCCESSFULLY (Provider: ${res.provider}):\n`);
+  console.log(res.brief);
 } else {
-  console.log("\n⚠️ GEMINI_API_KEY NOT SET IN LOCAL ENV — RUN WITH:");
-  console.log("GEMINI_API_KEY=\"your_key_here\" deno run --allow-net --allow-env server/test_ai_brief.ts\n");
+  console.log("\n⚠️ GROQ_API_KEY / GEMINI_API_KEY NOT SET IN LOCAL ENV — RUN WITH:");
+  console.log("GROQ_API_KEY=\"gsk_...\" deno run --allow-net --allow-env server/test_ai_brief.ts\n");
 }
 
 console.log("\n====================================================================");
