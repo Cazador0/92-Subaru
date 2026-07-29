@@ -508,7 +508,6 @@ function wire() {
   // transport
   $("btn-prev").addEventListener("click", prev);
   $("btn-play").addEventListener("click", toggle);
-  $("btn-stop").addEventListener("click", stop);
   $("btn-next").addEventListener("click", next);
   if (SHOW_GIGS) {
     $("tour-up").addEventListener("click", () => setTour("upcoming"));

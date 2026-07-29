@@ -55,7 +55,7 @@ Below is a preview of the **'92 Subaru** Home Page interface, capturing the retr
 │ ┌─────────────────────────────────────────────────────────────────────────┐ │
 │ │ ▶ NOW PLAYING: IRIS — Goo Goo Dolls (1998)                              │ │
 │ │ 0:00 [████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░] 4:49          │ │
-│ │ [ ◄◄ PREV ]     [ ▶ PLAY / ❚❚ PAUSE ]     [ ◼ STOP ]     [ NEXT ►► ]    │ │
+│ │ [ ◄◄ PREV ]        [ ▶ PLAY / ❚❚ PAUSE ]        [ NEXT ►► ]     │ │
 │ └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                                             │
 │ ─── THE SOUNDTRACK (OFFICIAL YOUT RECORDINGS) ────────────────────────────── │
