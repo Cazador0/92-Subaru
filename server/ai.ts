@@ -61,15 +61,22 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
       console.warn(`[ai:gemini] Attempt ${attempt} HTTP ${res.status}: ${errText.slice(0, 100)}`);
 
       if (res.status === 429 && attempt === 1) {
-        // Rate limited — backoff 1.2s before retry
-        await new Promise((r) => setTimeout(r, 1200));
+        // Rate limited — backoff 2.5s before retry
+        await new Promise((r) => setTimeout(r, 2500));
         continue;
+      }
+
+      if (res.status === 429) {
+        return {
+          brief: null,
+          error: "Gemini API free-tier rate limit active — please wait ~60 seconds before sending another test request.",
+        };
       }
 
       return { brief: null, error: `HTTP ${res.status}: ${errText.slice(0, 150)}` };
     } catch (e) {
       if (attempt === 1) {
-        await new Promise((r) => setTimeout(r, 1200));
+        await new Promise((r) => setTimeout(r, 2500));
         continue;
       }
       return { brief: null, error: `Network error: ${String(e)}` };
