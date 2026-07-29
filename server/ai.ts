@@ -37,9 +37,9 @@ Please generate a concise, structured 3-part AI Booking Intelligence Briefing fo
 
 Keep the briefing concise, actionable, professional, and formatted for an email body with bullet points.`;
 
-  // Try standard Google AI Studio models in order of availability
-  const models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash"];
-  let lastErr = "";
+  // Use official Google AI Studio production model identifiers
+  const models = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp"];
+  const errors: string[] = [];
 
   for (const model of models) {
     try {
@@ -54,8 +54,9 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
 
       if (!res.ok) {
         const errText = await res.text().catch(() => "");
-        lastErr = `HTTP ${res.status}: ${errText.slice(0, 120)}`;
-        console.warn(`[ai:gemini] Model ${model} ${lastErr}`);
+        const msg = `${model} (HTTP ${res.status}: ${errText.slice(0, 80)})`;
+        errors.push(msg);
+        console.warn(`[ai:gemini] ${msg}`);
         continue;
       }
 
@@ -63,10 +64,10 @@ Keep the briefing concise, actionable, professional, and formatted for an email 
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (text) return { brief: text.trim() };
     } catch (e) {
-      lastErr = String(e);
+      errors.push(`${model} (Error: ${String(e)})`);
       console.warn(`[ai:gemini] Error calling model ${model}:`, e);
     }
   }
 
-  return { brief: null, error: lastErr || "Gemini API returned no candidates" };
+  return { brief: null, error: errors.join(" | ") || "Gemini API returned no candidates" };
 }
