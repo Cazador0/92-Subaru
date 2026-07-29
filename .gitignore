@@ -28,3 +28,9 @@ Research/
 
 # Lockfile
 deno.lock
+
+# Backlog & AI Context files
+BACKLOG.md
+CLAUDE.md
+Claude.md
+
