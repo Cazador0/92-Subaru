@@ -66,6 +66,22 @@ a:hover { color: #d83a2b; }
 
 /* The reCAPTCHA v2 checkbox iframe is a fixed 304px wide — scale it down
    slightly where the single column gets narrower than that. */
-@media (max-width: 380px) {
-  .g-recaptcha { transform: scale(.9); transform-origin: 0 0; }
+/* Artist logo vault badges & hover effects */
+.artist-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, filter 0.2s ease;
+  user-select: none;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(23,20,15,0.4);
+}
+.artist-badge:hover {
+  transform: scale(1.15) rotate(0deg) !important;
+  box-shadow: 6px 6px 0 #17140f !important;
+  z-index: 10;
+  filter: brightness(1.08);
+}
+.art-filter-btn {
+  transition: background 0.15s ease, color 0.15s ease;
 }

@@ -518,6 +518,28 @@ function wire() {
     const row = e.target.closest("[data-pick]");
     if (row) pick(Number(row.dataset.pick));
   });
+
+  // artist repertoire logo vault filter buttons
+  const filterBar = $("artist-filter-bar");
+  if (filterBar) {
+    filterBar.addEventListener("click", (e) => {
+      const btn = e.target.closest(".art-filter-btn");
+      if (!btn) return;
+      const cat = btn.dataset.cat;
+      filterBar.querySelectorAll(".art-filter-btn").forEach((b) => {
+        const active = b === btn;
+        b.style.background = active ? "#17140f" : "#fffdf5";
+        b.style.color = active ? "#efe8d6" : "#17140f";
+      });
+      document.querySelectorAll("#artist-logo-grid .artist-badge").forEach((el) => {
+        if (cat === "all" || el.dataset.cat === cat) {
+          el.style.display = "inline-flex";
+        } else {
+          el.style.display = "none";
+        }
+      });
+    });
+  }
   // form (fields per FR-001)
   $("f-first").addEventListener("input", (e) => setField("firstName", e.target.value));
   $("f-last").addEventListener("input", (e) => setField("lastName", e.target.value));
