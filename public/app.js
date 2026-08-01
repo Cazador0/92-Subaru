@@ -592,23 +592,11 @@ function triggerAutoplayOnLoad() {
     return;
   }
 
-  // Attempt direct un-muted play of Track 01 on page arrival
+  // Always set default track to Track 01 ("Dreams")
   state.idx = 0;
 
-  playTrack(true).then(() => {
-    // Autoplay succeeded without user interaction! Sync playing state & UI
-    state.playing = true;
-    startTimer();
-    renderSoundtrack();
-    renderTransport();
-  }).catch(() => {
-    // Autoplay blocked by browser policy in this tab/window — ensure UI is paused and show gesture fallback
-    state.playing = false;
-    stopTimer();
-    renderSoundtrack();
-    renderTransport();
-    showAutoplayOverlay();
-  });
+  // Prompt the user to tap/click anywhere to start music on every site visit
+  showAutoplayOverlay();
 }
 
 async function main() {

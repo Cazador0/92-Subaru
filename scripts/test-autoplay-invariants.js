@@ -3,7 +3,7 @@ const path = require('path');
 const vm = require('vm');
 
 console.log("==================================================");
-console.log("  92 SUBARU — AUTOPLAY & UI SYNC PROVING SUITE    ");
+console.log("  92 SUBARU — TAP-TO-PLAY LANDING PROVING SUITE    ");
 console.log("==================================================");
 
 const appJsPath = path.join(__dirname, '../public/app.js');
@@ -72,7 +72,7 @@ function createDOMContext(audioPlayMock) {
       }
     },
     dispatchEvent: (event) => {
-      const fns = listeners[event] || [];
+      const fns = (listeners[event] || []).slice();
       fns.forEach(fn => fn(event));
     }
   };
@@ -116,56 +116,31 @@ function createDOMContext(audioPlayMock) {
   return { sandbox, elements, doc, win };
 }
 
-// TEST 1: Permissive Environment
-console.log("\n[TEST 1] Permissive Environment — Direct Autoplay Allowed");
+// TEST 1: Page Arrival Landing Overlay Verification
+console.log("\n[TEST 1] Page Arrival Landing Overlay Verification");
 {
-  const { sandbox, elements } = createDOMContext(() => Promise.resolve());
+  const { sandbox, elements, doc, win } = createDOMContext(() => Promise.resolve());
   const instrumentedCode = appJsContent.replace("const state =", "window.state =");
   vm.runInContext(instrumentedCode, sandbox);
 
   setTimeout(() => {
-    assert(sandbox.state.playing === true, "State playing is true when audio.play() resolves");
-    assert(elements["autoplay-overlay"].style.display === "none", "Autoplay overlay remains hidden when direct play succeeds");
-    runTest2();
+    assert(elements["autoplay-overlay"].style.display === "flex", "Tap-to-Play retro overlay displays flex on site arrival");
+    assert(sandbox.state.idx === 0, "Default track is set to Track 01 ('Dreams')");
+    assert(sandbox.state.playing === false, "State playing is FALSE until user interacts (NO fake playing or browser blocks)");
+    runTest2(sandbox, elements, doc, win);
   }, 50);
 }
 
-// TEST 2: Restricted Environment (New Tab Autoplay Policy Rejection)
-function runTest2() {
-  console.log("\n[TEST 2] Restricted Environment — New Tab Autoplay Policy Rejection");
-  const { sandbox, elements, doc, win } = createDOMContext(() => {
-    const err = new Error("play() failed because the user didn't interact with the document first.");
-    err.name = "NotAllowedError";
-    return Promise.reject(err);
-  });
+// TEST 2: User Gesture Click Anywhere Execution
+function runTest2(sandbox, elements, doc, win) {
+  console.log("\n[TEST 2] User Gesture Click Anywhere Execution");
 
-  const instrumentedCode = appJsContent.replace("const state =", "window.state =");
-  vm.runInContext(instrumentedCode, sandbox);
-
-  setTimeout(() => {
-    assert(sandbox.state.playing === false, "State playing is FALSE when audio.play() is rejected by browser policy (NO fake playing!)");
-    assert(elements["autoplay-overlay"].style.display === "flex", "Autoplay retro overlay displays flex when autoplay is blocked");
-    
-    runTest3(sandbox, elements, doc, win);
-  }, 50);
-}
-
-// TEST 3: User Gesture Capture
-function runTest3(sandbox, elements, doc, win) {
-  console.log("\n[TEST 3] User Gesture Capture — Tap Anywhere to Start Tape");
-  
-  // Override mock audio play to resolve upon user gesture
-  win.Audio.prototype.play = () => Promise.resolve();
-  if (sandbox._audioEngine) {
-    sandbox._audioEngine.play = () => Promise.resolve();
-  }
-
-  // Dispatch user gesture click
+  // Dispatch user gesture click anywhere on document
   doc.dispatchEvent("click");
 
   setTimeout(() => {
-    assert(elements["autoplay-overlay"].style.display === "none", "Autoplay overlay is dismissed upon user tap");
-    assert(sandbox.state.playing === true, "State playing transitions to TRUE on user gesture");
+    assert(elements["autoplay-overlay"].style.display === "none", "Tap-to-play overlay dismisses smoothly on user click");
+    assert(sandbox.state.playing === true, "Audio playback starts and state playing becomes TRUE");
     
     console.log("\n==================================================");
     console.log(`  VERIFICATION RESULTS: ${passCount} Passed, ${failCount} Failed`);
