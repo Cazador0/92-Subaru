@@ -161,10 +161,6 @@ function playTrack(autoplay = true) {
 function toggle() { state.playing ? pause() : play(); }
 
 function play() {
-  try {
-    localStorage.removeItem("92subaru_user_paused");
-  } catch {}
-
   playTrack(true).then(() => {
     state.playing = true;
     startTimer();
@@ -181,9 +177,6 @@ function play() {
 
 function pause() {
   state.playing = false;
-  try {
-    localStorage.setItem("92subaru_user_paused", "true");
-  } catch {}
   stopTimer();
   if (_audioEngine) _audioEngine.pause();
   stopAudio();
@@ -194,9 +187,6 @@ function pause() {
 function stop() {
   state.playing = false;
   state.elapsed = 0;
-  try {
-    localStorage.setItem("92subaru_user_paused", "true");
-  } catch {}
   stopTimer();
   if (_audioEngine) {
     _audioEngine.pause();
@@ -602,14 +592,7 @@ function triggerAutoplayOnLoad() {
     return;
   }
 
-  // Check if user explicitly paused in a previous session
-  try {
-    if (localStorage.getItem("92subaru_user_paused") === "true") {
-      return;
-    }
-  } catch {}
-
-  // Attempt direct un-muted play of Track 01
+  // Attempt direct un-muted play of Track 01 on page arrival
   state.idx = 0;
 
   playTrack(true).then(() => {
