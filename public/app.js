@@ -113,9 +113,36 @@ function getAudioEngine() {
   return _audioEngine;
 }
 
+function showAutoplayOverlay() {
+  const overlay = $("autoplay-overlay");
+  if (!overlay) return;
+
+  const track = DATA.tracks[state.idx] || DATA.tracks[0];
+  if (track) {
+    const titleEl = overlay.querySelector(".autoplay-title");
+    const artistEl = overlay.querySelector(".autoplay-artist");
+    if (titleEl) titleEl.textContent = `NOW PLAYING: ${track.t.toUpperCase()}`;
+    if (artistEl) artistEl.textContent = track.a.toUpperCase();
+  }
+
+  overlay.style.display = "flex";
+
+  const startPlayOnGesture = () => {
+    document.removeEventListener("click", startPlayOnGesture);
+    document.removeEventListener("touchstart", startPlayOnGesture);
+    document.removeEventListener("keydown", startPlayOnGesture);
+    overlay.style.display = "none";
+    play();
+  };
+
+  document.addEventListener("click", startPlayOnGesture, { once: true });
+  document.addEventListener("touchstart", startPlayOnGesture, { once: true });
+  document.addEventListener("keydown", startPlayOnGesture, { once: true });
+}
+
 function playTrack(autoplay = true) {
   const track = DATA.tracks[state.idx];
-  if (!track) return;
+  if (!track) return Promise.resolve(false);
   const audio = getAudioEngine();
   const src = track.src || `/assets/audio/${track.t.toLowerCase().replace(/[^a-z0-9]/g, "-")}.mp4`;
   
@@ -124,17 +151,24 @@ function playTrack(autoplay = true) {
     audio.currentTime = 0;
   }
   if (autoplay) {
-    audio.play().catch(() => {
+    return audio.play().then(() => true).catch((err) => {
       startAudio();
+      throw err;
     });
   }
+  return Promise.resolve(false);
 }
 
 function toggle() { state.playing ? pause() : play(); }
 
 function play() {
   state.playing = true;
-  playTrack(true);
+  try {
+    localStorage.removeItem("92subaru_user_paused");
+  } catch {}
+  playTrack(true).catch(() => {
+    showAutoplayOverlay();
+  });
   startTimer();
   renderTransport();
   renderSoundtrack();
@@ -142,6 +176,9 @@ function play() {
 
 function pause() {
   state.playing = false;
+  try {
+    localStorage.setItem("92subaru_user_paused", "true");
+  } catch {}
   stopTimer();
   if (_audioEngine) _audioEngine.pause();
   stopAudio();
@@ -152,6 +189,9 @@ function pause() {
 function stop() {
   state.playing = false;
   state.elapsed = 0;
+  try {
+    localStorage.setItem("92subaru_user_paused", "true");
+  } catch {}
   stopTimer();
   if (_audioEngine) {
     _audioEngine.pause();
@@ -550,6 +590,43 @@ async function loadContent() {
   } catch { /* keep FALLBACK */ }
 }
 
+function triggerAutoplayOnLoad() {
+  // Check URL query override ?autoplay=0
+  const autoplayParam = params.get("autoplay");
+  if (autoplayParam === "0" || autoplayParam === "false") {
+    return;
+  }
+
+  // Check if user explicitly paused in a previous session
+  try {
+    if (localStorage.getItem("92subaru_user_paused") === "true") {
+      return;
+    }
+  } catch {}
+
+  // Check if autoplay already attempted in this tab session
+  try {
+    if (sessionStorage.getItem("92subaru_autoplay_attempted") === "true") {
+      return;
+    }
+    sessionStorage.setItem("92subaru_autoplay_attempted", "true");
+  } catch {}
+
+  // Attempt direct un-muted play of Track 01
+  state.idx = 0;
+  state.playing = true;
+  startTimer();
+  renderSoundtrack();
+  renderTransport();
+
+  playTrack(true).then(() => {
+    // Autoplay succeeded without user interaction
+  }).catch(() => {
+    // Autoplay blocked by browser policy — show retro fallback overlay
+    showAutoplayOverlay();
+  });
+}
+
 async function main() {
   if (!SHOW_GIGS) $("gigs-section").remove();
   wire();
@@ -559,6 +636,8 @@ async function main() {
   if (SHOW_GIGS) renderGigs();
   renderTransport();
   playTrack(false);
+  triggerAutoplayOnLoad();
 }
 
 main();
+
