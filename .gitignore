@@ -4,9 +4,15 @@ serviceAccountKey.json
 *-firebase-adminsdk-*.json
 .env
 .env.*
+.env.local
+.env.development.local
+.env.production.local
 
-# Node
+# Node & Package Managers
 node_modules/
+
+# Vercel tooling
+.vercel/
 
 # Firebase tooling
 .firebase/
@@ -23,18 +29,22 @@ data/
 research/
 Research/
 
-# macOS
+# macOS & System files
 .DS_Store
+Thumbs.db
 
 # Lockfile
 deno.lock
 
-# Backlog & AI Context files
+# AI, Agent Tooling & Spec-Kit Metadata
+.claude/
+.lumen/
+.specify/
+.agents/
+.gemini/
+specs/
 BACKLOG.md
 CLAUDE.md
 Claude.md
-
-# Spec Kit design artifacts
-specs/
-
-
+*-ADR.md
+ADR.md
