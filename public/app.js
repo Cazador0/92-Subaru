@@ -152,7 +152,6 @@ function playTrack(autoplay = true) {
   }
   if (autoplay) {
     return audio.play().then(() => true).catch((err) => {
-      startAudio();
       throw err;
     });
   }
@@ -437,7 +436,7 @@ function renderSoundtrack() {
   $("mix-list").innerHTML = DATA.tracks.map((t, i) => {
     const active = i === state.idx;
     const adorn = active
-      ? '<div style="position:absolute; left:44px; right:70px; bottom:6px; height:6px; background:#d83a2b; opacity:.45; transform:rotate(-.5deg); border-radius:3px; pointer-events:none;"></div>' + MINI_EQ
+      ? '<div style="position:absolute; left:44px; right:70px; bottom:6px; height:6px; background:#d83a2b; opacity:.45; transform:rotate(-.5deg); border-radius:3px; pointer-events:none;"></div>' + (state.playing ? MINI_EQ : "")
       : "";
     return (
       `<div class="mix-row" data-pick="${i}" style="position:relative; display:flex; align-items:center; gap:16px; padding:11px 6px; cursor:pointer; border-bottom:1px dotted #17140f;">` +
