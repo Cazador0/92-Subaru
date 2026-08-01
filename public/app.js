@@ -162,16 +162,22 @@ function playTrack(autoplay = true) {
 function toggle() { state.playing ? pause() : play(); }
 
 function play() {
-  state.playing = true;
   try {
     localStorage.removeItem("92subaru_user_paused");
   } catch {}
-  playTrack(true).catch(() => {
+
+  playTrack(true).then(() => {
+    state.playing = true;
+    startTimer();
+    renderTransport();
+    renderSoundtrack();
+  }).catch(() => {
+    state.playing = false;
+    stopTimer();
+    renderTransport();
+    renderSoundtrack();
     showAutoplayOverlay();
   });
-  startTimer();
-  renderTransport();
-  renderSoundtrack();
 }
 
 function pause() {
@@ -604,25 +610,21 @@ function triggerAutoplayOnLoad() {
     }
   } catch {}
 
-  // Check if autoplay already attempted in this tab session
-  try {
-    if (sessionStorage.getItem("92subaru_autoplay_attempted") === "true") {
-      return;
-    }
-    sessionStorage.setItem("92subaru_autoplay_attempted", "true");
-  } catch {}
-
   // Attempt direct un-muted play of Track 01
   state.idx = 0;
-  state.playing = true;
-  startTimer();
-  renderSoundtrack();
-  renderTransport();
 
   playTrack(true).then(() => {
-    // Autoplay succeeded without user interaction
+    // Autoplay succeeded without user interaction! Sync playing state & UI
+    state.playing = true;
+    startTimer();
+    renderSoundtrack();
+    renderTransport();
   }).catch(() => {
-    // Autoplay blocked by browser policy — show retro fallback overlay
+    // Autoplay blocked by browser policy in this tab/window — ensure UI is paused and show gesture fallback
+    state.playing = false;
+    stopTimer();
+    renderSoundtrack();
+    renderTransport();
     showAutoplayOverlay();
   });
 }
