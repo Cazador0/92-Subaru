@@ -109,7 +109,7 @@ Max-width 1080. Kicker tag `SIDE B // OFF THE RECORD` (ink bg, cream text, rotat
 Then **WHAT WE PLAY** — genre chips (bordered, rotated): GRUNGE, BRITPOP, POP-PUNK, **EURODANCE** (solid red), HIP-HOP, R&B. Two CTAs: `◂ HEAR THE TAPE` (ink → Home) and `BOOK US ▸` (red → Contact), both with hard shadows.
 
 ### CONTACT ("Book The Tape")
-Max-width 1080. Kicker `BOOKING // TECHNICAL SPECS`. Title **BOOK THE / TAPE** (Anton 96px, red shadow). Two columns `1.4fr .9fr`:
+Max-width 1080. Kicker `BOOKING`. Title **BOOK THE / TAPE** (Anton 96px, red shadow). Two columns `1.4fr .9fr`:
 - **Booking form** — framed panel `3px solid #17140f` on `#fffdf5`, hard shadow `7px 7px 0`; dark title bar `MODEL '92 — BOOKING REQUEST` + `FORM / SIDE A`. Fields: **EVENT DATE*** (`type=date`, `min=2026-07-11`), **EVENT TYPE** (select: Bar/Club, Private Party, Wedding, Corporate/Brand, Festival), **LOCATION / VENUE***, **BUDGET RANGE** (select: Under $1,500 / $1,500–3,000 / $3,000–6,000 / $6,000+ / Let's talk), **MESSAGE*** (textarea). Inputs: cream `#efe8d6`, `2px solid #17140f`; focus = red border + `box-shadow:0 0 0 3px rgba(216,58,43,.18)`. Submit **SEND TRANSMISSION ▸** (red, Anton 20px, hard shadow; active nudges `translate(3px,3px)`).
 - **Info panel** — DIRECT LINE card (`booking@92subaru.fm`, `Dallas–Fort Worth & beyond`, response `< 48 hours` in red) and a dark ON THE DIAL card (instagram / youtube / bandcamp / tiktok @92subaru).
 
