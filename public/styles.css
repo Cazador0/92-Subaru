@@ -128,6 +128,7 @@ a:hover { color: #d83a2b; }
   overflow-y: auto;
   transform: rotate(-1deg);
   animation: xpulse 2s ease-in-out infinite;
+  cursor: default;
 }
 
 .autoplay-badge {
@@ -244,6 +245,16 @@ a:hover { color: #d83a2b; }
   border: 2px solid #17140f;
   box-shadow: 4px 4px 0 #d83a2b;
   transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.autoplay-hint {
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #d83a2b;
+  margin-top: 14px;
+  text-transform: uppercase;
 }
 
 .autoplay-action:hover {
