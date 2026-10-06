@@ -10,6 +10,14 @@ a:hover { color: #d83a2b; }
 ::selection { background: #d83a2b; color: #efe8d6; }
 
 @keyframes eqbar { 0%, 100% { transform: scaleY(.22); } 50% { transform: scaleY(1); } }
+
+/* Hero EQ is driven from JS off the live audio analyser. */
+#hero-eq .eq-bar {
+  transform: scaleY(0.12);
+  transform-origin: bottom;
+  transition: transform 80ms linear;
+  will-change: transform;
+}
 @keyframes xpulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
 @keyframes xscan { 0% { transform: translateY(-160px); } 100% { transform: translateY(700px); } }
 @keyframes xflick { 0%, 100% { opacity: 1; } 91% { opacity: 1; } 93% { opacity: .6; } 95% { opacity: 1; } 97% { opacity: .82; } }
@@ -56,9 +64,10 @@ a:hover { color: #d83a2b; }
 
   .page-title { font-size: clamp(44px, 14.5vw, 96px) !important; text-shadow: 4px 4px 0 #d83a2b !important; }
 
-  /* Book page: form + info panel stack; form rows collapse to one column
+  /* Book page: contact info above the form; form rows collapse to one column
      (DOM order is the FR-001 field order). */
   .book-grid { grid-template-columns: 1fr !important; gap: 26px !important; }
+  .book-info { order: -1; }
   .form-grid { grid-template-columns: 1fr !important; }
   #form-body { padding: 20px 14px !important; }
 }
