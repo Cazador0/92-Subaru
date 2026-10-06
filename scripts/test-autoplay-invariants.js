@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
 
 console.log("==================================================");
 console.log("  92 SUBARU — TAP-TO-PLAY LANDING PROVING SUITE    ");

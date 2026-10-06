@@ -35,6 +35,13 @@ const CONTENT_TYPES: Record<string, string> = {
   ".woff2": "font/woff2",
   ".map": "application/json",
   ".txt": "text/plain; charset=utf-8",
+  ".mp3": "audio/mpeg",
+  ".m4a": "audio/mp4",
+  ".mp4": "audio/mp4",
+  ".wav": "audio/wav",
+  ".ogg": "audio/ogg",
+  ".mov": "video/quicktime",
+  ".webm": "video/webm",
 };
 
 async function readPublic(
@@ -54,7 +61,30 @@ async function readPublic(
   }
 }
 
-async function serveStatic(pathname: string): Promise<Response> {
+type ByteRange = { start: number; end: number };
+
+function parseRange(header: string, size: number): ByteRange | null {
+  const m = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!m) return null;
+  const [, s, e] = m;
+  if (s === "" && e === "") return null;
+  if (s === "") {
+    const len = Number(e);
+    if (!Number.isInteger(len) || len <= 0) return null;
+    const start = Math.max(0, size - len);
+    return { start, end: size - 1 };
+  }
+  const start = Number(s);
+  if (!Number.isInteger(start) || start < 0 || start >= size) return null;
+  let end = e === "" ? size - 1 : Number(e);
+  if (!Number.isInteger(end) || end < start || end >= size) end = size - 1;
+  return { start, end };
+}
+
+async function serveStatic(
+  pathname: string,
+  rangeHeader: string | null,
+): Promise<Response> {
   // Normalize + block path traversal before touching the filesystem.
   let rel = decodeURIComponent(pathname);
   if (rel.endsWith("/")) rel += "index.html";
@@ -67,9 +97,25 @@ async function serveStatic(pathname: string): Promise<Response> {
   // Clean URLs (mirrors `cleanUrls` on Vercel): /privacy -> privacy.html.
   if (!file && !clean.includes(".")) file = await readPublic(clean + ".html");
   if (file) {
-    return new Response(file.body, {
-      headers: { "content-type": file.type },
+    const headers = new Headers({
+      "content-type": file.type,
+      "accept-ranges": "bytes",
+      "content-length": String(file.body.length),
     });
+
+    if (rangeHeader) {
+      const range = parseRange(rangeHeader, file.body.length);
+      if (range) {
+        const slice = file.body.slice(range.start, range.end + 1);
+        headers.set("content-range", `bytes ${range.start}-${range.end}/${file.body.length}`);
+        headers.set("content-length", String(slice.length));
+        return new Response(slice, { status: 206, headers });
+      }
+      headers.set("content-range", `bytes */${file.body.length}`);
+      return new Response(null, { status: 416, headers });
+    }
+
+    return new Response(file.body, { status: 200, headers });
   }
 
   // Unknown page route -> themed 404 with a real 404 status (FR-021).
@@ -100,5 +146,5 @@ Deno.serve({
   if (req.method !== "GET" && req.method !== "HEAD") {
     return json({ ok: false, error: "Method Not Allowed" }, 405);
   }
-  return serveStatic(pathname);
+  return serveStatic(pathname, req.headers.get("range"));
 });

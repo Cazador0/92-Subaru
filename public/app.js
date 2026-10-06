@@ -90,6 +90,20 @@ function fmt(s) {
 }
 const trackCount = () => DATA.tracks.length;
 
+// ---- session / preference persistence (FR-004, FR-005) ----------------------
+function hasVisitedThisSession() {
+  try { return sessionStorage.getItem("visited") === "true"; } catch { return false; }
+}
+function markVisited() {
+  try { sessionStorage.setItem("visited", "true"); } catch { /* private mode */ }
+}
+function userPausedLastVisit() {
+  try { return localStorage.getItem("user_paused") === "true"; } catch { return false; }
+}
+function setUserPaused(paused) {
+  try { localStorage.setItem("user_paused", paused ? "true" : "false"); } catch { /* private mode */ }
+}
+
 // ======================================================================
 //  NATIVE HTML5 AUDIO ENGINE & TRANSPORT (Option 1)
 // ======================================================================
@@ -113,31 +127,61 @@ function getAudioEngine() {
   return _audioEngine;
 }
 
-function showAutoplayOverlay() {
+function updateAutoplayOverlay(track) {
+  const overlay = $("autoplay-overlay");
+  if (!overlay) return;
+  const titleEl = overlay.querySelector(".autoplay-title");
+  const artistEl = overlay.querySelector(".autoplay-artist");
+  if (titleEl) {
+    titleEl.textContent = track ? `NOW PLAYING: ${track.t.toUpperCase()}` : "PICK A TRACK";
+  }
+  if (artistEl) {
+    artistEl.textContent = track ? track.a.toUpperCase() : "TAP A SONG TO START THE TAPE";
+  }
+}
+
+function renderAutoplayList() {
+  const list = $("autoplay-list");
+  if (!list) return;
+  list.innerHTML = DATA.tracks.map((t, i) =>
+    `<button type="button" class="autoplay-row" data-idx="${i}" aria-label="Play track ${t.n}: ${esc(t.t)} by ${esc(t.a)}">` +
+      `<span class="autoplay-num">${esc(t.n)}</span>` +
+      `<span class="autoplay-row-track"><span class="autoplay-row-name">${esc(t.t)}</span><span class="autoplay-row-artist">${esc(t.a)}</span></span>` +
+      `<span class="autoplay-dur">${fmt(t.d)}</span>` +
+    `</button>`
+  ).join("");
+}
+
+function showAutoplayOverlay(preserveSelection = false) {
   const overlay = $("autoplay-overlay");
   if (!overlay) return;
 
-  const track = DATA.tracks[state.idx] || DATA.tracks[0];
-  if (track) {
-    const titleEl = overlay.querySelector(".autoplay-title");
-    const artistEl = overlay.querySelector(".autoplay-artist");
-    if (titleEl) titleEl.textContent = `NOW PLAYING: ${track.t.toUpperCase()}`;
-    if (artistEl) artistEl.textContent = track.a.toUpperCase();
-  }
+  renderAutoplayList();
+  updateAutoplayOverlay(preserveSelection ? (DATA.tracks[state.idx] || DATA.tracks[0]) : null);
 
   overlay.style.display = "flex";
 
-  const startPlayOnGesture = () => {
-    document.removeEventListener("click", startPlayOnGesture);
-    document.removeEventListener("touchstart", startPlayOnGesture);
-    document.removeEventListener("keydown", startPlayOnGesture);
+  const startOnGesture = (ev) => {
+    document.removeEventListener("click", startOnGesture);
+    document.removeEventListener("touchstart", startOnGesture);
+
+    const row = ev && ev.target && typeof ev.target.closest === "function"
+      ? ev.target.closest("[data-idx]")
+      : null;
+    const idx = row ? Number(row.dataset.idx) : state.idx;
+    if (Number.isInteger(idx) && idx >= 0 && idx < trackCount()) {
+      state.idx = idx;
+    }
+
+    markVisited();
+    setUserPaused(false);
+    updateAutoplayOverlay(DATA.tracks[state.idx]);
     overlay.style.display = "none";
     play();
   };
 
-  document.addEventListener("click", startPlayOnGesture, { once: true });
-  document.addEventListener("touchstart", startPlayOnGesture, { once: true });
-  document.addEventListener("keydown", startPlayOnGesture, { once: true });
+  document.addEventListener("click", startOnGesture);
+  document.addEventListener("touchstart", startOnGesture);
 }
 
 function playTrack(autoplay = true) {
@@ -163,6 +207,7 @@ function toggle() { state.playing ? pause() : play(); }
 function play() {
   playTrack(true).then(() => {
     state.playing = true;
+    setUserPaused(false);
     startTimer();
     renderTransport();
     renderSoundtrack();
@@ -171,7 +216,7 @@ function play() {
     stopTimer();
     renderTransport();
     renderSoundtrack();
-    showAutoplayOverlay();
+    showAutoplayOverlay(true);
   });
 }
 
@@ -180,6 +225,7 @@ function pause() {
   stopTimer();
   if (_audioEngine) _audioEngine.pause();
   stopAudio();
+  setUserPaused(true);
   renderTransport();
   renderSoundtrack();
 }
@@ -193,6 +239,7 @@ function stop() {
     _audioEngine.currentTime = 0;
   }
   stopAudio();
+  setUserPaused(true);
   renderTransport();
   renderSoundtrack();
 }
@@ -200,29 +247,42 @@ function stop() {
 function prev() {
   state.idx = (state.idx + trackCount() - 1) % trackCount();
   state.elapsed = 0;
-  playTrack(state.playing);
-  if (state.playing) startTimer();
-  renderSoundtrack();
-  renderTransport();
+  if (state.playing) {
+    play();
+  } else {
+    renderSoundtrack();
+    renderTransport();
+  }
 }
 
 function next() {
   state.idx = (state.idx + 1) % trackCount();
   state.elapsed = 0;
-  playTrack(state.playing);
-  if (state.playing) startTimer();
-  renderSoundtrack();
-  renderTransport();
+  if (state.playing) {
+    play();
+  } else {
+    renderSoundtrack();
+    renderTransport();
+  }
 }
 
 function pick(i) {
   state.idx = i;
   state.elapsed = 0;
-  state.playing = true;
-  playTrack(true);
-  startTimer();
-  renderSoundtrack();
-  renderTransport();
+  play();
+}
+
+function seekToFraction(frac) {
+  const track = DATA.tracks[state.idx];
+  if (!track) return;
+  const f = Math.min(Math.max(0, frac), 1);
+  const t = f * track.d;
+  try {
+    const audio = getAudioEngine();
+    audio.currentTime = t;
+    state.elapsed = t;
+    renderTime();
+  } catch { /* seeking before metadata loads — ignore */ }
 }
 
 function setTour(tf) { state.tf = tf; renderGigs(); }
@@ -520,6 +580,17 @@ function wire() {
   $("btn-prev").addEventListener("click", prev);
   $("btn-play").addEventListener("click", toggle);
   $("btn-next").addEventListener("click", next);
+
+  // Click anywhere along the tape strip to seek within the track.
+  const seekBar = $("deck-seek");
+  if (seekBar) {
+    seekBar.addEventListener("click", (e) => {
+      const rect = seekBar.getBoundingClientRect();
+      if (!rect.width) return;
+      const frac = (e.clientX - rect.left) / rect.width;
+      seekToFraction(frac);
+    });
+  }
   if (SHOW_GIGS) {
     $("tour-up").addEventListener("click", () => setTour("upcoming"));
     $("tour-past").addEventListener("click", () => setTour("past"));
@@ -586,16 +657,19 @@ async function loadContent() {
 }
 
 function triggerAutoplayOnLoad() {
-  // Check URL query override ?autoplay=0
+  // FR-006 — explicit bypass for testing / direct links.
   const autoplayParam = params.get("autoplay");
-  if (autoplayParam === "0" || autoplayParam === "false") {
-    return;
-  }
+  if (autoplayParam === "0" || autoplayParam === "false") return;
 
-  // Always set default track to Track 01 ("Dreams")
+  // FR-005 — respect a saved pause/stop preference from a previous visit.
+  if (userPausedLastVisit()) return;
+
+  // FR-004 — only prompt on the first arrival of this session.
+  if (hasVisitedThisSession()) return;
+
+  // FR-001 — default selection is Track 01 ("Dreams").
   state.idx = 0;
 
-  // Prompt the user to tap/click anywhere to start music on every site visit
   showAutoplayOverlay();
 }
 
