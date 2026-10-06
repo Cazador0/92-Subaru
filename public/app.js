@@ -127,6 +127,75 @@ function getAudioEngine() {
   return _audioEngine;
 }
 
+// ---- audio-reactive hero EQ ---------------------------------------------------
+let _analyser = null;
+let _mediaSource = null;
+let _eqRaf = 0;
+
+const EQ_BANDS = [
+  [0, 4], [4, 8], [8, 16], [16, 28], [28, 44],
+  [44, 64], [64, 90], [90, 120], [120, 160],
+];
+const EQ_GAIN = [0.75, 0.85, 0.95, 1.05, 1.15, 1.25, 1.35, 1.45, 1.55];
+
+function ensureAnalyser() {
+  const ac = ctx();
+  if (_analyser) return _analyser;
+  const audio = getAudioEngine();
+  _mediaSource = ac.createMediaElementSource(audio);
+  _analyser = ac.createAnalyser();
+  _analyser.fftSize = 512;
+  _analyser.smoothingTimeConstant = 0.75;
+  _mediaSource.connect(_analyser);
+  _analyser.connect(ac.destination);
+  return _analyser;
+}
+
+function eqBars() {
+  return Array.from(document.querySelectorAll("#hero-eq .eq-bar"));
+}
+
+function startEqLoop() {
+  if (_eqRaf) return;
+  const bars = eqBars();
+  if (!bars.length) return;
+
+  let analyser;
+  try {
+    analyser = ensureAnalyser();
+  } catch {
+    return;
+  }
+
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  const smooth = new Float32Array(bars.length);
+
+  const draw = () => {
+    analyser.getByteFrequencyData(data);
+    bars.forEach((bar, i) => {
+      const band = EQ_BANDS[i] || [0, data.length];
+      let sum = 0;
+      for (let j = band[0]; j < band[1]; j++) sum += data[j] || 0;
+      const avg = sum / Math.max(1, band[1] - band[0]);
+      const gain = EQ_GAIN[i] || 1;
+      const target = Math.min(1, (avg / 190) * gain);
+      smooth[i] += (target - smooth[i]) * 0.35;
+      bar.style.transform = `scaleY(${(0.12 + smooth[i] * 0.88).toFixed(3)})`;
+    });
+    _eqRaf = requestAnimationFrame(draw);
+  };
+
+  draw();
+}
+
+function stopEqLoop() {
+  if (_eqRaf) cancelAnimationFrame(_eqRaf);
+  _eqRaf = 0;
+  eqBars().forEach((bar) => {
+    bar.style.transform = "scaleY(0.12)";
+  });
+}
+
 function updateAutoplayOverlay(track) {
   const overlay = $("autoplay-overlay");
   if (!overlay) return;
@@ -195,6 +264,9 @@ function playTrack(autoplay = true) {
     audio.currentTime = 0;
   }
   if (autoplay) {
+    // Mobile browsers require Web Audio activation during the tap, before
+    // audio.play() resolves. Reuse and resume the graph on subsequent plays.
+    try { ensureAnalyser(); } catch { /* native audio can play without an EQ */ }
     return audio.play().then(() => true).catch((err) => {
       throw err;
     });
@@ -208,12 +280,14 @@ function play() {
   playTrack(true).then(() => {
     state.playing = true;
     setUserPaused(false);
+    startEqLoop();
     startTimer();
     renderTransport();
     renderSoundtrack();
   }).catch(() => {
     state.playing = false;
     stopTimer();
+    stopEqLoop();
     renderTransport();
     renderSoundtrack();
     showAutoplayOverlay(true);
@@ -223,6 +297,7 @@ function play() {
 function pause() {
   state.playing = false;
   stopTimer();
+  stopEqLoop();
   if (_audioEngine) _audioEngine.pause();
   stopAudio();
   setUserPaused(true);
@@ -234,6 +309,7 @@ function stop() {
   state.playing = false;
   state.elapsed = 0;
   stopTimer();
+  stopEqLoop();
   if (_audioEngine) {
     _audioEngine.pause();
     _audioEngine.currentTime = 0;
@@ -317,7 +393,9 @@ let _ac = null, _nb = null, _audio = null;
 
 function ctx() {
   if (!_ac) { const AC = window.AudioContext || window.webkitAudioContext; _ac = new AC(); }
-  if (_ac.state === "suspended") _ac.resume();
+  if (_ac.state === "suspended" || _ac.state === "interrupted") {
+    _ac.resume().catch(() => { /* retry on the next play gesture */ });
+  }
   return _ac;
 }
 function noise() {
