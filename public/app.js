@@ -221,36 +221,86 @@ function renderAutoplayList() {
   ).join("");
 }
 
+let _overlayDocumentClick = null;
+let _overlayDocumentKeydown = null;
+
+function removeOverlayListeners() {
+  if (_overlayDocumentClick) {
+    document.removeEventListener("click", _overlayDocumentClick);
+    _overlayDocumentClick = null;
+  }
+  if (_overlayDocumentKeydown) {
+    document.removeEventListener("keydown", _overlayDocumentKeydown);
+    _overlayDocumentKeydown = null;
+  }
+}
+
+function dismissAutoplayOverlay() {
+  removeOverlayListeners();
+  const overlay = $("autoplay-overlay");
+  if (overlay) overlay.style.display = "none";
+  markVisited();
+}
+
+function startPlaybackFromOverlay() {
+  removeOverlayListeners();
+  const overlay = $("autoplay-overlay");
+  if (overlay) overlay.style.display = "none";
+  markVisited();
+  setUserPaused(false);
+  updateAutoplayOverlay(DATA.tracks[state.idx]);
+  play();
+}
+
 function showAutoplayOverlay(preserveSelection = false) {
   const overlay = $("autoplay-overlay");
   if (!overlay) return;
+
+  removeOverlayListeners();
 
   renderAutoplayList();
   updateAutoplayOverlay(preserveSelection ? (DATA.tracks[state.idx] || DATA.tracks[0]) : null);
 
   overlay.style.display = "flex";
 
-  const startOnGesture = (ev) => {
-    document.removeEventListener("click", startOnGesture);
-    document.removeEventListener("touchstart", startOnGesture);
-
-    const row = ev && ev.target && typeof ev.target.closest === "function"
-      ? ev.target.closest("[data-idx]")
+  _overlayDocumentClick = (ev) => {
+    const card = ev && ev.target && typeof ev.target.closest === "function"
+      ? ev.target.closest(".autoplay-content")
       : null;
-    const idx = row ? Number(row.dataset.idx) : state.idx;
-    if (Number.isInteger(idx) && idx >= 0 && idx < trackCount()) {
-      state.idx = idx;
+
+    if (card) {
+      const row = ev.target.closest("[data-idx]");
+      if (row) {
+        const idx = Number(row.dataset.idx);
+        if (Number.isInteger(idx) && idx >= 0 && idx < trackCount()) {
+          state.idx = idx;
+        }
+        startPlaybackFromOverlay();
+        return;
+      }
+
+      const action = ev.target.closest(".autoplay-action");
+      if (action) {
+        startPlaybackFromOverlay();
+        return;
+      }
+
+      // Clicks on the card itself (badge/title/artist) keep the overlay open.
+      return;
     }
 
-    markVisited();
-    setUserPaused(false);
-    updateAutoplayOverlay(DATA.tracks[state.idx]);
-    overlay.style.display = "none";
-    play();
+    // Click on the white-space backdrop: close without playing.
+    dismissAutoplayOverlay();
   };
 
-  document.addEventListener("click", startOnGesture);
-  document.addEventListener("touchstart", startOnGesture);
+  _overlayDocumentKeydown = (ev) => {
+    if (ev && (ev.key === "Escape" || ev.keyCode === 27)) {
+      dismissAutoplayOverlay();
+    }
+  };
+
+  document.addEventListener("click", _overlayDocumentClick);
+  document.addEventListener("keydown", _overlayDocumentKeydown);
 }
 
 function playTrack(autoplay = true) {

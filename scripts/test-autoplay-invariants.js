@@ -3,7 +3,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 console.log("==================================================");
-console.log("  92 SUBARU — TAP-TO-PLAY LANDING PROVING SUITE    ");
+console.log("  92 SUBARU — LANDING OVERLAY PROVING SUITE       ");
 console.log("==================================================");
 
 const appJsPath = path.join(__dirname, '../public/app.js');
@@ -54,7 +54,7 @@ function createDOMContext(audioPlayMock) {
   };
 
   // Seed required IDs in index.html
-  ["autoplay-overlay", "gigs-section", "hero-sweep", "f-first", "f-last", "f-email", "f-phone", "f-date", "f-type", "f-location", "f-budget", "f-message", "submit", "reset", "art-filter-bar"].forEach(getOrCreateElement);
+  ["autoplay-overlay", "autoplay-list", "gigs-section", "hero-sweep", "f-first", "f-last", "f-email", "f-phone", "f-date", "f-type", "f-location", "f-budget", "f-message", "submit", "reset", "art-filter-bar"].forEach(getOrCreateElement);
 
   const listeners = {};
 
@@ -72,7 +72,8 @@ function createDOMContext(audioPlayMock) {
       }
     },
     dispatchEvent: (event) => {
-      const fns = (listeners[event] || []).slice();
+      const type = typeof event === "string" ? event : event.type;
+      const fns = (listeners[type] || []).slice();
       fns.forEach(fn => fn(event));
     }
   };
@@ -124,30 +125,58 @@ console.log("\n[TEST 1] Page Arrival Landing Overlay Verification");
   vm.runInContext(instrumentedCode, sandbox);
 
   setTimeout(() => {
-    assert(elements["autoplay-overlay"].style.display === "flex", "Tap-to-Play retro overlay displays flex on site arrival");
+    assert(elements["autoplay-overlay"].style.display === "flex", "Landing overlay displays flex on site arrival");
     assert(sandbox.state.idx === 0, "Default track is set to Track 01 ('Dreams')");
-    assert(sandbox.state.playing === false, "State playing is FALSE until user interacts (NO fake playing or browser blocks)");
+    assert(sandbox.state.playing === false, "State playing is FALSE until user interacts");
     runTest2(sandbox, elements, doc, win);
   }, 50);
 }
 
-// TEST 2: User Gesture Click Anywhere Execution
+// TEST 2: White-space dismissal closes the popup without playback
 function runTest2(sandbox, elements, doc, win) {
-  console.log("\n[TEST 2] User Gesture Click Anywhere Execution");
+  console.log("\n[TEST 2] White-Space Dismissal Without Playback");
 
-  // Dispatch user gesture click anywhere on document
-  doc.dispatchEvent("click");
+  doc.dispatchEvent({ type: "click", target: null });
 
   setTimeout(() => {
-    assert(elements["autoplay-overlay"].style.display === "none", "Tap-to-play overlay dismisses smoothly on user click");
-    assert(sandbox.state.playing === true, "Audio playback starts and state playing becomes TRUE");
-    
-    console.log("\n==================================================");
-    console.log(`  VERIFICATION RESULTS: ${passCount} Passed, ${failCount} Failed`);
-    console.log("==================================================");
+    assert(elements["autoplay-overlay"].style.display === "none", "White-space click dismisses the landing overlay");
+    assert(sandbox.state.playing === false, "White-space dismissal does NOT start audio playback");
+    assert(sandbox.state.idx === 0, "Track selection remains unchanged after white-space dismissal");
+    runTest3();
+  }, 50);
+}
 
-    if (failCount > 0) {
-      process.exit(1);
-    }
+// TEST 3: Clicking a track row inside the card still starts playback
+function runTest3() {
+  console.log("\n[TEST 3] Track Row Click Starts Playback");
+
+  const { sandbox, elements, doc } = createDOMContext(() => Promise.resolve());
+  const instrumentedCode = appJsContent.replace("const state =", "window.state =");
+  vm.runInContext(instrumentedCode, sandbox);
+
+  setTimeout(() => {
+    // Simulate a click on the second track row inside the tape-deck card.
+    const target = {
+      closest: (sel) => {
+        if (sel === ".autoplay-content") return {};
+        if (sel === "[data-idx]") return { dataset: { idx: "1" } };
+        return null;
+      }
+    };
+
+    doc.dispatchEvent({ type: "click", target });
+
+    setTimeout(() => {
+      assert(sandbox.state.idx === 1, "Clicking a track row selects that track");
+      assert(sandbox.state.playing === true, "Clicking a track row starts audio playback");
+
+      console.log("\n==================================================");
+      console.log(`  VERIFICATION RESULTS: ${passCount} Passed, ${failCount} Failed`);
+      console.log("==================================================");
+
+      if (failCount > 0) {
+        process.exit(1);
+      }
+    }, 50);
   }, 50);
 }

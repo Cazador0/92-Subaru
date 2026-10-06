@@ -450,7 +450,7 @@
   </div>
 
   <!-- AUTOPLAY RETRO FALLBACK OVERLAY -->
-  <div id="autoplay-overlay" class="autoplay-overlay" style="display:none;">
+  <div id="autoplay-overlay" class="autoplay-overlay" role="dialog" aria-modal="true" aria-label="Pick a track or click outside to browse without music" style="display:none;">
     <div class="autoplay-content">
       <div class="autoplay-badge">'92 SUBARU TAPE DECK</div>
       <div class="autoplay-title">PICK A TRACK</div>
@@ -458,8 +458,9 @@
       <div id="autoplay-list" class="autoplay-list" role="group" aria-label="Choose a track to play"></div>
       <div class="autoplay-action">
         <span class="autoplay-play-icon">▶</span>
-        <span>PICK A TRACK — OR TAP ANYWHERE TO START</span>
+        <span>PICK A TRACK TO START THE TAPE</span>
       </div>
+      <div class="autoplay-hint">CLICK OUTSIDE TO BROWSE WITHOUT MUSIC</div>
     </div>
   </div>
 
